@@ -20,7 +20,7 @@ export default function App() {
     setLoading(true);
     setErrorMsg("");
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("Waitlist")
         .insert([{ 
           name: formData.name, 
