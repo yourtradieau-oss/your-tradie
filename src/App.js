@@ -1,16 +1,45 @@
 import React, { useState } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  "https://sbidwhsnwdsvkbdwzphb.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaWR3aHNud2RzdmtiZHd6cGhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MzcyOTcsImV4cCI6MjA5NzIxMzI5N30.eCkIM3gKZCi7hY-ef9JQjRHHBZ-97VSVC2npQH6M26g"
+);
 
 export default function App() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: ""
-  });
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = () => {
-    if (!formData.name || !formData.email) return;
-    setSubmitted(true);
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.email) {
+      setErrorMsg("Please enter your name and email.");
+      return;
+    }
+    setLoading(true);
+    setErrorMsg("");
+    try {
+      const { data, error } = await supabase
+        .from("Waitlist")
+        .insert([{ 
+          name: formData.name, 
+          email: formData.email, 
+          phone: formData.phone 
+        }]);
+      if (error) {
+        console.log("Supabase error:", error);
+        setErrorMsg("Error: " + error.message);
+        setLoading(false);
+      } else {
+        setSubmitted(true);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log("Catch error:", err);
+      setErrorMsg("Error: " + err.message);
+      setLoading(false);
+    }
   };
 
   return (
@@ -25,7 +54,6 @@ export default function App() {
       fontFamily: "sans-serif"
     }}>
 
-      {/* Logo */}
       <div style={{ textAlign: "center", marginBottom: 16 }}>
         <div style={{
           fontSize: 56,
@@ -54,12 +82,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* Taglines */}
-      <div style={{
-        textAlign: "center",
-        marginBottom: 48,
-        maxWidth: 480
-      }}>
+      <div style={{ textAlign: "center", marginBottom: 48, maxWidth: 480 }}>
         <div style={{
           fontSize: 26,
           fontWeight: 800,
@@ -78,7 +101,6 @@ export default function App() {
         </div>
       </div>
 
-      {/* Form */}
       {!submitted ? (
         <div style={{
           background: "rgba(255,255,255,0.05)",
@@ -132,22 +154,37 @@ export default function App() {
             />
           ))}
 
+          {errorMsg && (
+            <div style={{ 
+              color: "#ff6b6b", 
+              fontSize: 13, 
+              marginBottom: 10, 
+              textAlign: "center",
+              padding: "8px",
+              background: "rgba(255,107,107,0.1)",
+              borderRadius: 8
+            }}>
+              {errorMsg}
+            </div>
+          )}
+
           <button
             onClick={handleSubmit}
+            disabled={loading}
             style={{
               width: "100%",
-              background: "#F4822A",
+              background: loading ? "rgba(244,130,42,0.5)" : "#F4822A",
               border: "none",
               borderRadius: 10,
               padding: "14px",
               fontSize: 16,
               fontWeight: 800,
               color: "#fff",
-              cursor: "pointer",
+              cursor: loading ? "default" : "pointer",
               marginTop: 4
             }}
           >
-            Join the Waitlist →
+            {loading ? "Joining..." : "Join the Waitlist →"}
           </button>
 
           <div style={{
@@ -170,31 +207,16 @@ export default function App() {
           textAlign: "center"
         }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
-          <div style={{
-            fontSize: 22,
-            fontWeight: 800,
-            color: "#fff",
-            marginBottom: 8
-          }}>
+          <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>
             You're on the list!
           </div>
-          <div style={{
-            fontSize: 15,
-            color: "rgba(255,255,255,0.5)",
-            lineHeight: 1.6
-          }}>
+          <div style={{ fontSize: 15, color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>
             We'll be in touch when Your Tradie launches in your area.
           </div>
         </div>
       )}
 
-      {/* Footer */}
-      <div style={{
-        marginTop: 48,
-        fontSize: 12,
-        color: "rgba(255,255,255,0.2)",
-        textAlign: "center"
-      }}>
+      <div style={{ marginTop: 48, fontSize: 12, color: "rgba(255,255,255,0.2)", textAlign: "center" }}>
         © 2025 Your Tradie · Australia
       </div>
 
