@@ -167,10 +167,10 @@ export default function App() {
         )}
         <div style={{ textAlign: "center", marginBottom: 40, maxWidth: 480 }}>
           <div style={{ fontSize: 24, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.3, marginBottom: 10 }}>
-            Australia's Tradie Network
+            Get found. Get hired. Get rewarded.
           </div>
           <div style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
-            Get found. Get hired. Get rewarded.
+            Connecting you with tradies.
           </div>
         </div>
 
