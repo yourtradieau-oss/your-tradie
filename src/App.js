@@ -21,20 +21,25 @@ export default function App() {
     setErrorMsg("");
     try {
       const { error } = await supabase
-        .from("Waitlist")
-        .insert([{ 
-          name: formData.name, 
-          email: formData.email, 
-          phone: formData.phone 
-        }]);
-      if (error) {
-        console.log("Supabase error:", error);
-        setErrorMsg("Error: " + error.message);
-        setLoading(false);
-      } else {
-        setSubmitted(true);
-        setLoading(false);
-      }
+  .from("Waitlist")
+  .insert([{ 
+    name: formData.name, 
+    email: formData.email, 
+    phone: formData.phone 
+  }]);
+if (error) {
+  console.log("Supabase error:", error);
+  setErrorMsg("Error: " + error.message);
+  setLoading(false);
+} else {
+  await fetch("/api/send-confirmation", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: formData.name, email: formData.email })
+  });
+  setSubmitted(true);
+  setLoading(false);
+}
     } catch (err) {
       console.log("Catch error:", err);
       setErrorMsg("Error: " + err.message);
