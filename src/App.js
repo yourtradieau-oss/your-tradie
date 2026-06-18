@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -12,132 +12,232 @@ const TRADES = [
   "Electrician", "Plumber", "Builder", "Carpenter", "Painter",
   "Tiler", "Landscaper", "Roofer", "Plasterer", "Concreter",
   "Air Conditioning", "Locksmith", "Glazier", "Pest Control",
-  "Handyman", "Other"
+  "Handyman", "Cabinet Maker", "Bricklayer", "Welder",
+  "Solar Installer", "Flooring Specialist", "Other"
+];
+
+const SPECIALTIES = [
+  "Solar Panels", "EV Charging", "Switchboards", "Renovations",
+  "New Builds", "Decking", "Fencing", "Retaining Walls",
+  "Bathroom Renovations", "Kitchen Renovations", "Underground", "Mosaics",
+  "Roof Repairs", "Guttering", "Skylights", "Air Con Installation",
+  "Air Con Servicing", "Hot Water Systems", "Gas Fitting", "Waterproofing",
+  "Rendering", "Insulation", "Damp Proofing", "Asbestos Removal"
 ];
 
 const AREAS = [
-  "Brisbane North", "Brisbane South", "Brisbane East", "Brisbane West",
-  "Moreton Bay", "Caboolture", "Bribie Island", "Redcliffe",
-  "Sunshine Coast", "Gold Coast", "Ipswich", "Logan", "Other"
+  "Bribie Island", "Caboolture", "Redcliffe", "Morayfield",
+  "Burpengary", "Narangba", "North Lakes", "Strathpine",
+  "Chermside", "Brisbane CBD", "Brisbane North", "Brisbane South",
+  "Brisbane East", "Brisbane West", "Ipswich", "Logan",
+  "Sunshine Coast", "Gold Coast", "Toowoomba", "Other"
 ];
 
+const inputStyle = {
+  width: "100%", background: "rgba(255,255,255,0.07)",
+  border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10,
+  padding: "13px 16px", fontSize: 15, color: "#fff",
+  marginBottom: 12, outline: "none", boxSizing: "border-box",
+  fontFamily: "sans-serif"
+};
+
+const cardStyle = {
+  background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
+  borderRadius: 16, padding: "32px 28px", width: "100%", maxWidth: 440
+};
+
+const btnPrimary = (disabled) => ({
+  flex: 2, background: disabled ? "rgba(244,130,42,0.3)" : "#F4822A",
+  border: "none", borderRadius: 10, padding: "14px", fontSize: 16,
+  fontWeight: 800, color: "#fff", cursor: disabled ? "default" : "pointer"
+});
+
+const btnSecondary = {
+  flex: 1, background: "rgba(255,255,255,0.07)",
+  border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10,
+  padding: "14px", fontSize: 15, fontWeight: 800, color: "#fff", cursor: "pointer"
+};
+
+const Logo = () => (
+  <div style={{ textAlign: "center", marginBottom: 16 }}>
+    <div style={{ fontSize: 48, fontWeight: 800, color: "#FFFFFF", letterSpacing: -2, lineHeight: 1 }}>
+      Your <span style={{ color: "#F4822A" }}>Tradie</span>
+    </div>
+    <div style={{ height: 4, background: "#F4822A", borderRadius: 2, margin: "10px auto 0", width: 200 }} />
+    <div style={{ fontSize: 11, letterSpacing: 4, color: "rgba(255,255,255,0.35)", marginTop: 10, textTransform: "uppercase" }}>
+      Australia's Tradie Network
+    </div>
+  </div>
+);
+
+const Wrapper = ({ children }) => (
+  <div style={{
+    minHeight: "100vh", background: "#0D1B2A", display: "flex",
+    flexDirection: "column", alignItems: "center", justifyContent: "center",
+    padding: "40px 24px", fontFamily: "sans-serif"
+  }}>
+    {children}
+    <div style={{ marginTop: 48, fontSize: 12, color: "rgba(255,255,255,0.2)", textAlign: "center" }}>
+      © 2025 Your Tradie · Australia
+    </div>
+  </div>
+);
+
+const ProgressBar = ({ current, total }) => (
+  <div style={{ marginBottom: 24 }}>
+    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+      <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Step {current} of {total}</span>
+      <span style={{ fontSize: 13, color: "#F4822A" }}>{Math.round((current / total) * 100)}%</span>
+    </div>
+    <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 4, height: 6 }}>
+      <div style={{ background: "#F4822A", borderRadius: 4, height: 6, width: `${(current / total) * 100}%`, transition: "width 0.3s" }} />
+    </div>
+  </div>
+);
+
+const Tag = ({ label, onRemove, pending }) => (
+  <div style={{
+    background: pending ? "rgba(255,255,255,0.05)" : "rgba(244,130,42,0.2)",
+    border: pending ? "1px solid rgba(255,255,255,0.15)" : "1px solid rgba(244,130,42,0.4)",
+    borderRadius: 20, padding: "4px 12px", fontSize: 13,
+    color: pending ? "rgba(255,255,255,0.4)" : "#F4822A",
+    display: "flex", alignItems: "center", gap: 6
+  }}>
+    {label}{pending && <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>pending</span>}
+    <span onClick={onRemove} style={{ cursor: "pointer", opacity: 0.6 }}>×</span>
+  </div>
+);
+
+const SearchSelect = ({ items, selected, onAdd, placeholder, max, pendingItems, onAddCustom }) => {
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const filtered = items.filter(i =>
+    i.toLowerCase().includes(search.toLowerCase()) && !selected.includes(i)
+  );
+
+  const handleKey = (e) => {
+    if (e.key === "Enter" && search.trim()) {
+      if (filtered.length > 0) {
+        onAdd(filtered[0]);
+      } else {
+        onAddCustom(search.trim());
+      }
+      setSearch("");
+      setOpen(false);
+    }
+  };
+
+  return (
+    <div style={{ position: "relative", marginBottom: 12 }}>
+      <input
+        style={{ ...inputStyle, marginBottom: 0 }}
+        placeholder={max && selected.length >= max ? `Max ${max} selected` : placeholder}
+        value={search}
+        disabled={max && selected.length >= max}
+        onChange={e => { setSearch(e.target.value); setOpen(true); }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        onKeyDown={handleKey}
+      />
+      {open && search.length > 0 && (
+        <div style={{
+          position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100,
+          background: "#1a2d42", border: "1px solid rgba(255,255,255,0.15)",
+          borderRadius: 10, maxHeight: 200, overflowY: "auto", marginTop: 4
+        }}>
+          {filtered.map(item => (
+            <div key={item} onMouseDown={() => { onAdd(item); setSearch(""); setOpen(false); }}
+              style={{ padding: "10px 16px", fontSize: 14, color: "#fff", cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+              onMouseEnter={e => e.target.style.background = "rgba(244,130,42,0.1)"}
+              onMouseLeave={e => e.target.style.background = "transparent"}>
+              {item}
+            </div>
+          ))}
+          {filtered.length === 0 && search.trim() && (
+            <div onMouseDown={() => { onAddCustom(search.trim()); setSearch(""); setOpen(false); }}
+              style={{ padding: "10px 16px", fontSize: 14, color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>
+              Add "{search}" as custom →
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ============================================================
+// MAIN APP
+// ============================================================
 export default function App() {
   const isDevMode = window.location.pathname === DEV_PATH;
   const [view, setView] = useState(isDevMode ? "landing" : "waitlist");
 
-  // Waitlist form state
-  const [waitlistData, setWaitlistData] = useState({ name: "", email: "", phone: "" });
+  // Waitlist
+  const [wName, setWName] = useState("");
+  const [wEmail, setWEmail] = useState("");
+  const [wPhone, setWPhone] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Tradie onboarding state
+  // Onboarding
   const [step, setStep] = useState(1);
-  const [tradieData, setTradieData] = useState({
-    fullName: "",
-    businessName: "",
-    primaryTrade: "",
-    specialties: [],
-    primaryArea: "",
-    secondaryAreas: [],
-    licenceNumber: "",
-    abn: "",
-    photo: null
-  });
-  const [specialtyInput, setSpecialtyInput] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [businessName, setBusinessName] = useState("");
+  const [trades, setTrades] = useState([]);
+  const [customTrades, setCustomTrades] = useState([]);
+  const [specialties, setSpecialties] = useState([]);
+  const [customSpecialties, setCustomSpecialties] = useState([]);
+  const [primaryArea, setPrimaryArea] = useState("");
+  const [secondaryAreas, setSecondaryAreas] = useState([]);
+  const [postcode, setPostcode] = useState("");
+  const [licenceNumber, setLicenceNumber] = useState("");
+  const [abn, setAbn] = useState("");
+  const [photo, setPhoto] = useState(null);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
 
   const handleWaitlistSubmit = async () => {
-    if (!waitlistData.name || !waitlistData.email) {
-      setErrorMsg("Please enter your name and email.");
-      return;
-    }
-    setLoading(true);
-    setErrorMsg("");
+    if (!wName || !wEmail) { setErrorMsg("Please enter your name and email."); return; }
+    setLoading(true); setErrorMsg("");
     try {
-      const { error } = await supabase
-        .from("Waitlist")
-        .insert([{
-          name: waitlistData.name,
-          email: waitlistData.email,
-          phone: waitlistData.phone,
-          type: "waitlist"
-        }]);
+      const { error } = await supabase.from("Waitlist").insert([{ name: wName, email: wEmail, phone: wPhone, type: "waitlist" }]);
       if (error) { setErrorMsg("Error: " + error.message); setLoading(false); }
       else { setSubmitted(true); setLoading(false); }
-    } catch (err) {
-      setErrorMsg("Error: " + err.message); setLoading(false);
+    } catch (err) { setErrorMsg("Error: " + err.message); setLoading(false); }
+  };
+
+  const addTrade = (t) => { if (!trades.includes(t)) setTrades([...trades, t]); };
+  const removeTrade = (t) => setTrades(trades.filter(x => x !== t));
+  const addCustomTrade = (t) => { if (!customTrades.includes(t)) setCustomTrades([...customTrades, t]); };
+  const removeCustomTrade = (t) => setCustomTrades(customTrades.filter(x => x !== t));
+
+  const addSpecialty = (s) => { if (!specialties.includes(s)) setSpecialties([...specialties, s]); };
+  const removeSpecialty = (s) => setSpecialties(specialties.filter(x => x !== s));
+  const addCustomSpecialty = (s) => { if (!customSpecialties.includes(s)) setCustomSpecialties([...customSpecialties, s]); };
+  const removeCustomSpecialty = (s) => setCustomSpecialties(customSpecialties.filter(x => x !== s));
+
+  const toggleSecondaryArea = (a) => {
+    if (secondaryAreas.includes(a)) setSecondaryAreas(secondaryAreas.filter(x => x !== a));
+    else setSecondaryAreas([...secondaryAreas, a]);
+  };
+
+  const handleLaunch = async () => {
+    // Save custom suggestions to Supabase for admin review
+    const allCustom = [
+      ...customTrades.map(t => ({ type: "trade", value: t })),
+      ...customSpecialties.map(s => ({ type: "specialty", value: s }))
+    ];
+    if (allCustom.length > 0) {
+      await supabase.from("suggestions").insert(allCustom.map(c => ({
+        suggestion_type: c.type,
+        value: c.value,
+        submitted_by: fullName,
+        status: "pending"
+      })));
     }
+    setOnboardingComplete(true);
   };
-
-  const addSpecialty = () => {
-    if (specialtyInput.trim() && tradieData.specialties.length < 3) {
-      setTradieData({ ...tradieData, specialties: [...tradieData.specialties, specialtyInput.trim()] });
-      setSpecialtyInput("");
-    }
-  };
-
-  const removeSpecialty = (i) => {
-    setTradieData({ ...tradieData, specialties: tradieData.specialties.filter((_, idx) => idx !== i) });
-  };
-
-  const toggleSecondaryArea = (area) => {
-    const areas = tradieData.secondaryAreas;
-    if (areas.includes(area)) {
-      setTradieData({ ...tradieData, secondaryAreas: areas.filter(a => a !== area) });
-    } else {
-      setTradieData({ ...tradieData, secondaryAreas: [...areas, area] });
-    }
-  };
-
-  const Logo = () => (
-    <div style={{ textAlign: "center", marginBottom: 16 }}>
-      <div style={{ fontSize: 48, fontWeight: 800, color: "#FFFFFF", letterSpacing: -2, lineHeight: 1 }}>
-        Your <span style={{ color: "#F4822A" }}>Tradie</span>
-      </div>
-      <div style={{ height: 4, background: "#F4822A", borderRadius: 2, margin: "10px auto 0", width: 200 }} />
-      <div style={{ fontSize: 11, letterSpacing: 4, color: "rgba(255,255,255,0.35)", marginTop: 10, textTransform: "uppercase" }}>
-        Australia's Tradie Network
-      </div>
-    </div>
-  );
-
-  const Wrapper = ({ children }) => (
-    <div style={{
-      minHeight: "100vh", background: "#0D1B2A", display: "flex",
-      flexDirection: "column", alignItems: "center", justifyContent: "center",
-      padding: "40px 24px", fontFamily: "sans-serif"
-    }}>
-      {children}
-      <div style={{ marginTop: 48, fontSize: 12, color: "rgba(255,255,255,0.2)", textAlign: "center" }}>
-        © 2025 Your Tradie · Australia
-      </div>
-    </div>
-  );
-
-  const inputStyle = {
-    width: "100%", background: "rgba(255,255,255,0.07)",
-    border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10,
-    padding: "13px 16px", fontSize: 15, color: "#fff",
-    marginBottom: 12, outline: "none", boxSizing: "border-box"
-  };
-
-  const cardStyle = {
-    background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
-    borderRadius: 16, padding: "32px 28px", width: "100%", maxWidth: 420
-  };
-
-  const ProgressBar = ({ current, total }) => (
-    <div style={{ marginBottom: 24 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-        <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Step {current} of {total}</span>
-        <span style={{ fontSize: 13, color: "#F4822A" }}>{Math.round((current / total) * 100)}%</span>
-      </div>
-      <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 4, height: 6 }}>
-        <div style={{ background: "#F4822A", borderRadius: 4, height: 6, width: `${(current / total) * 100}%`, transition: "width 0.3s" }} />
-      </div>
-    </div>
-  );
 
   // ---- PUBLIC WAITLIST ----
   if (view === "waitlist") {
@@ -156,16 +256,9 @@ export default function App() {
           <div style={cardStyle}>
             <div style={{ fontSize: 20, fontWeight: 800, color: "#FFFFFF", marginBottom: 6, textAlign: "center" }}>Join the Community</div>
             <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>Be first when we launch in your area</div>
-            {[
-              { key: "name", placeholder: "Full name", type: "text" },
-              { key: "email", placeholder: "Email address", type: "email" },
-              { key: "phone", placeholder: "Phone number (optional)", type: "tel" }
-            ].map(field => (
-              <input key={field.key} type={field.type} placeholder={field.placeholder}
-                value={waitlistData[field.key]}
-                onChange={e => setWaitlistData({ ...waitlistData, [field.key]: e.target.value })}
-                style={inputStyle} />
-            ))}
+            <input style={inputStyle} placeholder="Full name" value={wName} onChange={e => setWName(e.target.value)} />
+            <input style={inputStyle} placeholder="Email address" type="email" value={wEmail} onChange={e => setWEmail(e.target.value)} />
+            <input style={inputStyle} placeholder="Phone number (optional)" type="tel" value={wPhone} onChange={e => setWPhone(e.target.value)} />
             {errorMsg && <div style={{ color: "#ff6b6b", fontSize: 13, marginBottom: 10, textAlign: "center", padding: "8px", background: "rgba(255,107,107,0.1)", borderRadius: 8 }}>{errorMsg}</div>}
             <button onClick={handleWaitlistSubmit} disabled={loading}
               style={{ width: "100%", background: loading ? "rgba(244,130,42,0.5)" : "#F4822A", border: "none", borderRadius: 10, padding: "14px", fontSize: 16, fontWeight: 800, color: "#fff", cursor: loading ? "default" : "pointer", marginTop: 4 }}>
@@ -184,7 +277,7 @@ export default function App() {
     );
   }
 
-  // ---- DEV: LANDING PAGE ----
+  // ---- DEV: LANDING ----
   if (view === "landing") {
     return (
       <Wrapper>
@@ -215,10 +308,10 @@ export default function App() {
         <Wrapper>
           <Logo />
           <div style={{ ...cardStyle, textAlign: "center" }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>🚀</div>
             <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Profile Launched!</div>
             <div style={{ fontSize: 15, color: "rgba(255,255,255,0.5)", lineHeight: 1.6, marginBottom: 24 }}>
-              Welcome to Your Tradie, {tradieData.fullName.split(" ")[0]}!
+              Welcome to Your Tradie, {fullName.split(" ")[0]}!
             </div>
             <button onClick={() => { setView("landing"); setOnboardingComplete(false); setStep(1); }}
               style={{ background: "none", border: "none", color: "rgba(255,255,255,0.3)", fontSize: 13, cursor: "pointer" }}>
@@ -240,82 +333,77 @@ export default function App() {
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>About You</div>
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>Let's start with the basics</div>
-              <input style={inputStyle} placeholder="Full name" value={tradieData.fullName}
-                onChange={e => setTradieData({ ...tradieData, fullName: e.target.value })} />
-              <input style={inputStyle} placeholder="Business name (optional)" value={tradieData.businessName}
-                onChange={e => setTradieData({ ...tradieData, businessName: e.target.value })} />
-              <button onClick={() => { if (tradieData.fullName) setStep(2); }}
-                style={{ width: "100%", background: tradieData.fullName ? "#F4822A" : "rgba(244,130,42,0.3)", border: "none", borderRadius: 10, padding: "14px", fontSize: 16, fontWeight: 800, color: "#fff", cursor: tradieData.fullName ? "pointer" : "default", marginTop: 4 }}>
+              <input style={inputStyle} placeholder="Full name" value={fullName} onChange={e => setFullName(e.target.value)} />
+              <input style={inputStyle} placeholder="Business name (optional)" value={businessName} onChange={e => setBusinessName(e.target.value)} />
+              <button onClick={() => fullName && setStep(2)} style={{ ...btnPrimary(!fullName), width: "100%", marginTop: 4 }}>
                 Next →
               </button>
             </>
           )}
 
-          {/* STEP 2 — Trade + Specialties */}
+          {/* STEP 2 — Trades + Specialties */}
           {step === 2 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Your Trade</div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>What do you do?</div>
-              <select value={tradieData.primaryTrade}
-                onChange={e => setTradieData({ ...tradieData, primaryTrade: e.target.value })}
-                style={{ ...inputStyle, marginBottom: 16 }}>
-                <option value="">Select your primary trade</option>
-                {TRADES.map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>What do you do? Select all that apply.</div>
 
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>
-                Specialties (up to 3) — e.g. Solar, Renovations, EV Charging
-              </div>
-              <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-                <input style={{ ...inputStyle, marginBottom: 0, flex: 1 }} placeholder="Add a specialty"
-                  value={specialtyInput} onChange={e => setSpecialtyInput(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && addSpecialty()} />
-                <button onClick={addSpecialty}
-                  style={{ background: "#F4822A", border: "none", borderRadius: 10, padding: "0 16px", color: "#fff", fontWeight: 800, cursor: "pointer", fontSize: 18 }}>+</button>
-              </div>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Primary trade(s)</div>
+              <SearchSelect
+                items={TRADES} selected={trades}
+                onAdd={addTrade} onAddCustom={addCustomTrade}
+                placeholder="Search or type your trade..."
+              />
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-                {tradieData.specialties.map((s, i) => (
-                  <div key={i} style={{ background: "rgba(244,130,42,0.2)", border: "1px solid rgba(244,130,42,0.4)", borderRadius: 20, padding: "4px 12px", fontSize: 13, color: "#F4822A", display: "flex", alignItems: "center", gap: 6 }}>
-                    {s}
-                    <span onClick={() => removeSpecialty(i)} style={{ cursor: "pointer", opacity: 0.6 }}>×</span>
-                  </div>
-                ))}
+                {trades.map(t => <Tag key={t} label={t} onRemove={() => removeTrade(t)} />)}
+                {customTrades.map(t => <Tag key={t} label={t} onRemove={() => removeCustomTrade(t)} pending />)}
+              </div>
+
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Specialties (optional)</div>
+              <SearchSelect
+                items={SPECIALTIES} selected={specialties}
+                onAdd={addSpecialty} onAddCustom={addCustomSpecialty}
+                placeholder="Search or type a specialty..."
+                max={6}
+              />
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+                {specialties.map(s => <Tag key={s} label={s} onRemove={() => removeSpecialty(s)} />)}
+                {customSpecialties.map(s => <Tag key={s} label={s} onRemove={() => removeCustomSpecialty(s)} pending />)}
               </div>
 
               <div style={{ display: "flex", gap: 8 }}>
-                <button onClick={() => setStep(1)}
-                  style={{ flex: 1, background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 800, color: "#fff", cursor: "pointer" }}>
-                  ← Back
-                </button>
-                <button onClick={() => { if (tradieData.primaryTrade) setStep(3); }}
-                  style={{ flex: 2, background: tradieData.primaryTrade ? "#F4822A" : "rgba(244,130,42,0.3)", border: "none", borderRadius: 10, padding: "14px", fontSize: 16, fontWeight: 800, color: "#fff", cursor: tradieData.primaryTrade ? "pointer" : "default" }}>
+                <button onClick={() => setStep(1)} style={btnSecondary}>← Back</button>
+                <button onClick={() => (trades.length > 0 || customTrades.length > 0) && setStep(3)}
+                  style={btnPrimary(trades.length === 0 && customTrades.length === 0)}>
                   Next →
                 </button>
               </div>
             </>
           )}
 
-          {/* STEP 3 — Service Areas */}
+          {/* STEP 3 — Areas */}
           {step === 3 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Service Areas</div>
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>Where do you work?</div>
-              <select value={tradieData.primaryArea}
-                onChange={e => setTradieData({ ...tradieData, primaryArea: e.target.value })}
-                style={{ ...inputStyle, marginBottom: 16 }}>
-                <option value="">Select your primary area</option>
+
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Primary area</div>
+              <select value={primaryArea} onChange={e => setPrimaryArea(e.target.value)} style={{ ...inputStyle, marginBottom: 16 }}>
+                <option value="">Select your main area</option>
                 {AREAS.map(a => <option key={a} value={a}>{a}</option>)}
               </select>
 
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>Also service (select all that apply)</div>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Postcode (if outside listed areas)</div>
+              <input style={inputStyle} placeholder="e.g. 4507" value={postcode} onChange={e => setPostcode(e.target.value)} />
+
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>Also service</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-                {AREAS.filter(a => a !== tradieData.primaryArea).map(area => (
+                {AREAS.filter(a => a !== primaryArea).map(area => (
                   <div key={area} onClick={() => toggleSecondaryArea(area)}
                     style={{
-                      background: tradieData.secondaryAreas.includes(area) ? "rgba(244,130,42,0.2)" : "rgba(255,255,255,0.05)",
-                      border: tradieData.secondaryAreas.includes(area) ? "1px solid rgba(244,130,42,0.4)" : "1px solid rgba(255,255,255,0.12)",
+                      background: secondaryAreas.includes(area) ? "rgba(244,130,42,0.2)" : "rgba(255,255,255,0.05)",
+                      border: secondaryAreas.includes(area) ? "1px solid rgba(244,130,42,0.4)" : "1px solid rgba(255,255,255,0.12)",
                       borderRadius: 20, padding: "6px 14px", fontSize: 13,
-                      color: tradieData.secondaryAreas.includes(area) ? "#F4822A" : "rgba(255,255,255,0.5)",
+                      color: secondaryAreas.includes(area) ? "#F4822A" : "rgba(255,255,255,0.5)",
                       cursor: "pointer"
                     }}>
                     {area}
@@ -324,40 +412,27 @@ export default function App() {
               </div>
 
               <div style={{ display: "flex", gap: 8 }}>
-                <button onClick={() => setStep(2)}
-                  style={{ flex: 1, background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 800, color: "#fff", cursor: "pointer" }}>
-                  ← Back
-                </button>
-                <button onClick={() => { if (tradieData.primaryArea) setStep(4); }}
-                  style={{ flex: 2, background: tradieData.primaryArea ? "#F4822A" : "rgba(244,130,42,0.3)", border: "none", borderRadius: 10, padding: "14px", fontSize: 16, fontWeight: 800, color: "#fff", cursor: tradieData.primaryArea ? "pointer" : "default" }}>
+                <button onClick={() => setStep(2)} style={btnSecondary}>← Back</button>
+                <button onClick={() => (primaryArea || postcode) && setStep(4)}
+                  style={btnPrimary(!primaryArea && !postcode)}>
                   Next →
                 </button>
               </div>
             </>
           )}
 
-          {/* STEP 4 — Licence + ABN */}
+          {/* STEP 4 — Credentials */}
           {step === 4 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Credentials</div>
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>Licence number and/or ABN</div>
-              <input style={inputStyle} placeholder="Licence number (if applicable)"
-                value={tradieData.licenceNumber}
-                onChange={e => setTradieData({ ...tradieData, licenceNumber: e.target.value })} />
-              <input style={inputStyle} placeholder="ABN"
-                value={tradieData.abn}
-                onChange={e => setTradieData({ ...tradieData, abn: e.target.value })} />
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", marginBottom: 16, textAlign: "center" }}>
-                At least one is required to go live
-              </div>
-
+              <input style={inputStyle} placeholder="Licence number (if applicable)" value={licenceNumber} onChange={e => setLicenceNumber(e.target.value)} />
+              <input style={inputStyle} placeholder="ABN" value={abn} onChange={e => setAbn(e.target.value)} />
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", marginBottom: 16, textAlign: "center" }}>At least one required to go live</div>
               <div style={{ display: "flex", gap: 8 }}>
-                <button onClick={() => setStep(3)}
-                  style={{ flex: 1, background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 800, color: "#fff", cursor: "pointer" }}>
-                  ← Back
-                </button>
-                <button onClick={() => { if (tradieData.licenceNumber || tradieData.abn) setStep(5); }}
-                  style={{ flex: 2, background: (tradieData.licenceNumber || tradieData.abn) ? "#F4822A" : "rgba(244,130,42,0.3)", border: "none", borderRadius: 10, padding: "14px", fontSize: 16, fontWeight: 800, color: "#fff", cursor: (tradieData.licenceNumber || tradieData.abn) ? "pointer" : "default" }}>
+                <button onClick={() => setStep(3)} style={btnSecondary}>← Back</button>
+                <button onClick={() => (licenceNumber || abn) && setStep(5)}
+                  style={btnPrimary(!licenceNumber && !abn)}>
                   Next →
                 </button>
               </div>
@@ -369,37 +444,27 @@ export default function App() {
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Profile Photo</div>
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>Add a photo or logo</div>
-
               <div style={{ textAlign: "center", marginBottom: 24 }}>
                 <div style={{
                   width: 100, height: 100, borderRadius: "50%", background: "rgba(255,255,255,0.07)",
                   border: "2px dashed rgba(255,255,255,0.2)", margin: "0 auto 16px",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: 36, cursor: "pointer"
-                }}
-                  onClick={() => document.getElementById("photo-upload").click()}>
-                  {tradieData.photo ? "📷" : "👤"}
+                }} onClick={() => document.getElementById("photo-upload").click()}>
+                  {photo ? "📷" : "👤"}
                 </div>
                 <input id="photo-upload" type="file" accept="image/*" style={{ display: "none" }}
-                  onChange={e => setTradieData({ ...tradieData, photo: e.target.files[0] })} />
-                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>
-                  {tradieData.photo ? tradieData.photo.name : "Tap to upload"}
-                </div>
+                  onChange={e => setPhoto(e.target.files[0])} />
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>{photo ? photo.name : "Tap to upload"}</div>
               </div>
-
               <div style={{ display: "flex", gap: 8 }}>
-                <button onClick={() => setStep(4)}
-                  style={{ flex: 1, background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 800, color: "#fff", cursor: "pointer" }}>
-                  ← Back
-                </button>
-                <button onClick={() => setOnboardingComplete(true)}
-                  style={{ flex: 2, background: "#F4822A", border: "none", borderRadius: 10, padding: "14px", fontSize: 16, fontWeight: 800, color: "#fff", cursor: "pointer" }}>
+                <button onClick={() => setStep(4)} style={btnSecondary}>← Back</button>
+                <button onClick={handleLaunch}
+                  style={{ ...btnPrimary(false), flex: 2 }}>
                   Launch My Profile 🚀
                 </button>
               </div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", textAlign: "center", marginTop: 12 }}>
-                You can add a photo later
-              </div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", textAlign: "center", marginTop: 12 }}>You can add a photo later</div>
             </>
           )}
         </div>
