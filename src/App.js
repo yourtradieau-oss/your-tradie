@@ -225,11 +225,16 @@ const PhoneMockup = () => (
 );
 
 const NavBar = ({ active }) => {
-  const icons = ["chart-bar", "briefcase", "message-circle", "user"];
+  const icons = [
+    { key: "chart-bar", emoji: "📊" },
+    { key: "briefcase", emoji: "🔨" },
+    { key: "message-circle", emoji: "💬" },
+    { key: "user", emoji: "👤" }
+  ];
   return (
     <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, background: "#fff", borderTop: "1px solid #eee", display: "flex", justifyContent: "space-around", alignItems: "center", height: 24, zIndex: 5 }}>
-      {icons.map(icon => (
-        <i key={icon} className={`ti ti-${icon}`} style={{ fontSize: 11, color: icon === active ? "#F4822A" : "#ccc" }} aria-hidden="true"></i>
+      {icons.map(item => (
+        <span key={item.key} style={{ fontSize: 11, opacity: item.key === active ? 1 : 0.35 }}>{item.emoji}</span>
       ))}
     </div>
   );
@@ -318,11 +323,11 @@ const GetSeenSection = () => (
         </div>
         <div style={scrollBodyStyle}>
           <div style={{ background: "#E1F5EE", borderRadius: 5, padding: 4, display: "flex", alignItems: "center", gap: 3, marginBottom: 4 }}>
-            <i className="ti ti-circle-check" style={{ color: "#0F6E56", fontSize: 9 }} aria-hidden="true"></i>
+            <span style={{ fontSize: 9 }}>✅</span>
             <span style={{ fontSize: 6, color: "#0F6E56", fontWeight: 800 }}>Licence verified</span>
           </div>
           <div style={{ background: "#E1F5EE", borderRadius: 5, padding: 4, display: "flex", alignItems: "center", gap: 3, marginBottom: 4 }}>
-            <i className="ti ti-circle-check" style={{ color: "#0F6E56", fontSize: 9 }} aria-hidden="true"></i>
+            <span style={{ fontSize: 9 }}>✅</span>
             <span style={{ fontSize: 6, color: "#0F6E56", fontWeight: 800 }}>ABN verified</span>
           </div>
           <div style={{ background: "#fff", borderRadius: 6, padding: 5 }}>
