@@ -235,7 +235,6 @@ const NavBar = ({ active }) => {
   );
 };
 
-const FeaturePhoneFrame = ({ children, label }) => (
   const FeaturePhoneFrame = ({ children, label }) => (
   <div style={{ textAlign: "center" }}>
     <div style={{
