@@ -235,7 +235,7 @@ const NavBar = ({ active }) => {
   );
 };
 
-  const FeaturePhoneFrame = ({ children, label }) => (
+const FeaturePhoneFrame = ({ children, label }) => (
   <div style={{ textAlign: "center" }}>
     <div style={{
       width: 150, height: 310, background: "#fff", borderRadius: 26,
@@ -246,7 +246,7 @@ const NavBar = ({ active }) => {
           position: "absolute", top: 5, left: "50%", transform: "translateX(-50%)",
           width: 40, height: 9, background: "#1a1a1a", borderRadius: "0 0 7px 7px", zIndex: 2
         }} />
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minHeight: 0 }}>
           {children}
         </div>
       </div>
@@ -256,10 +256,10 @@ const NavBar = ({ active }) => {
 );
 
 const GetSeenSection = () => (
-  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "50px 24px" }}>
+  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "90px 24px" }}>
     <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get seen</div>
     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 28, textAlign: "center" }}>Homeowners find you by trade and area — your work speaks for itself</div>
-   <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
+    <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
 
       <FeaturePhoneFrame label="Find tradies near you">
         <div style={{ background: "#0D1B2A", padding: "20px 9px 7px" }}>
@@ -341,7 +341,7 @@ const GetSeenSection = () => (
 );
 
 const GetHiredSection = () => (
-  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "50px 24px" }}>
+  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "90px 24px" }}>
     <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get hired</div>
     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 28, textAlign: "center" }}>Direct messages, no middlemen, no lead fees</div>
     <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
@@ -432,7 +432,7 @@ const GetHiredSection = () => (
 );
 
 const GetRewardedSection = () => (
-  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "50px 24px" }}>
+  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "90px 24px" }}>
     <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get rewarded</div>
     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 28, textAlign: "center" }}>Every job done builds your reputation on the platform</div>
     <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
