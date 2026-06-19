@@ -163,7 +163,6 @@ const SearchSelect = ({ items, selected, onAdd, placeholder, max, onAddCustom })
   );
 };
 
-// Phone mockup component for the waitlist hero
 const PhoneMockup = () => (
   <div style={{ display: "flex", justifyContent: "center" }}>
     <div style={{
@@ -221,6 +220,75 @@ const PhoneMockup = () => (
           ))}
         </div>
       </div>
+    </div>
+  </div>
+);
+
+const FeaturePhone = ({ heading, sub, accentColor }) => (
+  <div style={{
+    width: 160, height: 320, background: "#111", borderRadius: 28,
+    padding: 7, position: "relative", margin: "0 auto"
+  }}>
+    <div style={{
+      position: "absolute", top: 7, left: "50%", transform: "translateX(-50%)",
+      width: 50, height: 14, background: "#000", borderRadius: "0 0 10px 10px", zIndex: 2
+    }} />
+    <div style={{ background: "#0D1B2A", borderRadius: 21, height: "100%", overflow: "hidden", padding: "22px 12px 12px" }}>
+      <div style={{ fontSize: 7, color: accentColor, fontWeight: 800, letterSpacing: 1, marginBottom: 8 }}>YOUR TRADIE</div>
+      <div style={{ fontSize: 12, color: "#fff", fontWeight: 800, lineHeight: 1.3, marginBottom: 6 }}>{heading}</div>
+      <div style={{ fontSize: 8, color: "rgba(255,255,255,0.4)", lineHeight: 1.4 }}>{sub}</div>
+    </div>
+  </div>
+);
+
+const FeatureSection = ({ title, sub, items }) => (
+  <div style={{ width: "100%", maxWidth: 900, margin: "0 auto", padding: "60px 24px" }}>
+    <div style={{ fontSize: 28, fontWeight: 800, color: "#fff", marginBottom: 10, textAlign: "center" }}>{title}</div>
+    <div style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", marginBottom: 40, textAlign: "center" }}>{sub}</div>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
+      {items.map((item, i) => (
+        <div key={i} style={{ textAlign: "center" }}>
+          <FeaturePhone heading={item.heading} sub={item.sub} accentColor={item.color} />
+          <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", marginTop: 16 }}>{item.label}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const CongratsPage = () => (
+  <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif" }}>
+    <div style={{ padding: "60px 24px 40px", textAlign: "center" }}>
+      <Logo />
+      <div style={{ fontSize: 32, fontWeight: 800, color: "#F4822A", marginTop: 24, marginBottom: 12 }}>
+        Congratulations!
+      </div>
+      <div style={{ fontSize: 18, color: "rgba(255,255,255,0.6)", maxWidth: 500, margin: "0 auto" }}>
+        You're officially on the Your Tradie waitlist.
+      </div>
+    </div>
+
+    <div style={{ width: "100%", maxWidth: 700, margin: "0 auto", padding: "0 24px 60px", textAlign: "center" }}>
+      <div style={{ fontSize: 26, fontWeight: 800, color: "#fff", marginBottom: 16 }}>
+        Building Australia's Largest Tradie Network
+      </div>
+      <div style={{ fontSize: 16, color: "rgba(255,255,255,0.5)", lineHeight: 1.7 }}>
+        Your Tradie is a flat-fee platform connecting homeowners with verified, local tradies — no lead fees, no bidding wars, no middlemen. Just real reviews, real work, and a fair go for the tradies who do it.
+      </div>
+    </div>
+
+    <FeatureSection
+      title="Get seen. Get hired. Get rewarded."
+      sub="Built for tradies, not against them"
+      items={[
+        { label: "Get seen", heading: "Your profile, your reputation", sub: "Homeowners search by trade and area — your work speaks for itself.", color: "#F4822A" },
+        { label: "Get hired", heading: "Direct messages, no middlemen", sub: "Homeowners message you directly. No lead fees, ever.", color: "#1D9E75" },
+        { label: "Get rewarded", heading: "Real reviews build trust", sub: "Every job done builds your reputation on the platform.", color: "#378ADD" }
+      ]}
+    />
+
+    <div style={{ textAlign: "center", padding: "0 24px 80px" }}>
+      <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>© 2025 Your Tradie · Australia</div>
     </div>
   </div>
 );
@@ -289,14 +357,16 @@ export default function App() {
     setOnboardingComplete(true);
   };
 
-  // ---- PUBLIC WAITLIST (with phone mockup) ----
   if (view === "waitlist") {
+    if (submitted) {
+      return <CongratsPage />;
+    }
     return (
-  <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", padding: "40px 24px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-    <div style={{
-      maxWidth: 1000, margin: "0 auto", width: "100%", display: "grid",
-      gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center"
-    }}>
+      <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", padding: "40px 24px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <div style={{
+          maxWidth: 1000, margin: "0 auto", width: "100%", display: "grid",
+          gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center"
+        }}>
           <div>
             <Logo />
             <div style={{ marginBottom: 32 }}>
@@ -306,35 +376,23 @@ export default function App() {
               <div style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
                 Connecting you with tradies.
               </div>
-          
             </div>
-
-            {!submitted ? (
-              <div style={cardStyle}>
-                <div style={{ fontSize: 20, fontWeight: 800, color: "#FFFFFF", marginBottom: 6, textAlign: "center" }}>Join the Community</div>
-                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>Be first when we launch in your area</div>
-                <input style={inputStyle} placeholder="Full name" value={wName} onChange={e => setWName(e.target.value)} />
-                <input style={inputStyle} placeholder="Email address" type="email" value={wEmail} onChange={e => setWEmail(e.target.value)} />
-                <input style={inputStyle} placeholder="Phone number (optional)" type="tel" value={wPhone} onChange={e => setWPhone(e.target.value)} />
-                {errorMsg && <div style={{ color: "#ff6b6b", fontSize: 13, marginBottom: 10, textAlign: "center", padding: "8px", background: "rgba(255,107,107,0.1)", borderRadius: 8 }}>{errorMsg}</div>}
-                <button onClick={handleWaitlistSubmit} disabled={loading}
-                  style={{ width: "100%", background: loading ? "rgba(244,130,42,0.5)" : "#F4822A", border: "none", borderRadius: 10, padding: "14px", fontSize: 16, fontWeight: 800, color: "#fff", cursor: loading ? "default" : "pointer", marginTop: 4 }}>
-                  {loading ? "Joining..." : "Join the Waitlist →"}
-                </button>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", textAlign: "center", marginTop: 14 }}>No spam. No lead fees. Ever.</div>
-              </div>
-            ) : (
-              <div style={{ ...cardStyle, border: "1px solid rgba(44,214,83,0.3)", textAlign: "center" }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>You're on the list!</div>
-                <div style={{ fontSize: 15, color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>We'll be in touch the moment Your Tradie launches.</div>
-              </div>
-            )}
+            <div style={cardStyle}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: "#FFFFFF", marginBottom: 6, textAlign: "center" }}>Join the Community</div>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>Be first when we launch in your area</div>
+              <input style={inputStyle} placeholder="Full name" value={wName} onChange={e => setWName(e.target.value)} />
+              <input style={inputStyle} placeholder="Email address" type="email" value={wEmail} onChange={e => setWEmail(e.target.value)} />
+              <input style={inputStyle} placeholder="Phone number (optional)" type="tel" value={wPhone} onChange={e => setWPhone(e.target.value)} />
+              {errorMsg && <div style={{ color: "#ff6b6b", fontSize: 13, marginBottom: 10, textAlign: "center", padding: "8px", background: "rgba(255,107,107,0.1)", borderRadius: 8 }}>{errorMsg}</div>}
+              <button onClick={handleWaitlistSubmit} disabled={loading}
+                style={{ width: "100%", background: loading ? "rgba(244,130,42,0.5)" : "#F4822A", border: "none", borderRadius: 10, padding: "14px", fontSize: 16, fontWeight: 800, color: "#fff", cursor: loading ? "default" : "pointer", marginTop: 4 }}>
+                {loading ? "Joining..." : "Join the Waitlist →"}
+              </button>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", textAlign: "center", marginTop: 14 }}>No spam. No lead fees. Ever.</div>
+            </div>
           </div>
-
           <PhoneMockup />
         </div>
-
         <div style={{ marginTop: 64, fontSize: 12, color: "rgba(255,255,255,0.2)", textAlign: "center" }}>
           © 2025 Your Tradie · Australia
         </div>
@@ -342,7 +400,6 @@ export default function App() {
     );
   }
 
-  // ---- DEV: LANDING ----
   if (view === "landing") {
     return (
       <Wrapper>
@@ -366,7 +423,6 @@ export default function App() {
     );
   }
 
-  // ---- DEV: TRADIE ONBOARDING ----
   if (view === "tradie-onboarding") {
     if (onboardingComplete) {
       return (
@@ -500,7 +556,6 @@ export default function App() {
     );
   }
 
-  // ---- DEV: FIND A TRADIE ----
   if (view === "find-tradie") {
     return (
       <Wrapper>
