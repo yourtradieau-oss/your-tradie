@@ -1,14 +1,13 @@
-
 import React, { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
- 
+
 const supabase = createClient(
   "https://sbidwhsnwdsvkbdwzphb.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaWR3aHNud2RzdmtiZHd6cGhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MzcyOTcsImV4cCI6MjA5NzIxMzI5N30.eCkIM3gKZCi7hY-ef9JQjRHHBZ-97VSVC2npQH6M26g"
 );
- 
+
 const DEV_PATH = "/dev";
- 
+
 const TRADES = [
   "Electrician", "Plumber", "Builder", "Carpenter", "Painter",
   "Tiler", "Landscaper", "Roofer", "Plasterer", "Concreter",
@@ -16,7 +15,7 @@ const TRADES = [
   "Handyman", "Cabinet Maker", "Bricklayer", "Welder",
   "Solar Installer", "Flooring Specialist", "Other"
 ];
- 
+
 const SPECIALTIES = [
   "Solar Panels", "EV Charging", "Switchboards", "Renovations",
   "New Builds", "Decking", "Fencing", "Retaining Walls",
@@ -25,7 +24,7 @@ const SPECIALTIES = [
   "Air Con Servicing", "Hot Water Systems", "Gas Fitting", "Waterproofing",
   "Rendering", "Insulation", "Damp Proofing", "Asbestos Removal"
 ];
- 
+
 const AREAS = [
   "Bribie Island", "Caboolture", "Redcliffe", "Morayfield",
   "Burpengary", "Narangba", "North Lakes", "Strathpine",
@@ -33,7 +32,7 @@ const AREAS = [
   "Brisbane East", "Brisbane West", "Ipswich", "Logan",
   "Sunshine Coast", "Gold Coast", "Toowoomba", "Other"
 ];
- 
+
 const inputStyle = {
   width: "100%", background: "rgba(255,255,255,0.07)",
   border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10,
@@ -41,24 +40,24 @@ const inputStyle = {
   marginBottom: 12, outline: "none", boxSizing: "border-box",
   fontFamily: "sans-serif"
 };
- 
+
 const cardStyle = {
   background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
   borderRadius: 16, padding: "32px 28px", width: "100%", maxWidth: 440
 };
- 
+
 const btnPrimary = (disabled) => ({
   flex: 2, background: disabled ? "rgba(244,130,42,0.3)" : "#F4822A",
   border: "none", borderRadius: 10, padding: "14px", fontSize: 16,
   fontWeight: 800, color: "#fff", cursor: disabled ? "default" : "pointer"
 });
- 
+
 const btnSecondary = {
   flex: 1, background: "rgba(255,255,255,0.07)",
   border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10,
   padding: "14px", fontSize: 15, fontWeight: 800, color: "#fff", cursor: "pointer"
 };
- 
+
 const Logo = () => (
   <div style={{ textAlign: "center", marginBottom: 16 }}>
     <div style={{ fontSize: 48, fontWeight: 800, color: "#FFFFFF", letterSpacing: -2, lineHeight: 1 }}>
@@ -70,7 +69,7 @@ const Logo = () => (
     </div>
   </div>
 );
- 
+
 const Wrapper = ({ children }) => (
   <div style={{
     minHeight: "100vh", background: "#0D1B2A", display: "flex",
@@ -83,7 +82,7 @@ const Wrapper = ({ children }) => (
     </div>
   </div>
 );
- 
+
 const ProgressBar = ({ current, total }) => (
   <div style={{ marginBottom: 24 }}>
     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
@@ -95,7 +94,7 @@ const ProgressBar = ({ current, total }) => (
     </div>
   </div>
 );
- 
+
 const Tag = ({ label, onRemove, pending }) => (
   <div style={{
     background: pending ? "rgba(255,255,255,0.05)" : "rgba(244,130,42,0.2)",
@@ -108,15 +107,15 @@ const Tag = ({ label, onRemove, pending }) => (
     <span onClick={onRemove} style={{ cursor: "pointer", opacity: 0.6 }}>×</span>
   </div>
 );
- 
+
 const SearchSelect = ({ items, selected, onAdd, placeholder, max, onAddCustom }) => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
- 
+
   const filtered = items.filter(i =>
     i.toLowerCase().includes(search.toLowerCase()) && !selected.includes(i)
   );
- 
+
   const handleKey = (e) => {
     if (e.key === "Enter" && search.trim()) {
       if (filtered.length > 0) onAdd(filtered[0]);
@@ -125,7 +124,7 @@ const SearchSelect = ({ items, selected, onAdd, placeholder, max, onAddCustom })
       setOpen(false);
     }
   };
- 
+
   return (
     <div style={{ position: "relative", marginBottom: 12 }}>
       <input
@@ -163,7 +162,7 @@ const SearchSelect = ({ items, selected, onAdd, placeholder, max, onAddCustom })
     </div>
   );
 };
- 
+
 const PhoneMockup = () => (
   <div style={{ display: "flex", justifyContent: "center" }}>
     <div style={{
@@ -224,7 +223,7 @@ const PhoneMockup = () => (
     </div>
   </div>
 );
- 
+
 const NavBar = ({ active }) => {
   const icons = ["chart-bar", "briefcase", "message-circle", "user"];
   return (
@@ -235,7 +234,7 @@ const NavBar = ({ active }) => {
     </div>
   );
 };
- 
+
 /*
   FeaturePhoneFrame: widened + shortened per Lindsay's request.
   - width 150 -> 170, height 380 -> 330
@@ -248,14 +247,14 @@ const FeaturePhoneFrame = ({ children, label }) => (
   <div style={{ textAlign: "center" }}>
     <div style={{
       width: 170, height: 330, background: "#fff", borderRadius: 24,
-      padding: 6, margin: "0 auto", boxShadow: "0 8px 24px rgba(0,0,0,0.3)"
+      padding: 6, margin: "0 auto", boxShadow: "0 8px 24px rgba(0,0,0,0.3)", overflow: "hidden"
     }}>
-      <div style={{ border: "4px solid #1a1a1a", borderRadius: 18, height: "100%", overflow: "hidden", display: "flex", flexDirection: "column", position: "relative" }}>
+      <div style={{ border: "4px solid #1a1a1a", borderRadius: 18, height: 318, width: 158, overflow: "hidden", display: "flex", flexDirection: "column", position: "relative" }}>
         <div style={{
           position: "absolute", top: 5, left: "50%", transform: "translateX(-50%)",
           width: 40, height: 9, background: "#1a1a1a", borderRadius: "0 0 7px 7px", zIndex: 2
         }} />
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minHeight: 0 }}>
+        <div style={{ height: 310, width: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
           {children}
         </div>
       </div>
@@ -263,22 +262,24 @@ const FeaturePhoneFrame = ({ children, label }) => (
     <div style={{ fontSize: 11, color: "rgba(255,255,255,0.8)", marginTop: 8, fontWeight: 600 }}>{label}</div>
   </div>
 );
- 
+
 /*
-  ScrollBody: replaces the old `flex: 1, overflow: hidden` content wrapper.
-  Content scrolls internally if it's too tall, so the NavBar below it
-  is always rendered and always visible.
+  ScrollBody: fixed-height content wrapper (NOT flex:1). Using a hard
+  pixel height instead of flex prevents any child content (e.g. a
+  broken/missing image) from ever blowing out the container size,
+  which was pushing the NavBar thousands of pixels off screen.
+  Content that's taller than this box scrolls internally.
 */
 const scrollBodyStyle = {
-  padding: 6, flex: 1, background: "#F8F8F6", overflowY: "auto", minHeight: 0
+  padding: 6, height: 190, background: "#F8F8F6", overflowY: "auto", overflowX: "hidden"
 };
- 
+
 const GetSeenSection = () => (
  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "16px 20px" }}>
     <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get seen</div>
     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 16, textAlign: "center" }}>Homeowners find you by trade and area — your work speaks for itself</div>
     <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
- 
+
       <FeaturePhoneFrame label="Find tradies near you">
         <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
           <div style={{ fontSize: 6, color: "#F4822A", fontWeight: 800, letterSpacing: 0.5 }}>WORKING AREA</div>
@@ -309,7 +310,7 @@ const GetSeenSection = () => (
         </div>
         <NavBar active="chart-bar" />
       </FeaturePhoneFrame>
- 
+
       <FeaturePhoneFrame label="Verified profile">
         <div style={{ background: "#0D1B2A", padding: "20px 8px 8px", textAlign: "center" }}>
           <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#F4822A", margin: "0 auto 4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff", fontWeight: 800 }}>DK</div>
@@ -331,7 +332,7 @@ const GetSeenSection = () => (
         </div>
         <NavBar active="chart-bar" />
       </FeaturePhoneFrame>
- 
+
       <FeaturePhoneFrame label="Show what you do">
         <div style={{ background: "#0D1B2A", padding: "18px 8px 7px" }}>
           <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Specialties</div>
@@ -353,17 +354,17 @@ const GetSeenSection = () => (
         </div>
         <NavBar active="user" />
       </FeaturePhoneFrame>
- 
+
     </div>
   </div>
 );
- 
+
 const GetHiredSection = () => (
  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "8px 20px 16px" }}>
     <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get hired</div>
     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 16, textAlign: "center" }}>Direct messages, no middlemen, no lead fees</div>
     <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
- 
+
       <FeaturePhoneFrame label="Browse jobs near you">
         <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
           <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Jobs board</div>
@@ -394,7 +395,7 @@ const GetHiredSection = () => (
         </div>
         <NavBar active="briefcase" />
       </FeaturePhoneFrame>
- 
+
       <FeaturePhoneFrame label="Direct messages, no fees">
         <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
           <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Messages</div>
@@ -425,7 +426,7 @@ const GetHiredSection = () => (
         </div>
         <NavBar active="message-circle" />
       </FeaturePhoneFrame>
- 
+
       <FeaturePhoneFrame label="Homeowner messaging you">
         <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
           <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Dave Kowalski</div>
@@ -444,17 +445,17 @@ const GetHiredSection = () => (
         </div>
         <NavBar active="message-circle" />
       </FeaturePhoneFrame>
- 
+
     </div>
   </div>
 );
- 
+
 const GetRewardedSection = () => (
  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "8px 20px 30px" }}>
     <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get rewarded</div>
     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 16, textAlign: "center" }}>Every job done builds your reputation on the platform</div>
     <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
- 
+
       <FeaturePhoneFrame label="Real reviews build trust">
         <div style={{ background: "#F4822A", padding: "18px 8px 8px", textAlign: "center" }}>
           <div style={{ fontSize: 12, color: "#fff" }}>★★★★★</div>
@@ -478,14 +479,14 @@ const GetRewardedSection = () => (
         </div>
         <NavBar active="user" />
       </FeaturePhoneFrame>
- 
+
       <FeaturePhoneFrame label="Show your finished work">
         <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
           <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Completed work</div>
         </div>
         <div style={scrollBodyStyle}>
-          <div style={{ borderRadius: 6, height: 56, marginBottom: 4, position: "relative", overflow: "hidden" }}>
-            <img src="/solar-job.jpg" alt="Solar panel installation" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <div style={{ borderRadius: 6, height: 56, width: "100%", marginBottom: 4, position: "relative", overflow: "hidden", background: "#ddd" }}>
+            <img src="/solar-job.jpg" alt="Solar panel installation" style={{ width: "100%", height: "100%", maxHeight: 56, objectFit: "cover", display: "block" }} />
           </div>
           <div style={{ background: "#fff", borderRadius: 6, padding: 5 }}>
             <div style={{ fontSize: 6, color: "#222", fontWeight: 800, marginBottom: 1 }}>Solar panel install</div>
@@ -494,7 +495,7 @@ const GetRewardedSection = () => (
         </div>
         <NavBar active="user" />
       </FeaturePhoneFrame>
- 
+
       <FeaturePhoneFrame label="Detailed reviews">
         <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
           <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>New review</div>
@@ -514,11 +515,11 @@ const GetRewardedSection = () => (
         </div>
         <NavBar active="user" />
       </FeaturePhoneFrame>
- 
+
     </div>
   </div>
 );
- 
+
 const CongratsPage = () => (
   <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif" }}>
     <div style={{ padding: "50px 24px 20px", textAlign: "center" }}>
@@ -530,7 +531,7 @@ const CongratsPage = () => (
         You're officially on the Your Tradie waitlist.
       </div>
     </div>
- 
+
     <div style={{ width: "100%", maxWidth: 700, margin: "0 auto", padding: "0 24px 20px", textAlign: "center" }}>
       <div style={{ fontSize: 26, fontWeight: 800, color: "#fff", marginBottom: 16 }}>
         Building Australia's Largest Tradie Network
@@ -539,28 +540,28 @@ const CongratsPage = () => (
         We're connecting homeowners with tradies. No lead fees, no bidding wars, no middlemen — just the best way for tradies to get seen, get hired, and get the jobs they deserve.
       </div>
     </div>
- 
+
     <GetSeenSection />
     <GetHiredSection />
     <GetRewardedSection />
- 
+
     <div style={{ textAlign: "center", padding: "10px 24px 60px" }}>
       <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>© 2025 Your Tradie · Australia</div>
     </div>
   </div>
 );
- 
+
 export default function App() {
   const isDevMode = window.location.pathname === DEV_PATH;
   const [view, setView] = useState(isDevMode ? "landing" : "waitlist");
- 
+
   const [wName, setWName] = useState("");
   const [wEmail, setWEmail] = useState("");
   const [wPhone, setWPhone] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
- 
+
   const [step, setStep] = useState(1);
   const [fullName, setFullName] = useState("");
   const [businessName, setBusinessName] = useState("");
@@ -575,7 +576,7 @@ export default function App() {
   const [abn, setAbn] = useState("");
   const [photo, setPhoto] = useState(null);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
- 
+
   const handleWaitlistSubmit = async () => {
     if (!wName || !wEmail) { setErrorMsg("Please enter your name and email."); return; }
     setLoading(true); setErrorMsg("");
@@ -585,22 +586,22 @@ export default function App() {
       else { setSubmitted(true); setLoading(false); }
     } catch (err) { setErrorMsg("Error: " + err.message); setLoading(false); }
   };
- 
+
   const addTrade = (t) => { if (!trades.includes(t)) setTrades([...trades, t]); };
   const removeTrade = (t) => setTrades(trades.filter(x => x !== t));
   const addCustomTrade = (t) => { if (!customTrades.includes(t)) setCustomTrades([...customTrades, t]); };
   const removeCustomTrade = (t) => setCustomTrades(customTrades.filter(x => x !== t));
- 
+
   const addSpecialty = (s) => { if (!specialties.includes(s)) setSpecialties([...specialties, s]); };
   const removeSpecialty = (s) => setSpecialties(specialties.filter(x => x !== s));
   const addCustomSpecialty = (s) => { if (!customSpecialties.includes(s)) setCustomSpecialties([...customSpecialties, s]); };
   const removeCustomSpecialty = (s) => setCustomSpecialties(customSpecialties.filter(x => x !== s));
- 
+
   const toggleSecondaryArea = (a) => {
     if (secondaryAreas.includes(a)) setSecondaryAreas(secondaryAreas.filter(x => x !== a));
     else setSecondaryAreas([...secondaryAreas, a]);
   };
- 
+
   const handleLaunch = async () => {
     const allCustom = [
       ...customTrades.map(t => ({ type: "trade", value: t })),
@@ -613,7 +614,7 @@ export default function App() {
     }
     setOnboardingComplete(true);
   };
- 
+
   if (view === "waitlist") {
     if (submitted) {
       return <CongratsPage />;
@@ -656,7 +657,7 @@ export default function App() {
       </div>
     );
   }
- 
+
   if (view === "landing") {
     return (
       <Wrapper>
@@ -679,7 +680,7 @@ export default function App() {
       </Wrapper>
     );
   }
- 
+
   if (view === "tradie-onboarding") {
     if (onboardingComplete) {
       return (
@@ -699,13 +700,13 @@ export default function App() {
         </Wrapper>
       );
     }
- 
+
     return (
       <Wrapper>
         <Logo />
         <div style={cardStyle}>
           <ProgressBar current={step} total={5} />
- 
+
           {step === 1 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>About You</div>
@@ -715,7 +716,7 @@ export default function App() {
               <button onClick={() => fullName && setStep(2)} style={{ ...btnPrimary(!fullName), width: "100%", marginTop: 4 }}>Next →</button>
             </>
           )}
- 
+
           {step === 2 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Your Trade</div>
@@ -738,7 +739,7 @@ export default function App() {
               </div>
             </>
           )}
- 
+
           {step === 3 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Service Areas</div>
@@ -770,7 +771,7 @@ export default function App() {
               </div>
             </>
           )}
- 
+
           {step === 4 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Credentials</div>
@@ -784,7 +785,7 @@ export default function App() {
               </div>
             </>
           )}
- 
+
           {step === 5 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Profile Photo</div>
@@ -812,7 +813,7 @@ export default function App() {
       </Wrapper>
     );
   }
- 
+
   if (view === "find-tradie") {
     return (
       <Wrapper>
