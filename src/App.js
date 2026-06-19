@@ -166,15 +166,15 @@ const SearchSelect = ({ items, selected, onAdd, placeholder, max, onAddCustom })
 const PhoneMockup = () => (
   <div style={{ display: "flex", justifyContent: "center" }}>
     <div style={{
-      width: 240, height: 500, background: "#111", borderRadius: 40,
-      padding: 10, position: "relative", boxShadow: "0 0 0 2px rgba(255,255,255,0.1)"
+      width: 240, height: 500, background: "#fff", borderRadius: 40,
+      padding: 8, position: "relative", boxShadow: "0 8px 30px rgba(0,0,0,0.35)"
     }}>
-      <div style={{
-        position: "absolute", top: 10, left: "50%", transform: "translateX(-50%)",
-        width: 76, height: 20, background: "#000", borderRadius: "0 0 14px 14px", zIndex: 2
-      }} />
-      <div style={{ background: "#0D1B2A", borderRadius: 30, height: "100%", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-        <div style={{ background: "#0D1B2A", padding: "32px 16px 16px" }}>
+      <div style={{ border: "5px solid #1a1a1a", borderRadius: 32, height: "100%", overflow: "hidden", display: "flex", flexDirection: "column", position: "relative" }}>
+        <div style={{
+          position: "absolute", top: 8, left: "50%", transform: "translateX(-50%)",
+          width: 70, height: 18, background: "#1a1a1a", borderRadius: "0 0 12px 12px", zIndex: 2
+        }} />
+        <div style={{ background: "#0D1B2A", padding: "30px 16px 16px" }}>
           <div style={{ fontSize: 10, color: "#F4822A", fontWeight: 800, letterSpacing: 1, marginBottom: 10 }}>YOUR TRADIE</div>
           <div style={{ fontSize: 17, color: "#fff", fontWeight: 800, lineHeight: 1.25, marginBottom: 6 }}>Find a trusted tradie near you</div>
           <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>Verified · No lead fees · Real reviews</div>
@@ -238,26 +238,26 @@ const NavBar = ({ active }) => {
 const FeaturePhoneFrame = ({ children, label }) => (
   <div style={{ textAlign: "center" }}>
     <div style={{
-      width: 150, height: 310, background: "#0D1B2A", borderRadius: 26,
-      padding: 7, margin: "0 auto", position: "relative"
+      width: 150, height: 310, background: "#fff", borderRadius: 26,
+      padding: 6, margin: "0 auto", boxShadow: "0 8px 24px rgba(0,0,0,0.3)"
     }}>
-      <div style={{
-        position: "absolute", top: 7, left: "50%", transform: "translateX(-50%)",
-        width: 48, height: 12, background: "#000", borderRadius: "0 0 9px 9px", zIndex: 2
-      }} />
-      <div style={{ background: "#fff", borderRadius: 19, height: "100%", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <div style={{ border: "4px solid #1a1a1a", borderRadius: 20, height: "100%", overflow: "hidden", display: "flex", flexDirection: "column", position: "relative" }}>
+        <div style={{
+          position: "absolute", top: 5, left: "50%", transform: "translateX(-50%)",
+          width: 40, height: 9, background: "#1a1a1a", borderRadius: "0 0 7px 7px", zIndex: 2
+        }} />
         {children}
       </div>
     </div>
-    <div style={{ fontSize: 11, color: "#0D1B2A", marginTop: 10, fontWeight: 600 }}>{label}</div>
+    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.8)", marginTop: 10, fontWeight: 600 }}>{label}</div>
   </div>
 );
 
 const GetSeenSection = () => (
   <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "50px 24px" }}>
-    <div style={{ fontSize: 22, fontWeight: 800, color: "#0D1B2A", marginBottom: 4, textAlign: "center" }}>Get seen</div>
-    <div style={{ fontSize: 13, color: "#6B7280", marginBottom: 28, textAlign: "center" }}>Homeowners find you by trade and area — your work speaks for itself</div>
-    <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
+    <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get seen</div>
+    <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 28, textAlign: "center" }}>Homeowners find you by trade and area — your work speaks for itself</div>
+    <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
 
       <FeaturePhoneFrame label="Find tradies near you">
         <div style={{ background: "#0D1B2A", padding: "20px 9px 7px" }}>
@@ -339,10 +339,10 @@ const GetSeenSection = () => (
 );
 
 const GetHiredSection = () => (
-  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "50px 24px", background: "#fff" }}>
-    <div style={{ fontSize: 22, fontWeight: 800, color: "#0D1B2A", marginBottom: 4, textAlign: "center" }}>Get hired</div>
-    <div style={{ fontSize: 13, color: "#6B7280", marginBottom: 28, textAlign: "center" }}>Direct messages, no middlemen, no lead fees</div>
-    <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
+  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "50px 24px" }}>
+    <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get hired</div>
+    <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 28, textAlign: "center" }}>Direct messages, no middlemen, no lead fees</div>
+    <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
 
       <FeaturePhoneFrame label="Browse jobs near you">
         <div style={{ background: "#0D1B2A", padding: "20px 9px 7px" }}>
@@ -431,9 +431,9 @@ const GetHiredSection = () => (
 
 const GetRewardedSection = () => (
   <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "50px 24px" }}>
-    <div style={{ fontSize: 22, fontWeight: 800, color: "#0D1B2A", marginBottom: 4, textAlign: "center" }}>Get rewarded</div>
-    <div style={{ fontSize: 13, color: "#6B7280", marginBottom: 28, textAlign: "center" }}>Every job done builds your reputation on the platform</div>
-    <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
+    <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get rewarded</div>
+    <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 28, textAlign: "center" }}>Every job done builds your reputation on the platform</div>
+    <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
 
       <FeaturePhoneFrame label="Real reviews build trust">
         <div style={{ background: "#F4822A", padding: "20px 9px 10px", textAlign: "center" }}>
@@ -500,25 +500,22 @@ const GetRewardedSection = () => (
 );
 
 const CongratsPage = () => (
-  <div style={{ minHeight: "100vh", background: "#F7F7F4", fontFamily: "sans-serif" }}>
-    <div style={{ background: "#0D1B2A", padding: "50px 24px", textAlign: "center" }}>
+  <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif" }}>
+    <div style={{ padding: "50px 24px 30px", textAlign: "center" }}>
       <Logo />
-    </div>
-
-    <div style={{ padding: "40px 24px 20px", textAlign: "center" }}>
-      <div style={{ fontSize: 32, fontWeight: 800, color: "#F4822A", marginBottom: 12 }}>
+      <div style={{ fontSize: 32, fontWeight: 800, color: "#F4822A", marginTop: 24, marginBottom: 12 }}>
         Congratulations!
       </div>
-      <div style={{ fontSize: 17, color: "#444", maxWidth: 500, margin: "0 auto" }}>
+      <div style={{ fontSize: 17, color: "rgba(255,255,255,0.6)", maxWidth: 500, margin: "0 auto" }}>
         You're officially on the Your Tradie waitlist.
       </div>
     </div>
 
     <div style={{ width: "100%", maxWidth: 700, margin: "0 auto", padding: "0 24px 30px", textAlign: "center" }}>
-      <div style={{ fontSize: 26, fontWeight: 800, color: "#0D1B2A", marginBottom: 16 }}>
+      <div style={{ fontSize: 26, fontWeight: 800, color: "#fff", marginBottom: 16 }}>
         Building Australia's Largest Tradie Network
       </div>
-      <div style={{ fontSize: 16, color: "#555", lineHeight: 1.7 }}>
+      <div style={{ fontSize: 16, color: "rgba(255,255,255,0.5)", lineHeight: 1.7 }}>
         We're connecting homeowners with tradies. No lead fees, no bidding wars, no middlemen — just the best way for tradies to get seen, get hired, and get the jobs they deserve.
       </div>
     </div>
@@ -528,7 +525,7 @@ const CongratsPage = () => (
     <GetRewardedSection />
 
     <div style={{ textAlign: "center", padding: "30px 24px 60px" }}>
-      <div style={{ fontSize: 13, color: "#999" }}>© 2025 Your Tradie · Australia</div>
+      <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>© 2025 Your Tradie · Australia</div>
     </div>
   </div>
 );
