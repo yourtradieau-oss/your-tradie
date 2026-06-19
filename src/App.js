@@ -227,7 +227,7 @@ const PhoneMockup = () => (
 const NavBar = ({ active }) => {
   const icons = ["chart-bar", "briefcase", "message-circle", "user"];
   return (
-    <div style={{ background: "#fff", borderTop: "1px solid #eee", display: "flex", justifyContent: "space-around", padding: "5px 4px", flexShrink: 0 }}>
+    <div style={{ background: "#fff", borderTop: "1px solid #eee", display: "flex", justifyContent: "space-around", alignItems: "center", padding: "5px 4px", height: 24, boxSizing: "border-box", flexShrink: 0, flexGrow: 0 }}>
       {icons.map(icon => (
         <i key={icon} className={`ti ti-${icon}`} style={{ fontSize: 11, color: icon === active ? "#F4822A" : "#ccc" }} aria-hidden="true"></i>
       ))}
@@ -246,15 +246,24 @@ const NavBar = ({ active }) => {
 const FeaturePhoneFrame = ({ children, label }) => (
   <div style={{ textAlign: "center" }}>
     <div style={{
-      width: 170, height: 330, background: "#fff", borderRadius: 24,
-      padding: 6, margin: "0 auto", boxShadow: "0 8px 24px rgba(0,0,0,0.3)", overflow: "hidden"
+      width: 170, height: 330, maxHeight: 330, background: "#fff", borderRadius: 24,
+      padding: 6, margin: "0 auto", boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
+      overflow: "hidden", boxSizing: "border-box", flexShrink: 0, flexGrow: 0
     }}>
-      <div style={{ border: "4px solid #1a1a1a", borderRadius: 18, height: 318, width: 158, overflow: "hidden", display: "flex", flexDirection: "column", position: "relative" }}>
+      <div style={{
+        border: "4px solid #1a1a1a", borderRadius: 18, height: 318, maxHeight: 318,
+        width: 158, overflow: "hidden", display: "flex", flexDirection: "column",
+        position: "relative", boxSizing: "border-box", flexShrink: 0, flexGrow: 0
+      }}>
         <div style={{
           position: "absolute", top: 5, left: "50%", transform: "translateX(-50%)",
           width: 40, height: 9, background: "#1a1a1a", borderRadius: "0 0 7px 7px", zIndex: 2
         }} />
-        <div style={{ height: 310, width: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        <div style={{
+          height: 310, maxHeight: 310, width: "100%", display: "flex",
+          flexDirection: "column", overflow: "hidden", boxSizing: "border-box",
+          flexShrink: 0, flexGrow: 0
+        }}>
           {children}
         </div>
       </div>
@@ -264,14 +273,16 @@ const FeaturePhoneFrame = ({ children, label }) => (
 );
 
 /*
-  ScrollBody: fixed-height content wrapper (NOT flex:1). Using a hard
-  pixel height instead of flex prevents any child content (e.g. a
-  broken/missing image) from ever blowing out the container size,
-  which was pushing the NavBar thousands of pixels off screen.
-  Content that's taller than this box scrolls internally.
+  ScrollBody: fixed-height content wrapper. boxSizing: border-box and
+  flexShrink/flexGrow: 0 force this box to STAY at 190px no matter what
+  is inside it -- nothing can expand it. Content that's taller scrolls
+  internally instead of pushing the NavBar (which sits below this box)
+  out of the visible frame.
 */
 const scrollBodyStyle = {
-  padding: 6, height: 190, background: "#F8F8F6", overflowY: "auto", overflowX: "hidden"
+  padding: 6, height: 190, maxHeight: 190, background: "#F8F8F6",
+  overflowY: "auto", overflowX: "hidden", boxSizing: "border-box",
+  flexShrink: 0, flexGrow: 0
 };
 
 const GetSeenSection = () => (
