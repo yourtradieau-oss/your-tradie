@@ -224,28 +224,10 @@ const PhoneMockup = () => (
   </div>
 );
 
-const FeaturePhoneFrame = ({ children, label }) => (
-  <div style={{ textAlign: "center" }}>
-    <div style={{
-      width: 170, height: 350, background: "#111", borderRadius: 30,
-      padding: 8, margin: "0 auto", position: "relative"
-    }}>
-      <div style={{
-        position: "absolute", top: 8, left: "50%", transform: "translateX(-50%)",
-        width: 55, height: 14, background: "#000", borderRadius: "0 0 10px 10px", zIndex: 2
-      }} />
-      <div style={{ background: "#fff", borderRadius: 22, height: "100%", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-        {children}
-      </div>
-    </div>
-    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", marginTop: 10 }}>{label}</div>
-  </div>
-);
-
 const NavBar = ({ active }) => {
   const icons = ["chart-bar", "briefcase", "message-circle", "user"];
   return (
-    <div style={{ background: "#fff", borderTop: "1px solid #eee", display: "flex", justifyContent: "space-around", padding: 7 }}>
+    <div style={{ background: "#fff", borderTop: "1px solid #eee", display: "flex", justifyContent: "space-around", padding: 7, flexShrink: 0 }}>
       {icons.map(icon => (
         <i key={icon} className={`ti ti-${icon}`} style={{ fontSize: 13, color: icon === active ? "#F4822A" : "#ccc" }} aria-hidden="true"></i>
       ))}
@@ -253,85 +235,100 @@ const NavBar = ({ active }) => {
   );
 };
 
+const FeaturePhoneFrame = ({ children, label }) => (
+  <div style={{ textAlign: "center" }}>
+    <div style={{
+      width: 150, height: 310, background: "#0D1B2A", borderRadius: 26,
+      padding: 7, margin: "0 auto", position: "relative"
+    }}>
+      <div style={{
+        position: "absolute", top: 7, left: "50%", transform: "translateX(-50%)",
+        width: 48, height: 12, background: "#000", borderRadius: "0 0 9px 9px", zIndex: 2
+      }} />
+      <div style={{ background: "#fff", borderRadius: 19, height: "100%", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+        {children}
+      </div>
+    </div>
+    <div style={{ fontSize: 11, color: "#0D1B2A", marginTop: 10, fontWeight: 600 }}>{label}</div>
+  </div>
+);
+
 const GetSeenSection = () => (
-  <div style={{ width: "100%", maxWidth: 900, margin: "0 auto", padding: "60px 24px" }}>
-    <div style={{ fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Get seen</div>
-    <div style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", marginBottom: 32, textAlign: "center" }}>Homeowners find you by trade and area — your work speaks for itself</div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "50px 24px" }}>
+    <div style={{ fontSize: 22, fontWeight: 800, color: "#0D1B2A", marginBottom: 4, textAlign: "center" }}>Get seen</div>
+    <div style={{ fontSize: 13, color: "#6B7280", marginBottom: 28, textAlign: "center" }}>Homeowners find you by trade and area — your work speaks for itself</div>
+    <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
 
       <FeaturePhoneFrame label="Find tradies near you">
-        <div style={{ background: "#0D1B2A", padding: "22px 10px 8px" }}>
-          <div style={{ fontSize: 7, color: "#F4822A", fontWeight: 800, letterSpacing: 0.5 }}>WORKING AREA</div>
-          <div style={{ fontSize: 10, color: "#fff", fontWeight: 800, marginTop: 2 }}>Tradies near Brisbane</div>
+        <div style={{ background: "#0D1B2A", padding: "20px 9px 7px" }}>
+          <div style={{ fontSize: 6, color: "#F4822A", fontWeight: 800, letterSpacing: 0.5 }}>WORKING AREA</div>
+          <div style={{ fontSize: 9, color: "#fff", fontWeight: 800, marginTop: 2 }}>Tradies near Brisbane</div>
         </div>
-        <div style={{ height: 100, background: "#E5E9E0", position: "relative", overflow: "hidden", flexShrink: 0 }}>
-          <div style={{ position: "absolute", top: 0, left: "30%", width: 2, height: "100%", background: "#D8DCD2" }} />
-          <div style={{ position: "absolute", top: 0, left: "65%", width: 2, height: "100%", background: "#D8DCD2" }} />
-          <div style={{ position: "absolute", top: "50%", left: 0, width: "100%", height: 2, background: "#D8DCD2" }} />
+        <div style={{ height: 80, background: "#E5E9E0", position: "relative", overflow: "hidden", flexShrink: 0 }}>
           <div style={{ position: "absolute", top: 0, right: 0, width: "35%", height: "100%", background: "#C9DCEA", borderRadius: "50% 0 0 50%" }} />
-          <div style={{ position: "absolute", top: "25%", left: "25%", width: 12, height: 12, background: "#fff", border: "2px solid #F4822A", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6 }}>⚡</div>
-          <div style={{ position: "absolute", top: "55%", left: "48%", width: 12, height: 12, background: "#fff", border: "2px solid #1D9E75", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6 }}>🔧</div>
-          <div style={{ position: "absolute", top: "35%", left: "68%", width: 12, height: 12, background: "#fff", border: "2px solid #D4537E", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6 }}>🎨</div>
+          <div style={{ position: "absolute", top: "22%", left: "25%", width: 11, height: 11, background: "#fff", border: "2px solid #F4822A", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 5 }}>⚡</div>
+          <div style={{ position: "absolute", top: "55%", left: "48%", width: 11, height: 11, background: "#fff", border: "2px solid #1D9E75", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 5 }}>🔧</div>
+          <div style={{ position: "absolute", top: "35%", left: "65%", width: 11, height: 11, background: "#fff", border: "2px solid #D4537E", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 5 }}>🎨</div>
         </div>
-        <div style={{ padding: 8, flex: 1, background: "#F8F8F6", overflow: "hidden" }}>
-          <div style={{ fontSize: 6, color: "#888", marginBottom: 5 }}>3 tradies near you</div>
-          <div style={{ background: "#fff", borderRadius: 7, padding: 6, marginBottom: 5, display: "flex", alignItems: "center", gap: 5 }}>
-            <div style={{ width: 18, height: 18, borderRadius: 5, background: "#F4822A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 7, color: "#fff", fontWeight: 800 }}>DK</div>
+        <div style={{ padding: 7, flex: 1, background: "#F8F8F6", overflow: "hidden" }}>
+          <div style={{ fontSize: 6, color: "#888", marginBottom: 4 }}>3 tradies near you</div>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 5, marginBottom: 4, display: "flex", alignItems: "center", gap: 4 }}>
+            <div style={{ width: 16, height: 16, borderRadius: 4, background: "#F4822A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6, color: "#fff", fontWeight: 800 }}>DK</div>
             <div style={{ textAlign: "left" }}>
-              <div style={{ fontSize: 7, color: "#222", fontWeight: 800 }}>Dave Kowalski</div>
-              <div style={{ fontSize: 6, color: "#F4822A" }}>Electrician · Redcliffe</div>
+              <div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Dave Kowalski</div>
+              <div style={{ fontSize: 5, color: "#F4822A" }}>Electrician · Redcliffe</div>
             </div>
           </div>
-          <div style={{ background: "#fff", borderRadius: 7, padding: 6, display: "flex", alignItems: "center", gap: 5 }}>
-            <div style={{ width: 18, height: 18, borderRadius: 5, background: "#1D9E75", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 7, color: "#fff", fontWeight: 800 }}>MT</div>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 5, display: "flex", alignItems: "center", gap: 4 }}>
+            <div style={{ width: 16, height: 16, borderRadius: 4, background: "#1D9E75", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6, color: "#fff", fontWeight: 800 }}>MT</div>
             <div style={{ textAlign: "left" }}>
-              <div style={{ fontSize: 7, color: "#222", fontWeight: 800 }}>Mel Torres</div>
-              <div style={{ fontSize: 6, color: "#F4822A" }}>Plumber · Bribie Island</div>
+              <div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Mel Torres</div>
+              <div style={{ fontSize: 5, color: "#F4822A" }}>Plumber · Bribie Island</div>
             </div>
           </div>
         </div>
-        <NavBar active="search" />
+        <NavBar active="chart-bar" />
       </FeaturePhoneFrame>
 
       <FeaturePhoneFrame label="Verified profile">
-        <div style={{ background: "#0D1B2A", padding: "24px 10px 12px", textAlign: "center" }}>
-          <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#F4822A", margin: "0 auto 6px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: "#fff", fontWeight: 800 }}>DK</div>
-          <div style={{ fontSize: 11, color: "#fff", fontWeight: 800 }}>Dave Kowalski</div>
-          <div style={{ fontSize: 8, color: "#F4822A" }}>Electrician · Redcliffe</div>
+        <div style={{ background: "#0D1B2A", padding: "22px 9px 10px", textAlign: "center" }}>
+          <div style={{ width: 38, height: 38, borderRadius: "50%", background: "#F4822A", margin: "0 auto 5px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: "#fff", fontWeight: 800 }}>DK</div>
+          <div style={{ fontSize: 9, color: "#fff", fontWeight: 800 }}>Dave Kowalski</div>
+          <div style={{ fontSize: 7, color: "#F4822A" }}>Electrician · Redcliffe</div>
         </div>
-        <div style={{ padding: 9, flex: 1, background: "#F8F8F6" }}>
-          <div style={{ background: "#E1F5EE", borderRadius: 6, padding: 6, display: "flex", alignItems: "center", gap: 4, marginBottom: 6 }}>
-            <i className="ti ti-circle-check" style={{ color: "#0F6E56", fontSize: 11 }} aria-hidden="true"></i>
-            <span style={{ fontSize: 7, color: "#0F6E56", fontWeight: 800 }}>Licence verified</span>
+        <div style={{ padding: 7, flex: 1, background: "#F8F8F6" }}>
+          <div style={{ background: "#E1F5EE", borderRadius: 5, padding: 5, display: "flex", alignItems: "center", gap: 3, marginBottom: 5 }}>
+            <i className="ti ti-circle-check" style={{ color: "#0F6E56", fontSize: 9 }} aria-hidden="true"></i>
+            <span style={{ fontSize: 6, color: "#0F6E56", fontWeight: 800 }}>Licence verified</span>
           </div>
-          <div style={{ background: "#E1F5EE", borderRadius: 6, padding: 6, display: "flex", alignItems: "center", gap: 4, marginBottom: 8 }}>
-            <i className="ti ti-circle-check" style={{ color: "#0F6E56", fontSize: 11 }} aria-hidden="true"></i>
-            <span style={{ fontSize: 7, color: "#0F6E56", fontWeight: 800 }}>ABN verified</span>
+          <div style={{ background: "#E1F5EE", borderRadius: 5, padding: 5, display: "flex", alignItems: "center", gap: 3, marginBottom: 6 }}>
+            <i className="ti ti-circle-check" style={{ color: "#0F6E56", fontSize: 9 }} aria-hidden="true"></i>
+            <span style={{ fontSize: 6, color: "#0F6E56", fontWeight: 800 }}>ABN verified</span>
           </div>
-          <div style={{ background: "#fff", borderRadius: 7, padding: 7 }}>
-            <div style={{ fontSize: 6, color: "#555", lineHeight: 1.5 }}>Licensed electrician working on switchboards, EV charging and renovations.</div>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 6 }}>
+            <div style={{ fontSize: 5, color: "#555", lineHeight: 1.5 }}>Licensed electrician working on switchboards, EV charging and renovations.</div>
           </div>
         </div>
         <NavBar active="chart-bar" />
       </FeaturePhoneFrame>
 
       <FeaturePhoneFrame label="Show what you do">
-        <div style={{ background: "#0D1B2A", padding: "22px 10px 10px" }}>
-          <div style={{ fontSize: 9, color: "#fff", fontWeight: 800 }}>Specialties</div>
+        <div style={{ background: "#0D1B2A", padding: "20px 9px 8px" }}>
+          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Specialties</div>
         </div>
-        <div style={{ padding: 9, flex: 1, background: "#F8F8F6" }}>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>
-            <span style={{ background: "#FAEEDA", color: "#854F0B", fontSize: 8, padding: "4px 9px", borderRadius: 10 }}>Solar</span>
-            <span style={{ background: "#FAEEDA", color: "#854F0B", fontSize: 8, padding: "4px 9px", borderRadius: 10 }}>Switchboards</span>
-            <span style={{ background: "#FAEEDA", color: "#854F0B", fontSize: 8, padding: "4px 9px", borderRadius: 10 }}>EV Charging</span>
+        <div style={{ padding: 7, flex: 1, background: "#F8F8F6" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 6 }}>
+            <span style={{ background: "#FAEEDA", color: "#854F0B", fontSize: 6, padding: "3px 7px", borderRadius: 8 }}>Solar</span>
+            <span style={{ background: "#FAEEDA", color: "#854F0B", fontSize: 6, padding: "3px 7px", borderRadius: 8 }}>Switchboards</span>
+            <span style={{ background: "#FAEEDA", color: "#854F0B", fontSize: 6, padding: "3px 7px", borderRadius: 8 }}>EV Charging</span>
           </div>
-          <div style={{ background: "#fff", borderRadius: 8, padding: 8, marginBottom: 6 }}>
-            <div style={{ fontSize: 7, color: "#888", marginBottom: 3 }}>Years experience</div>
-            <div style={{ fontSize: 9, color: "#222", fontWeight: 800 }}>14 years</div>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 6, marginBottom: 5 }}>
+            <div style={{ fontSize: 5, color: "#888", marginBottom: 2 }}>Years experience</div>
+            <div style={{ fontSize: 7, color: "#222", fontWeight: 800 }}>14 years</div>
           </div>
-          <div style={{ background: "#fff", borderRadius: 8, padding: 8 }}>
-            <div style={{ fontSize: 7, color: "#888", marginBottom: 3 }}>Service areas</div>
-            <div style={{ fontSize: 8, color: "#222" }}>Redcliffe, Bribie, Caboolture</div>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 6 }}>
+            <div style={{ fontSize: 5, color: "#888", marginBottom: 2 }}>Service areas</div>
+            <div style={{ fontSize: 6, color: "#222" }}>Redcliffe, Bribie, Caboolture</div>
           </div>
         </div>
         <NavBar active="user" />
@@ -342,67 +339,67 @@ const GetSeenSection = () => (
 );
 
 const GetHiredSection = () => (
-  <div style={{ width: "100%", maxWidth: 900, margin: "0 auto", padding: "60px 24px" }}>
-    <div style={{ fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Get hired</div>
-    <div style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", marginBottom: 32, textAlign: "center" }}>Direct messages, no middlemen, no lead fees</div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "50px 24px", background: "#fff" }}>
+    <div style={{ fontSize: 22, fontWeight: 800, color: "#0D1B2A", marginBottom: 4, textAlign: "center" }}>Get hired</div>
+    <div style={{ fontSize: 13, color: "#6B7280", marginBottom: 28, textAlign: "center" }}>Direct messages, no middlemen, no lead fees</div>
+    <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
 
       <FeaturePhoneFrame label="Browse jobs near you">
-        <div style={{ background: "#0D1B2A", padding: "22px 10px 8px" }}>
-          <div style={{ fontSize: 9, color: "#fff", fontWeight: 800 }}>Jobs board</div>
-          <div style={{ fontSize: 6, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>No lead fees · Unlimited</div>
+        <div style={{ background: "#0D1B2A", padding: "20px 9px 7px" }}>
+          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Jobs board</div>
+          <div style={{ fontSize: 5, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>No lead fees · Unlimited</div>
         </div>
-        <div style={{ padding: 9, flex: 1, background: "#F8F8F6" }}>
-          <div style={{ background: "#fff", borderRadius: 8, padding: 7, marginBottom: 6 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-              <span style={{ fontSize: 7, color: "#222", fontWeight: 800 }}>Switchboard upgrade</span>
-              <span style={{ background: "#FCEBEB", color: "#A32D2D", fontSize: 5, padding: "1px 5px", borderRadius: 6 }}>Urgent</span>
+        <div style={{ padding: 7, flex: 1, background: "#F8F8F6" }}>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 6, marginBottom: 5 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
+              <span style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Switchboard upgrade</span>
+              <span style={{ background: "#FCEBEB", color: "#A32D2D", fontSize: 4, padding: "1px 4px", borderRadius: 5 }}>Urgent</span>
             </div>
-            <div style={{ fontSize: 6, color: "#888" }}>Redcliffe · Posted 2hrs ago</div>
+            <div style={{ fontSize: 5, color: "#888" }}>Redcliffe · 2hrs ago</div>
           </div>
-          <div style={{ background: "#fff", borderRadius: 8, padding: 7, marginBottom: 6 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-              <span style={{ fontSize: 7, color: "#222", fontWeight: 800 }}>EV charger install</span>
-              <span style={{ background: "#FAEEDA", color: "#854F0B", fontSize: 5, padding: "1px 5px", borderRadius: 6 }}>This week</span>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 6, marginBottom: 5 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
+              <span style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>EV charger install</span>
+              <span style={{ background: "#FAEEDA", color: "#854F0B", fontSize: 4, padding: "1px 4px", borderRadius: 5 }}>This week</span>
             </div>
-            <div style={{ fontSize: 6, color: "#888" }}>Bribie Island · Posted 1d ago</div>
+            <div style={{ fontSize: 5, color: "#888" }}>Bribie Island · 1d ago</div>
           </div>
-          <div style={{ background: "#fff", borderRadius: 8, padding: 7 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-              <span style={{ fontSize: 7, color: "#222", fontWeight: 800 }}>New power point</span>
-              <span style={{ background: "#EAF3DE", color: "#3B6D11", fontSize: 5, padding: "1px 5px", borderRadius: 6 }}>Planning</span>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 6 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
+              <span style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>New power point</span>
+              <span style={{ background: "#EAF3DE", color: "#3B6D11", fontSize: 4, padding: "1px 4px", borderRadius: 5 }}>Planning</span>
             </div>
-            <div style={{ fontSize: 6, color: "#888" }}>Caboolture · Posted 3d ago</div>
+            <div style={{ fontSize: 5, color: "#888" }}>Caboolture · 3d ago</div>
           </div>
         </div>
         <NavBar active="briefcase" />
       </FeaturePhoneFrame>
 
       <FeaturePhoneFrame label="Direct messages, no fees">
-        <div style={{ background: "#0D1B2A", padding: "22px 10px 8px" }}>
-          <div style={{ fontSize: 9, color: "#fff", fontWeight: 800 }}>Messages</div>
-          <div style={{ fontSize: 6, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>Tradie view</div>
+        <div style={{ background: "#0D1B2A", padding: "20px 9px 7px" }}>
+          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Messages</div>
+          <div style={{ fontSize: 5, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>Tradie view</div>
         </div>
-        <div style={{ padding: 9, flex: 1, background: "#F8F8F6" }}>
-          <div style={{ background: "#fff", borderRadius: 8, padding: 7, marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#378ADD", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 7, color: "#fff" }}>SM</div>
+        <div style={{ padding: 7, flex: 1, background: "#F8F8F6" }}>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 5, marginBottom: 4, display: "flex", alignItems: "center", gap: 4 }}>
+            <div style={{ width: 16, height: 16, borderRadius: "50%", background: "#378ADD", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6, color: "#fff" }}>SM</div>
             <div style={{ textAlign: "left", flex: 1 }}>
-              <div style={{ fontSize: 7, color: "#222", fontWeight: 800 }}>Sarah M.</div>
-              <div style={{ fontSize: 6, color: "#888" }}>Hi, are you free next week?</div>
+              <div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Sarah M.</div>
+              <div style={{ fontSize: 5, color: "#888" }}>Free next week?</div>
             </div>
           </div>
-          <div style={{ background: "#fff", borderRadius: 8, padding: 7, marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#D4537E", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 7, color: "#fff" }}>JT</div>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 5, marginBottom: 4, display: "flex", alignItems: "center", gap: 4 }}>
+            <div style={{ width: 16, height: 16, borderRadius: "50%", background: "#D4537E", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6, color: "#fff" }}>JT</div>
             <div style={{ textAlign: "left", flex: 1 }}>
-              <div style={{ fontSize: 7, color: "#222", fontWeight: 800 }}>James T.</div>
-              <div style={{ fontSize: 6, color: "#888" }}>Thanks for the quote!</div>
+              <div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>James T.</div>
+              <div style={{ fontSize: 5, color: "#888" }}>Thanks for the quote!</div>
             </div>
           </div>
-          <div style={{ background: "#fff", borderRadius: 8, padding: 7, display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#1D9E75", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 7, color: "#fff" }}>RK</div>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 5, display: "flex", alignItems: "center", gap: 4 }}>
+            <div style={{ width: 16, height: 16, borderRadius: "50%", background: "#1D9E75", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6, color: "#fff" }}>RK</div>
             <div style={{ textAlign: "left", flex: 1 }}>
-              <div style={{ fontSize: 7, color: "#222", fontWeight: 800 }}>Rachel K.</div>
-              <div style={{ fontSize: 6, color: "#888" }}>Can you do Thursday?</div>
+              <div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Rachel K.</div>
+              <div style={{ fontSize: 5, color: "#888" }}>Do Thursday?</div>
             </div>
           </div>
         </div>
@@ -410,24 +407,22 @@ const GetHiredSection = () => (
       </FeaturePhoneFrame>
 
       <FeaturePhoneFrame label="Homeowner messaging you">
-        <div style={{ background: "#0D1B2A", padding: "22px 10px 8px" }}>
-          <div style={{ fontSize: 9, color: "#fff", fontWeight: 800 }}>Dave Kowalski</div>
-          <div style={{ fontSize: 6, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>Electrician · Online now</div>
+        <div style={{ background: "#0D1B2A", padding: "20px 9px 7px" }}>
+          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Dave Kowalski</div>
+          <div style={{ fontSize: 5, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>Online now</div>
         </div>
-        <div style={{ padding: 9, flex: 1, background: "#F8F8F6", display: "flex", flexDirection: "column", gap: 6 }}>
-          <div style={{ background: "#fff", borderRadius: "10px 10px 10px 2px", padding: "6px 8px", maxWidth: "80%", alignSelf: "flex-start" }}>
-            <div style={{ fontSize: 6, color: "#222" }}>Hi! Got your switchboard job posted, happy to quote.</div>
+        <div style={{ padding: 7, flex: 1, background: "#F8F8F6", display: "flex", flexDirection: "column", gap: 5 }}>
+          <div style={{ background: "#fff", borderRadius: "8px 8px 8px 2px", padding: "5px 7px", maxWidth: "85%", alignSelf: "flex-start" }}>
+            <div style={{ fontSize: 5, color: "#222" }}>Happy to quote on your switchboard job.</div>
           </div>
-          <div style={{ background: "#F4822A", borderRadius: "10px 10px 2px 10px", padding: "6px 8px", maxWidth: "80%", alignSelf: "flex-end" }}>
-            <div style={{ fontSize: 6, color: "#fff" }}>Great, when can you come look?</div>
+          <div style={{ background: "#F4822A", borderRadius: "8px 8px 2px 8px", padding: "5px 7px", maxWidth: "85%", alignSelf: "flex-end" }}>
+            <div style={{ fontSize: 5, color: "#fff" }}>When can you look?</div>
           </div>
-          <div style={{ background: "#fff", borderRadius: "10px 10px 10px 2px", padding: "6px 8px", maxWidth: "80%", alignSelf: "flex-start" }}>
-            <div style={{ fontSize: 6, color: "#222" }}>Tomorrow 9am works for me</div>
+          <div style={{ background: "#fff", borderRadius: "8px 8px 8px 2px", padding: "5px 7px", maxWidth: "85%", alignSelf: "flex-start" }}>
+            <div style={{ fontSize: 5, color: "#222" }}>Tomorrow 9am works</div>
           </div>
         </div>
-        <div style={{ background: "#fff", borderTop: "1px solid #eee", padding: "6px 8px" }}>
-          <div style={{ background: "#F0F0EC", borderRadius: 14, padding: "5px 9px", fontSize: 6, color: "#999" }}>Type a message...</div>
-        </div>
+        <NavBar active="message-circle" />
       </FeaturePhoneFrame>
 
     </div>
@@ -435,74 +430,66 @@ const GetHiredSection = () => (
 );
 
 const GetRewardedSection = () => (
-  <div style={{ width: "100%", maxWidth: 900, margin: "0 auto", padding: "60px 24px" }}>
-    <div style={{ fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Get rewarded</div>
-    <div style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", marginBottom: 32, textAlign: "center" }}>Every job done builds your reputation on the platform</div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "50px 24px" }}>
+    <div style={{ fontSize: 22, fontWeight: 800, color: "#0D1B2A", marginBottom: 4, textAlign: "center" }}>Get rewarded</div>
+    <div style={{ fontSize: 13, color: "#6B7280", marginBottom: 28, textAlign: "center" }}>Every job done builds your reputation on the platform</div>
+    <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
 
       <FeaturePhoneFrame label="Real reviews build trust">
-        <div style={{ background: "#0D1B2A", padding: "22px 10px 12px", textAlign: "center" }}>
-          <div style={{ fontSize: 16, color: "#FAC775" }}>★★★★★</div>
-          <div style={{ fontSize: 9, color: "#fff", fontWeight: 800, marginTop: 2 }}>4.9 · 87 reviews</div>
+        <div style={{ background: "#F4822A", padding: "20px 9px 10px", textAlign: "center" }}>
+          <div style={{ fontSize: 13, color: "#fff" }}>★★★★★</div>
+          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800, marginTop: 2 }}>4.9 · 87 reviews</div>
         </div>
-        <div style={{ padding: 9, flex: 1, background: "#F8F8F6" }}>
-          <div style={{ background: "#fff", borderRadius: 8, padding: 7, marginBottom: 6 }}>
+        <div style={{ padding: 7, flex: 1, background: "#F8F8F6" }}>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 6, marginBottom: 5 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
               <span style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Sarah M.</span>
-              <span style={{ fontSize: 7, color: "#FAC775" }}>★★★★★</span>
+              <span style={{ fontSize: 6, color: "#F4822A" }}>★★★★★</span>
             </div>
-            <div style={{ fontSize: 6, color: "#888", lineHeight: 1.4 }}>Switchboard upgrade done same day, great work.</div>
+            <div style={{ fontSize: 5, color: "#888", lineHeight: 1.4 }}>Switchboard upgrade done same day.</div>
           </div>
-          <div style={{ background: "#fff", borderRadius: 8, padding: 7, marginBottom: 6 }}>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 6 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
               <span style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>James T.</span>
-              <span style={{ fontSize: 7, color: "#FAC775" }}>★★★★★</span>
+              <span style={{ fontSize: 6, color: "#F4822A" }}>★★★★★</span>
             </div>
-            <div style={{ fontSize: 6, color: "#888", lineHeight: 1.4 }}>Punctual, fair price, very tidy.</div>
-          </div>
-          <div style={{ background: "#fff", borderRadius: 8, padding: 7 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
-              <span style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Rachel K.</span>
-              <span style={{ fontSize: 7, color: "#FAC775" }}>★★★★★</span>
-            </div>
-            <div style={{ fontSize: 6, color: "#888", lineHeight: 1.4 }}>Highly recommend, will use again.</div>
+            <div style={{ fontSize: 5, color: "#888", lineHeight: 1.4 }}>Punctual, fair price, very tidy.</div>
           </div>
         </div>
         <NavBar active="user" />
       </FeaturePhoneFrame>
 
       <FeaturePhoneFrame label="Show your finished work">
-        <div style={{ background: "#0D1B2A", padding: "22px 10px 8px" }}>
-          <div style={{ fontSize: 9, color: "#fff", fontWeight: 800 }}>Completed work</div>
+        <div style={{ background: "#0D1B2A", padding: "20px 9px 7px" }}>
+          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Completed work</div>
         </div>
-        <div style={{ padding: 9, flex: 1, background: "#F8F8F6" }}>
-          <div style={{ borderRadius: 8, height: 90, marginBottom: 6, position: "relative", overflow: "hidden" }}>
+        <div style={{ padding: 7, flex: 1, background: "#F8F8F6" }}>
+          <div style={{ borderRadius: 6, height: 80, marginBottom: 5, position: "relative", overflow: "hidden" }}>
             <img src="/solar-job.jpg" alt="Solar panel installation" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            <div style={{ position: "absolute", bottom: 4, right: 6, background: "rgba(0,0,0,0.5)", borderRadius: 4, padding: "2px 5px", fontSize: 5, color: "#fff" }}>Job photo</div>
           </div>
-          <div style={{ background: "#fff", borderRadius: 8, padding: 7 }}>
-            <div style={{ fontSize: 7, color: "#222", fontWeight: 800, marginBottom: 2 }}>Solar panel install</div>
-            <div style={{ fontSize: 6, color: "#888" }}>Brisbane · Completed last week</div>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 6 }}>
+            <div style={{ fontSize: 6, color: "#222", fontWeight: 800, marginBottom: 2 }}>Solar panel install</div>
+            <div style={{ fontSize: 5, color: "#888" }}>Brisbane · Completed last week</div>
           </div>
         </div>
         <NavBar active="user" />
       </FeaturePhoneFrame>
 
       <FeaturePhoneFrame label="Detailed reviews">
-        <div style={{ background: "#0D1B2A", padding: "22px 10px 8px" }}>
-          <div style={{ fontSize: 9, color: "#fff", fontWeight: 800 }}>New review</div>
+        <div style={{ background: "#0D1B2A", padding: "20px 9px 7px" }}>
+          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>New review</div>
         </div>
-        <div style={{ padding: 9, flex: 1, background: "#F8F8F6" }}>
-          <div style={{ background: "#fff", borderRadius: 10, padding: 10 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 6 }}>
-              <div style={{ width: 18, height: 18, borderRadius: "50%", background: "#378ADD", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6, color: "#fff" }}>SM</div>
+        <div style={{ padding: 7, flex: 1, background: "#F8F8F6" }}>
+          <div style={{ background: "#fff", borderRadius: 8, padding: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 5 }}>
+              <div style={{ width: 16, height: 16, borderRadius: "50%", background: "#378ADD", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 5, color: "#fff" }}>SM</div>
               <div style={{ textAlign: "left" }}>
-                <div style={{ fontSize: 7, color: "#222", fontWeight: 800 }}>Sarah M.</div>
-                <div style={{ fontSize: 5, color: "#888" }}>2 days ago</div>
+                <div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Sarah M.</div>
+                <div style={{ fontSize: 4, color: "#888" }}>2 days ago</div>
               </div>
             </div>
-            <div style={{ fontSize: 9, color: "#FAC775", marginBottom: 5 }}>★★★★★</div>
-            <div style={{ fontSize: 6, color: "#555", lineHeight: 1.5 }}>"Dave was on time, explained everything clearly and the switchboard upgrade was done same day. Highly recommend."</div>
+            <div style={{ fontSize: 7, color: "#F4822A", marginBottom: 4 }}>★★★★★</div>
+            <div style={{ fontSize: 5, color: "#555", lineHeight: 1.5 }}>"Dave was on time, explained everything clearly. Highly recommend."</div>
           </div>
         </div>
         <NavBar active="user" />
@@ -513,23 +500,26 @@ const GetRewardedSection = () => (
 );
 
 const CongratsPage = () => (
-  <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif" }}>
-    <div style={{ padding: "60px 24px 40px", textAlign: "center" }}>
+  <div style={{ minHeight: "100vh", background: "#F7F7F4", fontFamily: "sans-serif" }}>
+    <div style={{ background: "#0D1B2A", padding: "50px 24px", textAlign: "center" }}>
       <Logo />
-      <div style={{ fontSize: 32, fontWeight: 800, color: "#F4822A", marginTop: 24, marginBottom: 12 }}>
+    </div>
+
+    <div style={{ padding: "40px 24px 20px", textAlign: "center" }}>
+      <div style={{ fontSize: 32, fontWeight: 800, color: "#F4822A", marginBottom: 12 }}>
         Congratulations!
       </div>
-      <div style={{ fontSize: 18, color: "rgba(255,255,255,0.6)", maxWidth: 500, margin: "0 auto" }}>
+      <div style={{ fontSize: 17, color: "#444", maxWidth: 500, margin: "0 auto" }}>
         You're officially on the Your Tradie waitlist.
       </div>
     </div>
 
-    <div style={{ width: "100%", maxWidth: 700, margin: "0 auto", padding: "0 24px 40px", textAlign: "center" }}>
-      <div style={{ fontSize: 26, fontWeight: 800, color: "#fff", marginBottom: 16 }}>
+    <div style={{ width: "100%", maxWidth: 700, margin: "0 auto", padding: "0 24px 30px", textAlign: "center" }}>
+      <div style={{ fontSize: 26, fontWeight: 800, color: "#0D1B2A", marginBottom: 16 }}>
         Building Australia's Largest Tradie Network
       </div>
-      <div style={{ fontSize: 16, color: "rgba(255,255,255,0.5)", lineHeight: 1.7 }}>
-        We're connecting homeowners with verified, licensed local tradies — no lead fees, no bidding wars, no middlemen. Just a fair way for tradies to be seen.
+      <div style={{ fontSize: 16, color: "#555", lineHeight: 1.7 }}>
+        We're connecting homeowners with tradies. No lead fees, no bidding wars, no middlemen — just the best way for tradies to get seen, get hired, and get the jobs they deserve.
       </div>
     </div>
 
@@ -537,8 +527,8 @@ const CongratsPage = () => (
     <GetHiredSection />
     <GetRewardedSection />
 
-    <div style={{ textAlign: "center", padding: "0 24px 80px" }}>
-      <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>© 2025 Your Tradie · Australia</div>
+    <div style={{ textAlign: "center", padding: "30px 24px 60px" }}>
+      <div style={{ fontSize: 13, color: "#999" }}>© 2025 Your Tradie · Australia</div>
     </div>
   </div>
 );
