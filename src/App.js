@@ -68,27 +68,43 @@ const btnSecondary = {
 */
 const GlobalMobileStyles = () => (
   <style>{`
+    html, body { overflow-x: hidden; max-width: 100%; }
+    * { box-sizing: border-box; }
     .yt-logo-text { font-size: 48px; }
     .yt-waitlist-grid {
       max-width: 1000px; margin: 0 auto; width: 100%;
       display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
     }
     .yt-congrats-title { font-size: 32px; }
-    .yt-congrats-heading { font-size: 26px; }
+    .yt-congrats-heading { font-size: 26px; word-wrap: break-word; overflow-wrap: break-word; }
     .yt-landing-heading { font-size: 24px; }
+    .yt-phone-row {
+      display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;
+    }
     @media (max-width: 700px) {
+      html, body, #root { overflow-x: hidden; width: 100%; max-width: 100vw; }
       .yt-logo-text { font-size: 34px; }
       .yt-waitlist-grid {
         grid-template-columns: 1fr !important;
         gap: 24px !important;
+        padding: 0 4px;
       }
       .yt-congrats-title { font-size: 26px; }
       .yt-congrats-heading { font-size: 21px; }
       .yt-landing-heading { font-size: 20px; }
-      body, #root { overflow-x: hidden; }
+      .yt-phone-row {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        justify-items: center;
+        gap: 10px !important;
+      }
+      .yt-phone-row > div:nth-child(3) {
+        grid-column: 1 / span 2;
+      }
     }
   `}</style>
 );
+ 
  
 const Logo = () => (
   <div style={{ textAlign: "center", marginBottom: 16 }}>
@@ -326,7 +342,7 @@ const GetSeenSection = () => (
  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "28px 20px" }}>
     <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get seen</div>
     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 16, textAlign: "center" }}>Homeowners find you by trade and area — your work speaks for itself</div>
-    <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
+    <div className="yt-phone-row">
  
       <FeaturePhoneFrame label="Find tradies near you">
         <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
@@ -411,7 +427,7 @@ const GetHiredSection = () => (
  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "24px 20px 16px" }}>
     <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get hired</div>
     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 16, textAlign: "center" }}>Direct messages, no middlemen, no lead fees</div>
-    <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
+    <div className="yt-phone-row">
  
       <FeaturePhoneFrame label="Browse jobs near you">
         <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
@@ -502,7 +518,7 @@ const GetRewardedSection = () => (
  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "24px 20px 30px" }}>
     <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get rewarded</div>
     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 16, textAlign: "center" }}>Every job done builds your reputation on the platform</div>
-    <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
+    <div className="yt-phone-row">
  
       <FeaturePhoneFrame label="Real reviews build trust">
         <div style={{ background: "#F4822A", padding: "18px 8px 8px", textAlign: "center" }}>
