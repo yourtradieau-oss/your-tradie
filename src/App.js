@@ -227,7 +227,7 @@ const PhoneMockup = () => (
 const NavBar = ({ active }) => {
   const icons = ["chart-bar", "briefcase", "message-circle", "user"];
   return (
-    <div style={{ background: "#fff", borderTop: "1px solid #eee", display: "flex", justifyContent: "space-around", alignItems: "center", padding: "5px 4px", height: 24, boxSizing: "border-box", flexShrink: 0, flexGrow: 0 }}>
+    <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, background: "#fff", borderTop: "1px solid #eee", display: "flex", justifyContent: "space-around", alignItems: "center", height: 24, zIndex: 5 }}>
       {icons.map(icon => (
         <i key={icon} className={`ti ti-${icon}`} style={{ fontSize: 11, color: icon === active ? "#F4822A" : "#ccc" }} aria-hidden="true"></i>
       ))}
@@ -236,36 +236,28 @@ const NavBar = ({ active }) => {
 };
 
 /*
-  FeaturePhoneFrame: widened + shortened per Lindsay's request.
-  - width 150 -> 170, height 380 -> 330
-  - inner content area now uses overflow-y: auto with a fixed max-height
-    budget instead of an uncapped flex:1, so the NavBar is NEVER pushed
-    out of view. If content is taller than the budget it scrolls inside
-    the phone screen instead of clipping the nav bar.
+  FeaturePhoneFrame: pure pixel-locked mockup, not a real scrolling UI.
+  Outer + inner frame are fixed-size boxes. The content area is a fixed
+  190px window with overflow:hidden (no scroll needed -- it's a static
+  image, not an app). NavBar is pinned with position:absolute to the
+  very bottom of the inner frame, so it is PHYSICALLY GUARANTEED to be
+  visible no matter what happens to the content above it.
 */
 const FeaturePhoneFrame = ({ children, label }) => (
   <div style={{ textAlign: "center" }}>
     <div style={{
-      width: 170, height: 330, maxHeight: 330, background: "#fff", borderRadius: 24,
-      padding: 6, margin: "0 auto", boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
-      overflow: "hidden", boxSizing: "border-box", flexShrink: 0, flexGrow: 0
+      width: 170, height: 330, background: "#fff", borderRadius: 24,
+      padding: 6, margin: "0 auto", boxShadow: "0 8px 24px rgba(0,0,0,0.3)"
     }}>
       <div style={{
-        border: "4px solid #1a1a1a", borderRadius: 18, height: 318, maxHeight: 318,
-        width: 158, overflow: "hidden", display: "flex", flexDirection: "column",
-        position: "relative", boxSizing: "border-box", flexShrink: 0, flexGrow: 0
+        border: "4px solid #1a1a1a", borderRadius: 18, height: 318,
+        width: 158, overflow: "hidden", position: "relative", background: "#fff"
       }}>
         <div style={{
           position: "absolute", top: 5, left: "50%", transform: "translateX(-50%)",
-          width: 40, height: 9, background: "#1a1a1a", borderRadius: "0 0 7px 7px", zIndex: 2
+          width: 40, height: 9, background: "#1a1a1a", borderRadius: "0 0 7px 7px", zIndex: 10
         }} />
-        <div style={{
-          height: 310, maxHeight: 310, width: "100%", display: "flex",
-          flexDirection: "column", overflow: "hidden", boxSizing: "border-box",
-          flexShrink: 0, flexGrow: 0
-        }}>
-          {children}
-        </div>
+        {children}
       </div>
     </div>
     <div style={{ fontSize: 11, color: "rgba(255,255,255,0.8)", marginTop: 8, fontWeight: 600 }}>{label}</div>
@@ -273,16 +265,12 @@ const FeaturePhoneFrame = ({ children, label }) => (
 );
 
 /*
-  ScrollBody: fixed-height content wrapper. boxSizing: border-box and
-  flexShrink/flexGrow: 0 force this box to STAY at 190px no matter what
-  is inside it -- nothing can expand it. Content that's taller scrolls
-  internally instead of pushing the NavBar (which sits below this box)
-  out of the visible frame.
+  ScrollBody: fixed 190px window, content clipped (overflow: hidden,
+  not scroll) since this is a static mockup image. Positioned with
+  plain document flow above the absolutely-positioned NavBar.
 */
 const scrollBodyStyle = {
-  padding: 6, height: 190, maxHeight: 190, background: "#F8F8F6",
-  overflowY: "auto", overflowX: "hidden", boxSizing: "border-box",
-  flexShrink: 0, flexGrow: 0
+  padding: 6, height: 190, background: "#F8F8F6", overflow: "hidden"
 };
 
 const GetSeenSection = () => (
