@@ -174,23 +174,38 @@ const PhoneMockup = () => (
         position: "absolute", top: 10, left: "50%", transform: "translateX(-50%)",
         width: 76, height: 20, background: "#000", borderRadius: "0 0 14px 14px", zIndex: 2
       }} />
-      <div style={{ background: "#0D1B2A", borderRadius: 30, height: "100%", overflow: "hidden", padding: "32px 16px 16px" }}>
-        <div style={{ fontSize: 10, color: "#F4822A", fontWeight: 800, letterSpacing: 1, marginBottom: 10 }}>YOUR TRADIE</div>
-        <div style={{ fontSize: 17, color: "#fff", fontWeight: 800, lineHeight: 1.25, marginBottom: 6 }}>Find a trusted tradie near you</div>
-        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>Verified · No lead fees · Real reviews</div>
-        <div style={{ background: "#fff", borderRadius: 8, padding: "9px 11px", fontSize: 10, color: "#888", marginBottom: 8 }}>Search trade, name, suburb...</div>
-        <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
-          <div style={{ flex: 1, background: "rgba(255,255,255,0.08)", borderRadius: 6, padding: "7px 9px", fontSize: 9, color: "#fff" }}>All trades</div>
-          <div style={{ flex: 1, background: "rgba(255,255,255,0.08)", borderRadius: 6, padding: "7px 9px", fontSize: 9, color: "#fff" }}>All areas</div>
+      <div style={{ background: "#0D1B2A", borderRadius: 30, height: "100%", overflow: "hidden" }}>
+        <div style={{ background: "#0D1B2A", padding: "32px 16px 16px" }}>
+          <div style={{ fontSize: 10, color: "#F4822A", fontWeight: 800, letterSpacing: 1, marginBottom: 10 }}>YOUR TRADIE</div>
+          <div style={{ fontSize: 17, color: "#fff", fontWeight: 800, lineHeight: 1.25, marginBottom: 6 }}>Find a trusted tradie near you</div>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>Verified · No lead fees · Real reviews</div>
+          <div style={{ background: "#fff", borderRadius: 8, padding: "9px 11px", fontSize: 10, color: "#888", marginBottom: 8 }}>Search trade, name, suburb...</div>
+          <div style={{ display: "flex", gap: 6 }}>
+            <div style={{ flex: 1, background: "rgba(255,255,255,0.08)", borderRadius: 6, padding: "7px 9px", fontSize: 9, color: "#fff" }}>All trades</div>
+            <div style={{ flex: 1, background: "rgba(255,255,255,0.08)", borderRadius: 6, padding: "7px 9px", fontSize: 9, color: "#fff" }}>All areas</div>
+          </div>
         </div>
-        <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 10, padding: 10, marginBottom: 6 }}>
-          <div style={{ fontSize: 11, color: "#fff", fontWeight: 800 }}>Dave Kowalski</div>
-          <div style={{ fontSize: 9, color: "#F4822A", marginBottom: 3 }}>Electrician · Redcliffe</div>
-          <div style={{ fontSize: 8, color: "rgba(255,255,255,0.4)" }}>4.9 stars · 87 reviews</div>
-        </div>
-        <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 10, padding: 10 }}>
-          <div style={{ fontSize: 11, color: "#fff", fontWeight: 800 }}>Mel Torres</div>
-          <div style={{ fontSize: 9, color: "#F4822A" }}>Plumber · Bribie Island</div>
+        <div style={{ background: "#F5F5F0", padding: 14, height: "100%" }}>
+          <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+            <div style={{ flex: 1, background: "#fff", border: "1.5px dashed #F4822A", borderRadius: 10, padding: 8 }}>
+              <div style={{ fontSize: 9, fontWeight: 800, color: "#222" }}>Working Area</div>
+              <div style={{ fontSize: 7, color: "#888" }}>Who's working near you</div>
+            </div>
+            <div style={{ flex: 1, background: "#F4822A", borderRadius: 10, padding: 8 }}>
+              <div style={{ fontSize: 9, fontWeight: 800, color: "#fff" }}>Post a Job</div>
+              <div style={{ fontSize: 7, color: "rgba(255,255,255,0.8)" }}>Get tradies to you</div>
+            </div>
+          </div>
+          <div style={{ fontSize: 8, color: "#888", marginBottom: 8 }}>5 tradies found</div>
+          <div style={{ background: "#fff", borderRadius: 10, padding: 10, marginBottom: 8, boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
+            <div style={{ fontSize: 11, color: "#222", fontWeight: 800 }}>Dave Kowalski</div>
+            <div style={{ fontSize: 9, color: "#F4822A", marginBottom: 3 }}>Electrician · Redcliffe</div>
+            <div style={{ fontSize: 8, color: "#888" }}>4.9 stars · 87 reviews</div>
+          </div>
+          <div style={{ background: "#fff", borderRadius: 10, padding: 10, boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
+            <div style={{ fontSize: 11, color: "#222", fontWeight: 800 }}>Mel Torres</div>
+            <div style={{ fontSize: 9, color: "#F4822A" }}>Plumber · Bribie Island</div>
+          </div>
         </div>
       </div>
     </div>
@@ -264,11 +279,11 @@ export default function App() {
   // ---- PUBLIC WAITLIST (with phone mockup) ----
   if (view === "waitlist") {
     return (
-      <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", padding: "40px 24px" }}>
-        <div style={{
-          maxWidth: 1000, margin: "0 auto", display: "grid",
-          gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center"
-        }}>
+  <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", padding: "40px 24px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+    <div style={{
+      maxWidth: 1000, margin: "0 auto", width: "100%", display: "grid",
+      gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center"
+    }}>
           <div>
             <Logo />
             <div style={{ marginBottom: 32 }}>
