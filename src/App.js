@@ -108,7 +108,7 @@ const Tag = ({ label, onRemove, pending }) => (
   </div>
 );
 
-const SearchSelect = ({ items, selected, onAdd, placeholder, max, pendingItems, onAddCustom }) => {
+const SearchSelect = ({ items, selected, onAdd, placeholder, max, onAddCustom }) => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -118,11 +118,8 @@ const SearchSelect = ({ items, selected, onAdd, placeholder, max, pendingItems, 
 
   const handleKey = (e) => {
     if (e.key === "Enter" && search.trim()) {
-      if (filtered.length > 0) {
-        onAdd(filtered[0]);
-      } else {
-        onAddCustom(search.trim());
-      }
+      if (filtered.length > 0) onAdd(filtered[0]);
+      else onAddCustom(search.trim());
       setSearch("");
       setOpen(false);
     }
@@ -166,14 +163,44 @@ const SearchSelect = ({ items, selected, onAdd, placeholder, max, pendingItems, 
   );
 };
 
-// ============================================================
-// MAIN APP
-// ============================================================
+// Phone mockup component for the waitlist hero
+const PhoneMockup = () => (
+  <div style={{ display: "flex", justifyContent: "center" }}>
+    <div style={{
+      width: 240, height: 500, background: "#111", borderRadius: 40,
+      padding: 10, position: "relative", boxShadow: "0 0 0 2px rgba(255,255,255,0.1)"
+    }}>
+      <div style={{
+        position: "absolute", top: 10, left: "50%", transform: "translateX(-50%)",
+        width: 76, height: 20, background: "#000", borderRadius: "0 0 14px 14px", zIndex: 2
+      }} />
+      <div style={{ background: "#0D1B2A", borderRadius: 30, height: "100%", overflow: "hidden", padding: "32px 16px 16px" }}>
+        <div style={{ fontSize: 10, color: "#F4822A", fontWeight: 800, letterSpacing: 1, marginBottom: 10 }}>YOUR TRADIE</div>
+        <div style={{ fontSize: 17, color: "#fff", fontWeight: 800, lineHeight: 1.25, marginBottom: 6 }}>Find a trusted tradie near you</div>
+        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>Verified · No lead fees · Real reviews</div>
+        <div style={{ background: "#fff", borderRadius: 8, padding: "9px 11px", fontSize: 10, color: "#888", marginBottom: 8 }}>Search trade, name, suburb...</div>
+        <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+          <div style={{ flex: 1, background: "rgba(255,255,255,0.08)", borderRadius: 6, padding: "7px 9px", fontSize: 9, color: "#fff" }}>All trades</div>
+          <div style={{ flex: 1, background: "rgba(255,255,255,0.08)", borderRadius: 6, padding: "7px 9px", fontSize: 9, color: "#fff" }}>All areas</div>
+        </div>
+        <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 10, padding: 10, marginBottom: 6 }}>
+          <div style={{ fontSize: 11, color: "#fff", fontWeight: 800 }}>Dave Kowalski</div>
+          <div style={{ fontSize: 9, color: "#F4822A", marginBottom: 3 }}>Electrician · Redcliffe</div>
+          <div style={{ fontSize: 8, color: "rgba(255,255,255,0.4)" }}>4.9 stars · 87 reviews</div>
+        </div>
+        <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 10, padding: 10 }}>
+          <div style={{ fontSize: 11, color: "#fff", fontWeight: 800 }}>Mel Torres</div>
+          <div style={{ fontSize: 9, color: "#F4822A" }}>Plumber · Bribie Island</div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 export default function App() {
   const isDevMode = window.location.pathname === DEV_PATH;
   const [view, setView] = useState(isDevMode ? "landing" : "waitlist");
 
-  // Waitlist
   const [wName, setWName] = useState("");
   const [wEmail, setWEmail] = useState("");
   const [wPhone, setWPhone] = useState("");
@@ -181,7 +208,6 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Onboarding
   const [step, setStep] = useState(1);
   const [fullName, setFullName] = useState("");
   const [businessName, setBusinessName] = useState("");
@@ -223,57 +249,67 @@ export default function App() {
   };
 
   const handleLaunch = async () => {
-    // Save custom suggestions to Supabase for admin review
     const allCustom = [
       ...customTrades.map(t => ({ type: "trade", value: t })),
       ...customSpecialties.map(s => ({ type: "specialty", value: s }))
     ];
     if (allCustom.length > 0) {
       await supabase.from("suggestions").insert(allCustom.map(c => ({
-        suggestion_type: c.type,
-        value: c.value,
-        submitted_by: fullName,
-        status: "pending"
+        suggestion_type: c.type, value: c.value, submitted_by: fullName, status: "pending"
       })));
     }
     setOnboardingComplete(true);
   };
 
-  // ---- PUBLIC WAITLIST ----
+  // ---- PUBLIC WAITLIST (with phone mockup) ----
   if (view === "waitlist") {
     return (
-      <Wrapper>
-        <Logo />
-        <div style={{ textAlign: "center", marginBottom: 48, maxWidth: 480 }}>
-          <div style={{ fontSize: 26, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.3, marginBottom: 10 }}>
-            Get found. Get hired. Get rewarded.
+      <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", padding: "40px 24px" }}>
+        <div style={{
+          maxWidth: 1000, margin: "0 auto", display: "grid",
+          gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center"
+        }}>
+          <div>
+            <Logo />
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.3, marginBottom: 10 }}>
+                Get found. Get hired. Get rewarded.
+              </div>
+              <div style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
+                Connecting you with tradies.
+              </div>
+            </div>
+
+            {!submitted ? (
+              <div style={cardStyle}>
+                <div style={{ fontSize: 20, fontWeight: 800, color: "#FFFFFF", marginBottom: 6, textAlign: "center" }}>Join the Community</div>
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>Be first when we launch in your area</div>
+                <input style={inputStyle} placeholder="Full name" value={wName} onChange={e => setWName(e.target.value)} />
+                <input style={inputStyle} placeholder="Email address" type="email" value={wEmail} onChange={e => setWEmail(e.target.value)} />
+                <input style={inputStyle} placeholder="Phone number (optional)" type="tel" value={wPhone} onChange={e => setWPhone(e.target.value)} />
+                {errorMsg && <div style={{ color: "#ff6b6b", fontSize: 13, marginBottom: 10, textAlign: "center", padding: "8px", background: "rgba(255,107,107,0.1)", borderRadius: 8 }}>{errorMsg}</div>}
+                <button onClick={handleWaitlistSubmit} disabled={loading}
+                  style={{ width: "100%", background: loading ? "rgba(244,130,42,0.5)" : "#F4822A", border: "none", borderRadius: 10, padding: "14px", fontSize: 16, fontWeight: 800, color: "#fff", cursor: loading ? "default" : "pointer", marginTop: 4 }}>
+                  {loading ? "Joining..." : "Join the Waitlist →"}
+                </button>
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", textAlign: "center", marginTop: 14 }}>No spam. No lead fees. Ever.</div>
+              </div>
+            ) : (
+              <div style={{ ...cardStyle, border: "1px solid rgba(44,214,83,0.3)", textAlign: "center" }}>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>You're on the list!</div>
+                <div style={{ fontSize: 15, color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>We'll be in touch the moment Your Tradie launches.</div>
+              </div>
+            )}
           </div>
-          <div style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
-            Connecting you with tradies.
-          </div>
+
+          <PhoneMockup />
         </div>
-        {!submitted ? (
-          <div style={cardStyle}>
-            <div style={{ fontSize: 20, fontWeight: 800, color: "#FFFFFF", marginBottom: 6, textAlign: "center" }}>Join the Community</div>
-            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>Be first when we launch in your area</div>
-            <input style={inputStyle} placeholder="Full name" value={wName} onChange={e => setWName(e.target.value)} />
-            <input style={inputStyle} placeholder="Email address" type="email" value={wEmail} onChange={e => setWEmail(e.target.value)} />
-            <input style={inputStyle} placeholder="Phone number (optional)" type="tel" value={wPhone} onChange={e => setWPhone(e.target.value)} />
-            {errorMsg && <div style={{ color: "#ff6b6b", fontSize: 13, marginBottom: 10, textAlign: "center", padding: "8px", background: "rgba(255,107,107,0.1)", borderRadius: 8 }}>{errorMsg}</div>}
-            <button onClick={handleWaitlistSubmit} disabled={loading}
-              style={{ width: "100%", background: loading ? "rgba(244,130,42,0.5)" : "#F4822A", border: "none", borderRadius: 10, padding: "14px", fontSize: 16, fontWeight: 800, color: "#fff", cursor: loading ? "default" : "pointer", marginTop: 4 }}>
-              {loading ? "Joining..." : "Join the Waitlist →"}
-            </button>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", textAlign: "center", marginTop: 14 }}>No spam. No lead fees. Ever.</div>
-          </div>
-        ) : (
-          <div style={{ ...cardStyle, border: "1px solid rgba(44,214,83,0.3)", textAlign: "center" }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>You're on the list!</div>
-            <div style={{ fontSize: 15, color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>We'll be in touch the moment Your Tradie launches.</div>
-          </div>
-        )}
-      </Wrapper>
+
+        <div style={{ marginTop: 64, fontSize: 12, color: "rgba(255,255,255,0.2)", textAlign: "center" }}>
+          © 2025 Your Tradie · Australia
+        </div>
+      </div>
     );
   }
 
@@ -328,73 +364,50 @@ export default function App() {
         <div style={cardStyle}>
           <ProgressBar current={step} total={5} />
 
-          {/* STEP 1 — Name */}
           {step === 1 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>About You</div>
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>Let's start with the basics</div>
               <input style={inputStyle} placeholder="Full name" value={fullName} onChange={e => setFullName(e.target.value)} />
               <input style={inputStyle} placeholder="Business name (optional)" value={businessName} onChange={e => setBusinessName(e.target.value)} />
-              <button onClick={() => fullName && setStep(2)} style={{ ...btnPrimary(!fullName), width: "100%", marginTop: 4 }}>
-                Next →
-              </button>
+              <button onClick={() => fullName && setStep(2)} style={{ ...btnPrimary(!fullName), width: "100%", marginTop: 4 }}>Next →</button>
             </>
           )}
 
-          {/* STEP 2 — Trades + Specialties */}
           {step === 2 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Your Trade</div>
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>What do you do? Select all that apply.</div>
-
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Primary trade(s)</div>
-              <SearchSelect
-                items={TRADES} selected={trades}
-                onAdd={addTrade} onAddCustom={addCustomTrade}
-                placeholder="Search or type your trade..."
-              />
+              <SearchSelect items={TRADES} selected={trades} onAdd={addTrade} onAddCustom={addCustomTrade} placeholder="Search or type your trade..." />
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
                 {trades.map(t => <Tag key={t} label={t} onRemove={() => removeTrade(t)} />)}
                 {customTrades.map(t => <Tag key={t} label={t} onRemove={() => removeCustomTrade(t)} pending />)}
               </div>
-
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Specialties (optional)</div>
-              <SearchSelect
-                items={SPECIALTIES} selected={specialties}
-                onAdd={addSpecialty} onAddCustom={addCustomSpecialty}
-                placeholder="Search or type a specialty..."
-                max={6}
-              />
+              <SearchSelect items={SPECIALTIES} selected={specialties} onAdd={addSpecialty} onAddCustom={addCustomSpecialty} placeholder="Search or type a specialty..." max={6} />
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
                 {specialties.map(s => <Tag key={s} label={s} onRemove={() => removeSpecialty(s)} />)}
                 {customSpecialties.map(s => <Tag key={s} label={s} onRemove={() => removeCustomSpecialty(s)} pending />)}
               </div>
-
               <div style={{ display: "flex", gap: 8 }}>
                 <button onClick={() => setStep(1)} style={btnSecondary}>← Back</button>
-                <button onClick={() => (trades.length > 0 || customTrades.length > 0) && setStep(3)}
-                  style={btnPrimary(trades.length === 0 && customTrades.length === 0)}>
-                  Next →
-                </button>
+                <button onClick={() => (trades.length > 0 || customTrades.length > 0) && setStep(3)} style={btnPrimary(trades.length === 0 && customTrades.length === 0)}>Next →</button>
               </div>
             </>
           )}
 
-          {/* STEP 3 — Areas */}
           {step === 3 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Service Areas</div>
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>Where do you work?</div>
-
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Primary area</div>
               <select value={primaryArea} onChange={e => setPrimaryArea(e.target.value)} style={{ ...inputStyle, marginBottom: 16 }}>
                 <option value="">Select your main area</option>
                 {AREAS.map(a => <option key={a} value={a}>{a}</option>)}
               </select>
-
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Postcode (if outside listed areas)</div>
               <input style={inputStyle} placeholder="e.g. 4507" value={postcode} onChange={e => setPostcode(e.target.value)} />
-
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>Also service</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
                 {AREAS.filter(a => a !== primaryArea).map(area => (
@@ -403,25 +416,19 @@ export default function App() {
                       background: secondaryAreas.includes(area) ? "rgba(244,130,42,0.2)" : "rgba(255,255,255,0.05)",
                       border: secondaryAreas.includes(area) ? "1px solid rgba(244,130,42,0.4)" : "1px solid rgba(255,255,255,0.12)",
                       borderRadius: 20, padding: "6px 14px", fontSize: 13,
-                      color: secondaryAreas.includes(area) ? "#F4822A" : "rgba(255,255,255,0.5)",
-                      cursor: "pointer"
+                      color: secondaryAreas.includes(area) ? "#F4822A" : "rgba(255,255,255,0.5)", cursor: "pointer"
                     }}>
                     {area}
                   </div>
                 ))}
               </div>
-
               <div style={{ display: "flex", gap: 8 }}>
                 <button onClick={() => setStep(2)} style={btnSecondary}>← Back</button>
-                <button onClick={() => (primaryArea || postcode) && setStep(4)}
-                  style={btnPrimary(!primaryArea && !postcode)}>
-                  Next →
-                </button>
+                <button onClick={() => (primaryArea || postcode) && setStep(4)} style={btnPrimary(!primaryArea && !postcode)}>Next →</button>
               </div>
             </>
           )}
 
-          {/* STEP 4 — Credentials */}
           {step === 4 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Credentials</div>
@@ -431,15 +438,11 @@ export default function App() {
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", marginBottom: 16, textAlign: "center" }}>At least one required to go live</div>
               <div style={{ display: "flex", gap: 8 }}>
                 <button onClick={() => setStep(3)} style={btnSecondary}>← Back</button>
-                <button onClick={() => (licenceNumber || abn) && setStep(5)}
-                  style={btnPrimary(!licenceNumber && !abn)}>
-                  Next →
-                </button>
+                <button onClick={() => (licenceNumber || abn) && setStep(5)} style={btnPrimary(!licenceNumber && !abn)}>Next →</button>
               </div>
             </>
           )}
 
-          {/* STEP 5 — Photo */}
           {step === 5 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Profile Photo</div>
@@ -448,29 +451,22 @@ export default function App() {
                 <div style={{
                   width: 100, height: 100, borderRadius: "50%", background: "rgba(255,255,255,0.07)",
                   border: "2px dashed rgba(255,255,255,0.2)", margin: "0 auto 16px",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 36, cursor: "pointer"
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, cursor: "pointer"
                 }} onClick={() => document.getElementById("photo-upload").click()}>
                   {photo ? "📷" : "👤"}
                 </div>
-                <input id="photo-upload" type="file" accept="image/*" style={{ display: "none" }}
-                  onChange={e => setPhoto(e.target.files[0])} />
+                <input id="photo-upload" type="file" accept="image/*" style={{ display: "none" }} onChange={e => setPhoto(e.target.files[0])} />
                 <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>{photo ? photo.name : "Tap to upload"}</div>
               </div>
               <div style={{ display: "flex", gap: 8 }}>
                 <button onClick={() => setStep(4)} style={btnSecondary}>← Back</button>
-                <button onClick={handleLaunch}
-                  style={{ ...btnPrimary(false), flex: 2 }}>
-                  Launch My Profile 🚀
-                </button>
+                <button onClick={handleLaunch} style={{ ...btnPrimary(false), flex: 2 }}>Launch My Profile 🚀</button>
               </div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", textAlign: "center", marginTop: 12 }}>You can add a photo later</div>
             </>
           )}
         </div>
-        <button onClick={() => setView("landing")} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.2)", fontSize: 12, cursor: "pointer", marginTop: 16 }}>
-          ← Back to home
-        </button>
+        <button onClick={() => setView("landing")} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.2)", fontSize: 12, cursor: "pointer", marginTop: 16 }}>← Back to home</button>
       </Wrapper>
     );
   }
