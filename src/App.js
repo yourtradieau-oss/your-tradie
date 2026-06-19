@@ -58,9 +58,41 @@ const btnSecondary = {
   padding: "14px", fontSize: 15, fontWeight: 800, color: "#fff", cursor: "pointer"
 };
  
+/*
+  GlobalMobileStyles: injects real CSS with a media query so the
+  waitlist page's two-column grid (form + phone) properly stacks
+  into one column on narrow phone screens, and oversized text
+  shrinks down. Inline style objects can't use media queries, so
+  this uses a <style> tag with classNames instead, only for the
+  specific spots that were overflowing on mobile.
+*/
+const GlobalMobileStyles = () => (
+  <style>{`
+    .yt-logo-text { font-size: 48px; }
+    .yt-waitlist-grid {
+      max-width: 1000px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+    }
+    .yt-congrats-title { font-size: 32px; }
+    .yt-congrats-heading { font-size: 26px; }
+    .yt-landing-heading { font-size: 24px; }
+    @media (max-width: 700px) {
+      .yt-logo-text { font-size: 34px; }
+      .yt-waitlist-grid {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+      }
+      .yt-congrats-title { font-size: 26px; }
+      .yt-congrats-heading { font-size: 21px; }
+      .yt-landing-heading { font-size: 20px; }
+      body, #root { overflow-x: hidden; }
+    }
+  `}</style>
+);
+ 
 const Logo = () => (
   <div style={{ textAlign: "center", marginBottom: 16 }}>
-    <div style={{ fontSize: 48, fontWeight: 800, color: "#FFFFFF", letterSpacing: -2, lineHeight: 1 }}>
+    <div className="yt-logo-text" style={{ fontWeight: 800, color: "#FFFFFF", letterSpacing: -2, lineHeight: 1 }}>
       Your <span style={{ color: "#F4822A" }}>Tradie</span>
     </div>
     <div style={{ height: 4, background: "#F4822A", borderRadius: 2, margin: "10px auto 0", width: 200 }} />
@@ -537,10 +569,11 @@ const GetRewardedSection = () => (
 );
  
 const CongratsPage = () => (
-  <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif" }}>
+  <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", overflowX: "hidden" }}>
+    <GlobalMobileStyles />
     <div style={{ padding: "50px 24px 20px", textAlign: "center" }}>
       <Logo />
-      <div style={{ fontSize: 32, fontWeight: 800, color: "#F4822A", marginTop: 24, marginBottom: 12 }}>
+      <div className="yt-congrats-title" style={{ fontWeight: 800, color: "#F4822A", marginTop: 24, marginBottom: 12 }}>
         Congratulations!
       </div>
       <div style={{ fontSize: 17, color: "rgba(255,255,255,0.6)", maxWidth: 500, margin: "0 auto" }}>
@@ -549,7 +582,7 @@ const CongratsPage = () => (
     </div>
  
     <div style={{ width: "100%", maxWidth: 700, margin: "0 auto", padding: "0 24px 20px", textAlign: "center" }}>
-      <div style={{ fontSize: 26, fontWeight: 800, color: "#fff", marginBottom: 16 }}>
+      <div className="yt-congrats-heading" style={{ fontWeight: 800, color: "#fff", marginBottom: 16 }}>
         Building Australia's Largest Tradie Network
       </div>
       <div style={{ fontSize: 16, color: "rgba(255,255,255,0.5)", lineHeight: 1.7 }}>
@@ -636,15 +669,13 @@ export default function App() {
       return <CongratsPage />;
     }
     return (
-      <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", padding: "40px 24px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div style={{
-          maxWidth: 1000, margin: "0 auto", width: "100%", display: "grid",
-          gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center"
-        }}>
+      <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", padding: "40px 24px", display: "flex", flexDirection: "column", justifyContent: "center", overflowX: "hidden" }}>
+        <GlobalMobileStyles />
+        <div className="yt-waitlist-grid">
           <div>
             <Logo />
             <div style={{ marginBottom: 32 }}>
-              <div style={{ fontSize: 26, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.3, marginBottom: 10 }}>
+              <div className="yt-congrats-heading" style={{ fontWeight: 800, color: "#FFFFFF", lineHeight: 1.3, marginBottom: 10 }}>
                 Get found. Get hired. Get rewarded.
               </div>
               <div style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
