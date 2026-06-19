@@ -174,7 +174,7 @@ const PhoneMockup = () => (
         position: "absolute", top: 10, left: "50%", transform: "translateX(-50%)",
         width: 76, height: 20, background: "#000", borderRadius: "0 0 14px 14px", zIndex: 2
       }} />
-      <div style={{ background: "#0D1B2A", borderRadius: 30, height: "100%", overflow: "hidden" }}>
+      <div style={{ background: "#0D1B2A", borderRadius: 30, height: "100%", overflow: "hidden", display: "flex", flexDirection: "column" }}>
         <div style={{ background: "#0D1B2A", padding: "32px 16px 16px" }}>
           <div style={{ fontSize: 10, color: "#F4822A", fontWeight: 800, letterSpacing: 1, marginBottom: 10 }}>YOUR TRADIE</div>
           <div style={{ fontSize: 17, color: "#fff", fontWeight: 800, lineHeight: 1.25, marginBottom: 6 }}>Find a trusted tradie near you</div>
@@ -185,7 +185,7 @@ const PhoneMockup = () => (
             <div style={{ flex: 1, background: "rgba(255,255,255,0.08)", borderRadius: 6, padding: "7px 9px", fontSize: 9, color: "#fff" }}>All areas</div>
           </div>
         </div>
-        <div style={{ background: "#F5F5F0", padding: 14, height: "100%" }}>
+        <div style={{ background: "#F5F5F0", padding: 14, flex: 1, overflow: "hidden" }}>
           <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
             <div style={{ flex: 1, background: "#fff", border: "1.5px dashed #F4822A", borderRadius: 10, padding: 8 }}>
               <div style={{ fontSize: 9, fontWeight: 800, color: "#222" }}>Working Area</div>
@@ -206,6 +206,19 @@ const PhoneMockup = () => (
             <div style={{ fontSize: 11, color: "#222", fontWeight: 800 }}>Mel Torres</div>
             <div style={{ fontSize: 9, color: "#F4822A" }}>Plumber · Bribie Island</div>
           </div>
+        </div>
+        <div style={{ background: "#fff", borderTop: "1px solid #eee", display: "flex", justifyContent: "space-around", padding: "10px 8px" }}>
+          {[
+            { icon: "📊", label: "Dashboard" },
+            { icon: "🔨", label: "Jobs" },
+            { icon: "💬", label: "Messages" },
+            { icon: "👤", label: "Account" }
+          ].map(item => (
+            <div key={item.label} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 14 }}>{item.icon}</div>
+              <div style={{ fontSize: 7, color: "#888", marginTop: 2 }}>{item.label}</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -293,6 +306,7 @@ export default function App() {
               <div style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
                 Connecting you with tradies.
               </div>
+          
             </div>
 
             {!submitted ? (
