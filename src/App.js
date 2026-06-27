@@ -642,6 +642,50 @@ export default function App() {
   const [photo, setPhoto] = useState(null);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
  
+  const [authMode, setAuthMode] = useState("register"); // "register" | "login"
+  const [authPassword, setAuthPassword] = useState("");
+ 
+  // Check for existing Supabase session on load (cookie/cache persistence)
+  React.useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        // User already logged in — go straight to onboarding or dashboard
+        setView("tradie-onboarding");
+      }
+    });
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session && view === "tradie-auth") {
+        setStep(1);
+        setView("tradie-onboarding");
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+ 
+  const handleSocialAuth = async (provider) => {
+    setErrorMsg(""); setLoading(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: window.location.href }
+    });
+    if (error) { setErrorMsg(error.message); setLoading(false); }
+  };
+ 
+  const handleEmailAuth = async () => {
+    if (!wEmail || !authPassword) { setErrorMsg("Please enter your email and password."); return; }
+    setLoading(true); setErrorMsg("");
+    if (authMode === "register") {
+      const { error } = await supabase.auth.signUp({ email: wEmail, password: authPassword });
+      if (error) { setErrorMsg(error.message); setLoading(false); }
+      else { setStep(1); setView("tradie-onboarding"); setLoading(false); }
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email: wEmail, password: authPassword });
+      if (error) { setErrorMsg(error.message); setLoading(false); }
+      else { setStep(1); setView("tradie-onboarding"); setLoading(false); }
+    }
+  };
+ 
   const handleWaitlistSubmit = async () => {
     if (!wName || !wEmail) { setErrorMsg("Please enter your name and email."); return; }
     setLoading(true); setErrorMsg("");
@@ -723,26 +767,121 @@ export default function App() {
  
   if (view === "landing") {
     return (
-      <Wrapper>
-        <Logo />
-        {isDevMode && <div style={{ fontSize: 11, color: "#F4822A", letterSpacing: 2, textTransform: "uppercase", marginBottom: 24, marginTop: 4 }}>Dev Mode</div>}
-        <div style={{ textAlign: "center", marginBottom: 40, maxWidth: 480 }}>
-          <div style={{ fontSize: 24, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.3, marginBottom: 10 }}>Get found. Get hired. Get rewarded.</div>
-          <div style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>Connecting you with tradies.</div>
+      <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", overflowX: "hidden" }}>
+        <GlobalMobileStyles />
+        {/* Header */}
+        <div style={{ padding: "40px 24px 0", textAlign: "center" }}>
+          <Logo />
         </div>
-        <div style={{ width: "100%", maxWidth: 420 }}>
-          <button onClick={() => { setStep(1); setView("tradie-onboarding"); }}
-            style={{ width: "100%", background: "#F4822A", border: "none", borderRadius: 12, padding: "20px", fontSize: 18, fontWeight: 800, color: "#fff", cursor: "pointer", marginBottom: 16 }}>
-            I'm a Tradie 🔨
+ 
+        {/* Hero */}
+        <div style={{ textAlign: "center", padding: "32px 24px 40px", maxWidth: 600, margin: "0 auto" }}>
+          <div style={{ fontSize: 32, fontWeight: 800, color: "#fff", lineHeight: 1.2, marginBottom: 12 }}>
+            Australia's Tradie Network
+          </div>
+          <div style={{ fontSize: 17, color: "rgba(255,255,255,0.5)", lineHeight: 1.6, marginBottom: 8 }}>
+            No lead fees. No middlemen. Just tradies and the people who need them.
+          </div>
+        </div>
+ 
+        {/* Two entry buttons */}
+        <div style={{ maxWidth: 480, margin: "0 auto", padding: "0 24px 60px", display: "flex", flexDirection: "column", gap: 16 }}>
+          {/* Tradie entry */}
+          <button onClick={() => setView("tradie-auth")}
+            style={{ width: "100%", background: "#F4822A", border: "none", borderRadius: 16, padding: "22px 20px", cursor: "pointer", textAlign: "left", position: "relative" }}>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 4 }}>For Tradies</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>I'm a Tradie 🔨</div>
+            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", marginTop: 4 }}>Sign in or create your free profile</div>
+            <div style={{ position: "absolute", right: 20, top: "50%", transform: "translateY(-50%)", fontSize: 22, color: "rgba(255,255,255,0.5)" }}>→</div>
           </button>
+ 
+          {/* Homeowner entry */}
           <button onClick={() => setView("find-tradie")}
-            style={{ width: "100%", background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 12, padding: "20px", fontSize: 18, fontWeight: 800, color: "#fff", cursor: "pointer" }}>
-            Find a Tradie 🏠
+            style={{ width: "100%", background: "rgba(255,255,255,0.06)", border: "1.5px solid rgba(255,255,255,0.15)", borderRadius: 16, padding: "22px 20px", cursor: "pointer", textAlign: "left", position: "relative" }}>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 4 }}>For Homeowners</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>Find a Tradie 🏠</div>
+            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginTop: 4 }}>Browse free — no account needed</div>
+            <div style={{ position: "absolute", right: 20, top: "50%", transform: "translateY(-50%)", fontSize: 22, color: "rgba(255,255,255,0.3)" }}>→</div>
           </button>
+ 
+          {/* Already have account */}
+          <div style={{ textAlign: "center", marginTop: 8 }}>
+            <span style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>Already have an account? </span>
+            <span onClick={() => setView("tradie-auth")} style={{ fontSize: 13, color: "#F4822A", cursor: "pointer", fontWeight: 700 }}>Sign in</span>
+          </div>
         </div>
-      </Wrapper>
+ 
+        {/* Trust strip */}
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", padding: "24px", display: "flex", justifyContent: "center", gap: 32, flexWrap: "wrap" }}>
+          {["✅ Verified tradies", "💬 Direct messaging", "⭐ Real reviews", "🚫 No lead fees"].map(item => (
+            <div key={item} style={{ fontSize: 13, color: "rgba(255,255,255,0.35)", fontWeight: 600 }}>{item}</div>
+          ))}
+        </div>
+      </div>
     );
   }
+ 
+  if (view === "tradie-auth") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", overflowX: "hidden" }}>
+        <GlobalMobileStyles />
+        <Logo />
+        <div style={{ ...cardStyle, marginTop: 8, width: "100%", maxWidth: 400 }}>
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", textAlign: "center", marginBottom: 6 }}>
+            {authMode === "register" ? "Create your free profile" : "Welcome back"}
+          </div>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>
+            {authMode === "register" ? "Join Australia's tradie network" : "Sign in to your account"}
+          </div>
+ 
+          {/* Social login buttons */}
+          <button onClick={() => handleSocialAuth("google")}
+            style={{ width: "100%", background: "#fff", border: "none", borderRadius: 10, padding: "13px 16px", fontSize: 15, fontWeight: 700, color: "#222", cursor: "pointer", marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+            <span style={{ fontSize: 18 }}>🇬</span> Continue with Google
+          </button>
+          <button onClick={() => handleSocialAuth("apple")}
+            style={{ width: "100%", background: "#000", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 10, padding: "13px 16px", fontSize: 15, fontWeight: 700, color: "#fff", cursor: "pointer", marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+            <span style={{ fontSize: 18 }}>🍎</span> Continue with Apple
+          </button>
+ 
+          {/* Divider */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+            <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.1)" }} />
+            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>or use email</span>
+            <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.1)" }} />
+          </div>
+ 
+          {/* Email fields */}
+          <input style={inputStyle} placeholder="Email address" type="email" value={wEmail} onChange={e => setWEmail(e.target.value)} />
+          <input style={{ ...inputStyle, marginBottom: 16 }} placeholder="Password" type="password" value={authPassword} onChange={e => setAuthPassword(e.target.value)} />
+ 
+          {errorMsg && <div style={{ color: "#ff6b6b", fontSize: 13, marginBottom: 12, textAlign: "center", padding: 8, background: "rgba(255,107,107,0.1)", borderRadius: 8 }}>{errorMsg}</div>}
+ 
+          <button onClick={handleEmailAuth} disabled={loading}
+            style={{ width: "100%", background: loading ? "rgba(244,130,42,0.4)" : "#F4822A", border: "none", borderRadius: 10, padding: "14px", fontSize: 16, fontWeight: 800, color: "#fff", cursor: loading ? "default" : "pointer", marginBottom: 16 }}>
+            {loading ? "Please wait..." : authMode === "register" ? "Create Account →" : "Sign In →"}
+          </button>
+ 
+          {/* Toggle register/login */}
+          <div style={{ textAlign: "center" }}>
+            {authMode === "register" ? (
+              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
+                Already have an account?{" "}
+                <span onClick={() => { setAuthMode("login"); setErrorMsg(""); }} style={{ color: "#F4822A", cursor: "pointer", fontWeight: 700 }}>Sign in</span>
+              </span>
+            ) : (
+              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
+                New to Your Tradie?{" "}
+                <span onClick={() => { setAuthMode("register"); setErrorMsg(""); }} style={{ color: "#F4822A", cursor: "pointer", fontWeight: 700 }}>Create account</span>
+              </span>
+            )}
+          </div>
+        </div>
+        <button onClick={() => setView("landing")} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.25)", fontSize: 13, cursor: "pointer", marginTop: 20 }}>← Back</button>
+      </div>
+    );
+  }
+ 
  
   if (view === "tradie-onboarding") {
     if (onboardingComplete) {
@@ -879,14 +1018,67 @@ export default function App() {
  
   if (view === "find-tradie") {
     return (
-      <Wrapper>
-        <Logo />
-        <div style={{ ...cardStyle, textAlign: "center" }}>
-          <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 12 }}>Find a Tradie</div>
-          <div style={{ fontSize: 14, color: "rgba(255,255,255,0.4)", marginBottom: 24 }}>Search and browse coming next session.</div>
-          <button onClick={() => setView("landing")} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.3)", fontSize: 13, cursor: "pointer" }}>← Back</button>
+      <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", overflowX: "hidden" }}>
+        <GlobalMobileStyles />
+        {/* Header */}
+        <div style={{ background: "#0D1B2A", padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>Your <span style={{ color: "#F4822A" }}>Tradie</span></div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button onClick={() => setView("tradie-auth")} style={{ background: "none", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 8, padding: "7px 14px", fontSize: 13, color: "rgba(255,255,255,0.7)", cursor: "pointer" }}>Sign in</button>
+            <button onClick={() => { setAuthMode("register"); setView("tradie-auth"); }} style={{ background: "#F4822A", border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 13, fontWeight: 700, color: "#fff", cursor: "pointer" }}>Register</button>
+          </div>
         </div>
-      </Wrapper>
+ 
+        {/* Search bar */}
+        <div style={{ padding: "20px 20px 12px" }}>
+          <div style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, padding: "13px 16px", fontSize: 15, color: "rgba(255,255,255,0.4)", display: "flex", alignItems: "center", gap: 10 }}>
+            <span>🔍</span>
+            <span>Search trade, name or suburb...</span>
+          </div>
+        </div>
+ 
+        {/* Trade category pills */}
+        <div style={{ padding: "0 20px 20px", overflowX: "auto" }}>
+          <div style={{ display: "flex", gap: 8, paddingBottom: 4 }}>
+            {["All", "Electrician", "Plumber", "Builder", "Painter", "Tiler", "Landscaper"].map(t => (
+              <div key={t} style={{ background: t === "All" ? "#F4822A" : "rgba(255,255,255,0.07)", border: t === "All" ? "none" : "1px solid rgba(255,255,255,0.12)", borderRadius: 20, padding: "7px 16px", fontSize: 13, color: t === "All" ? "#fff" : "rgba(255,255,255,0.6)", cursor: "pointer", whiteSpace: "nowrap", fontWeight: t === "All" ? 700 : 400 }}>
+                {t}
+              </div>
+            ))}
+          </div>
+        </div>
+ 
+        {/* Sample tradie cards */}
+        <div style={{ padding: "0 20px" }}>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>Tradies near you</div>
+          {[
+            { name: "Dave Kowalski", trade: "Electrician", area: "Redcliffe", rating: "4.9", reviews: 87, initials: "DK", color: "#F4822A" },
+            { name: "Mel Torres", trade: "Plumber", area: "Bribie Island", rating: "4.8", reviews: 54, initials: "MT", color: "#1D9E75" },
+            { name: "Sam Chen", trade: "Builder", area: "North Lakes", rating: "5.0", reviews: 31, initials: "SC", color: "#378ADD" }
+          ].map(tradie => (
+            <div key={tradie.name} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "16px", marginBottom: 12, display: "flex", alignItems: "center", gap: 14, cursor: "pointer" }}>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: tradie.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: "#fff", fontWeight: 800, flexShrink: 0 }}>{tradie.initials}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 15, fontWeight: 800, color: "#fff", marginBottom: 2 }}>{tradie.name}</div>
+                <div style={{ fontSize: 13, color: "#F4822A", marginBottom: 4 }}>{tradie.trade} · {tradie.area}</div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>⭐ {tradie.rating} · {tradie.reviews} reviews · ✅ Verified</div>
+              </div>
+              <div style={{ fontSize: 20, color: "rgba(255,255,255,0.2)" }}>→</div>
+            </div>
+          ))}
+        </div>
+ 
+        {/* Soft login nudge at bottom */}
+        <div style={{ margin: "20px", background: "rgba(244,130,42,0.08)", border: "1px solid rgba(244,130,42,0.2)", borderRadius: 14, padding: "16px", textAlign: "center" }}>
+          <div style={{ fontSize: 14, color: "rgba(255,255,255,0.6)", marginBottom: 10 }}>Want to message a tradie or save favourites?</div>
+          <button onClick={() => { setAuthMode("register"); setView("tradie-auth"); }}
+            style={{ background: "#F4822A", border: "none", borderRadius: 8, padding: "10px 24px", fontSize: 14, fontWeight: 700, color: "#fff", cursor: "pointer" }}>
+            Create a free account →
+          </button>
+        </div>
+ 
+        <button onClick={() => setView("landing")} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.2)", fontSize: 13, cursor: "pointer", padding: "10px 20px 40px" }}>← Back to home</button>
+      </div>
     );
   }
 }
