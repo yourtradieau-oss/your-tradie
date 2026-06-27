@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
  
@@ -789,7 +788,7 @@ export default function App() {
                 style={{ width: "100%", background: "#F4822A", border: "none", borderRadius: 14, padding: "20px 20px", cursor: "pointer", textAlign: "left", position: "relative" }}>
                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 }}>For Tradies</div>
                 <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>I'm a Tradie</div>
-                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", marginTop: 2 }}>Sign in or create your free profile</div>
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", marginTop: 2 }}>Build your profile and get discovered</div>
                 <div style={{ position: "absolute", right: 18, top: "50%", transform: "translateY(-50%)", fontSize: 20, color: "rgba(255,255,255,0.5)" }}>→</div>
               </button>
  
@@ -797,7 +796,7 @@ export default function App() {
                 style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 14, padding: "20px 20px", cursor: "pointer", textAlign: "left", position: "relative" }}>
                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 }}>For Homeowners</div>
                 <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>Find a Tradie</div>
-                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>Browse free — no account needed</div>
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>Search and connect with local tradies</div>
                 <div style={{ position: "absolute", right: 18, top: "50%", transform: "translateY(-50%)", fontSize: 20, color: "rgba(255,255,255,0.2)" }}>→</div>
               </button>
  
@@ -813,9 +812,17 @@ export default function App() {
         </div>
  
         {/* Trust strip */}
-        <div style={{ marginTop: 48, borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 24, display: "flex", justifyContent: "center", gap: 32, flexWrap: "wrap" }}>
-          {["Verified tradies", "Direct messaging", "Real reviews", "No lead fees"].map(item => (
-            <div key={item} style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", fontWeight: 600, letterSpacing: 0.5 }}>{item}</div>
+        <div style={{ marginTop: 48, borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 28, display: "flex", justifyContent: "center", gap: 40, flexWrap: "wrap" }}>
+          {[
+            { label: "Verified tradies", dot: "#1D9E75" },
+            { label: "Direct messaging", dot: "#378ADD" },
+            { label: "Real reviews", dot: "#F4822A" },
+            { label: "No lead fees", dot: "#F4822A" }
+          ].map(item => (
+            <div key={item.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 7, height: 7, borderRadius: "50%", background: item.dot }} />
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>{item.label}</div>
+            </div>
           ))}
         </div>
  
