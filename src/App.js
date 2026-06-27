@@ -106,13 +106,13 @@ const GlobalMobileStyles = () => (
 );
  
  
-const Logo = () => (
+const Logo = ({ dark = true }) => (
   <div style={{ textAlign: "center", marginBottom: 16 }}>
-    <div className="yt-logo-text" style={{ fontWeight: 800, color: "#FFFFFF", letterSpacing: -2, lineHeight: 1 }}>
+    <div className="yt-logo-text" style={{ fontWeight: 800, color: dark ? "#FFFFFF" : "#0D1B2A", letterSpacing: -2, lineHeight: 1 }}>
       Your <span style={{ color: "#F4822A" }}>Tradie</span>
     </div>
     <div style={{ height: 4, background: "#F4822A", borderRadius: 2, margin: "10px auto 0", width: 200 }} />
-    <div style={{ fontSize: 11, letterSpacing: 4, color: "rgba(255,255,255,0.35)", marginTop: 10, textTransform: "uppercase" }}>
+    <div style={{ fontSize: 11, letterSpacing: 4, color: dark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.35)", marginTop: 10, textTransform: "uppercase" }}>
       Australia's Tradie Network
     </div>
   </div>
@@ -619,6 +619,7 @@ const CongratsPage = () => (
 export default function App() {
   const isDevMode = window.location.pathname === DEV_PATH;
   const [view, setView] = useState(isDevMode ? "landing" : "waitlist");
+  const [darkMode, setDarkMode] = useState(true);
  
   const [wName, setWName] = useState("");
   const [wEmail, setWEmail] = useState("");
@@ -766,69 +767,68 @@ export default function App() {
   }
  
   if (view === "landing") {
+    const bg = darkMode ? "#0D1B2A" : "#F5F5F0";
+    const text = darkMode ? "#fff" : "#0D1B2A";
+    const subText = darkMode ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.5)";
+    const cardBg = darkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)";
+    const cardBorder = darkMode ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(0,0,0,0.1)";
+    const divider = darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+    const signInColor = darkMode ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.35)";
     return (
-      <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", overflowX: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "40px 24px" }}>
+      <div style={{ minHeight: "100vh", background: bg, fontFamily: "sans-serif", overflowX: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "40px 24px", transition: "background 0.3s" }}>
         <GlobalMobileStyles />
+        <div style={{ position: "fixed", top: 20, right: 20, zIndex: 100 }}>
+          <button onClick={() => setDarkMode(!darkMode)} style={{ background: darkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)", border: darkMode ? "1px solid rgba(255,255,255,0.15)" : "1px solid rgba(0,0,0,0.12)", borderRadius: 20, padding: "6px 16px", fontSize: 12, fontWeight: 700, color: darkMode ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.5)", cursor: "pointer", letterSpacing: 0.5 }}>
+            {darkMode ? "Light mode" : "Dark mode"}
+          </button>
+        </div>
         <div className="yt-waitlist-grid">
-          {/* Left column */}
           <div>
-            <Logo />
+            <Logo dark={darkMode} />
             <div style={{ marginBottom: 32 }}>
-              <div style={{ fontSize: 26, fontWeight: 800, color: "#fff", lineHeight: 1.3, marginBottom: 10 }}>
-                Get found. Get hired. Get rewarded.
-              </div>
-              <div style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
-                No lead fees. No middlemen. Just tradies and the people who need them.
-              </div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: text, lineHeight: 1.3, marginBottom: 10 }}>Get found. Get hired. Get rewarded.</div>
+              <div style={{ fontSize: 16, color: subText, lineHeight: 1.6 }}>No lead fees. No middlemen. Just tradies and the people who need them.</div>
             </div>
- 
-            {/* Entry buttons */}
             <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 440 }}>
-              <button onClick={() => setView("tradie-auth")}
-                style={{ width: "100%", background: "#F4822A", border: "none", borderRadius: 14, padding: "20px 20px", cursor: "pointer", textAlign: "left", position: "relative" }}>
+              <button onClick={() => setView("tradie-auth")} style={{ width: "100%", background: "#F4822A", border: "none", borderRadius: 14, padding: "20px 20px", cursor: "pointer", textAlign: "left", position: "relative" }}>
                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 }}>For Tradies</div>
                 <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>I'm a Tradie</div>
                 <div style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", marginTop: 2 }}>Build your profile and get discovered</div>
                 <div style={{ position: "absolute", right: 18, top: "50%", transform: "translateY(-50%)", fontSize: 20, color: "rgba(255,255,255,0.5)" }}>→</div>
               </button>
- 
-              <button onClick={() => setView("find-tradie")}
-                style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 14, padding: "20px 20px", cursor: "pointer", textAlign: "left", position: "relative" }}>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 }}>For Homeowners</div>
-                <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>Find a Tradie</div>
-                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>Search and connect with local tradies</div>
-                <div style={{ position: "absolute", right: 18, top: "50%", transform: "translateY(-50%)", fontSize: 20, color: "rgba(255,255,255,0.2)" }}>→</div>
+              <button onClick={() => setView("find-tradie")} style={{ width: "100%", background: cardBg, border: cardBorder, borderRadius: 14, padding: "20px 20px", cursor: "pointer", textAlign: "left", position: "relative" }}>
+                <div style={{ fontSize: 11, color: subText, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 }}>For Homeowners</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: text }}>Find a Tradie</div>
+                <div style={{ fontSize: 13, color: subText, marginTop: 2 }}>Search and connect with local tradies</div>
+                <div style={{ position: "absolute", right: 18, top: "50%", transform: "translateY(-50%)", fontSize: 20, color: subText }}>→</div>
               </button>
- 
               <div style={{ textAlign: "center", marginTop: 4 }}>
-                <span style={{ fontSize: 13, color: "rgba(255,255,255,0.25)" }}>Already have an account? </span>
+                <span style={{ fontSize: 13, color: signInColor }}>Already have an account? </span>
                 <span onClick={() => { setAuthMode("login"); setView("tradie-auth"); }} style={{ fontSize: 13, color: "#F4822A", cursor: "pointer", fontWeight: 700 }}>Sign in</span>
               </div>
             </div>
           </div>
- 
-          {/* Right column — phone mockup */}
           <PhoneMockup />
         </div>
- 
-        {/* Trust strip */}
-        <div style={{ marginTop: 48, borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 28, display: "flex", justifyContent: "center", gap: 40, flexWrap: "wrap" }}>
-          {[
-            { label: "Verified tradies", dot: "#1D9E75" },
-            { label: "Direct messaging", dot: "#378ADD" },
-            { label: "Real reviews", dot: "#F4822A" },
-            { label: "No lead fees", dot: "#F4822A" }
-          ].map(item => (
-            <div key={item.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{ width: 7, height: 7, borderRadius: "50%", background: item.dot }} />
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>{item.label}</div>
-            </div>
-          ))}
+        <div style={{ marginTop: 52, borderTop: `1px solid ${divider}`, paddingTop: 36 }}>
+          <div style={{ textAlign: "center", marginBottom: 20 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: subText }}>Why tradies choose us</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
+            {[
+              { label: "Verified Tradies", sub: "Licence & ABN checked", color: "#1D9E75" },
+              { label: "No Lead Fees", sub: "Ever. Not one cent.", color: "#F4822A" },
+              { label: "Direct Messaging", sub: "Talk directly, no middlemen", color: "#378ADD" },
+              { label: "Real Reviews", sub: "From real customers", color: "#F4822A" }
+            ].map(item => (
+              <div key={item.label} style={{ background: darkMode ? `${item.color}18` : `${item.color}12`, border: `1.5px solid ${item.color}50`, borderRadius: 12, padding: "16px 22px", minWidth: 160, textAlign: "center" }}>
+                <div style={{ fontSize: 15, fontWeight: 800, color: item.color, marginBottom: 4 }}>{item.label}</div>
+                <div style={{ fontSize: 12, color: subText }}>{item.sub}</div>
+              </div>
+            ))}
+          </div>
         </div>
- 
-        <div style={{ marginTop: 24, fontSize: 12, color: "rgba(255,255,255,0.15)", textAlign: "center" }}>
-          © 2025 Your Tradie · Australia
-        </div>
+        <div style={{ marginTop: 28, fontSize: 12, color: signInColor, textAlign: "center" }}>© 2025 Your Tradie · Australia</div>
       </div>
     );
   }
