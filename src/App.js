@@ -661,7 +661,7 @@ export default function App() {
       }
     });
     return () => subscription.unsubscribe();
-  }, []);
+  }, [view]);
 
   const handleSocialAuth = async (provider) => {
     setErrorMsg(""); setLoading(true);
