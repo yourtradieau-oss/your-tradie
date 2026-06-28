@@ -821,7 +821,7 @@ export default function App() {
               { label: "Direct Messaging", sub: "No middlemen involved", color: "#F4822A" },
               { label: "Real Reviews", sub: "From real customers", color: "#F4822A" }
             ].map(item => (
-              <div key={item.label} style={{ background: darkMode ? `${item.color}18` : `${item.color}12`, border: `1.5px solid ${item.color}50`, borderRadius: 12, padding: "16px 22px", minWidth: 160, textAlign: "center" }}>
+              <div key={item.label} style={{ background: darkMode ? `${item.color}18` : `${item.color}12`, border: `1.5px solid ${item.color}50`, borderRadius: 12, padding: "16px 22px", width: 220, minHeight: 80, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                 <div style={{ fontSize: 15, fontWeight: 800, color: item.color, marginBottom: 4 }}>{item.label}</div>
                 <div style={{ fontSize: 12, color: subText }}>{item.sub}</div>
               </div>
