@@ -300,7 +300,6 @@ const ServiceAreaPicker = ({ serviceAreas, onAdd, onRemove }) => {
   const [postcodeSearch, setPostcodeSearch] = useState("");
   const [postcodeResult, setPostcodeResult] = useState(null);
   const [otherText, setOtherText] = useState("");
-  const [showOther, setShowOther] = useState(false);
  
   const states = Object.keys(REGION_DATA);
  
@@ -319,7 +318,7 @@ const ServiceAreaPicker = ({ serviceAreas, onAdd, onRemove }) => {
   };
  
   const submitOther = () => {
-    if (otherText.trim()) { onAdd({ label: otherText.trim(), isCustom: true }); setOtherText(""); setShowOther(false); }
+   if (otherText.trim()) { onAdd({ label: otherText.trim(), isCustom: true }); setOtherText(""); }
   };
  
   const handlePostcodeSearch = (val) => {
