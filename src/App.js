@@ -1,4 +1,4 @@
-
+App · JS
 import React, { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
  
@@ -300,6 +300,7 @@ const ServiceAreaPicker = ({ serviceAreas, onAdd, onRemove }) => {
   const [postcodeSearch, setPostcodeSearch] = useState("");
   const [postcodeResult, setPostcodeResult] = useState(null);
   const [otherText, setOtherText] = useState("");
+  const [showOther, setShowOther] = useState(false);
  
   const states = Object.keys(REGION_DATA);
  
@@ -318,7 +319,7 @@ const ServiceAreaPicker = ({ serviceAreas, onAdd, onRemove }) => {
   };
  
   const submitOther = () => {
-   if (otherText.trim()) { onAdd({ label: otherText.trim(), isCustom: true }); setOtherText(""); }
+    if (otherText.trim()) { onAdd({ label: otherText.trim(), isCustom: true }); setOtherText(""); setShowOther(false); }
   };
  
   const handlePostcodeSearch = (val) => {
@@ -709,7 +710,6 @@ export default function App() {
   const [licenceNumber, setLicenceNumber] = useState("");
   const [abn, setAbn] = useState("");
   const [photo, setPhoto] = useState(null);
-  const [onboardingComplete, setOnboardingComplete] = useState(false);
   const [authMode, setAuthMode] = useState("register");
   const [authPassword, setAuthPassword] = useState("");
  
@@ -790,7 +790,9 @@ export default function App() {
       ...serviceAreas.filter(a => a.isCustom).map(a => ({ suggestion_type: "area", value: a.label, submitted_by: fullName, status: "pending" }))
     ];
     if (allCustom.length > 0) await supabase.from("suggestions").insert(allCustom);
-    setLoading(false); setOnboardingComplete(true);
+    setLoading(false);
+    setView("tradie-dashboard");
+    setStep(1);
   };
  
   if (view === "waitlist") {
@@ -939,20 +941,6 @@ export default function App() {
   }
  
   if (view === "tradie-onboarding") {
-    if (onboardingComplete) {
-      return (
-        <Wrapper>
-          <Logo />
-          <div style={{ ...cardStyle, textAlign: "center" }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🚀</div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Profile Launched!</div>
-            <div style={{ fontSize: 15, color: "rgba(255,255,255,0.5)", lineHeight: 1.6, marginBottom: 24 }}>Welcome to Your Tradie, {fullName.split(" ")[0]}!</div>
-            <button onClick={() => { setView("tradie-dashboard"); setOnboardingComplete(false); setStep(1); }} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.3)", fontSize: 13, cursor: "pointer" }}>Go to dashboard →</button>
-          </div>
-        </Wrapper>
-      );
-    }
- 
     return (
       <Wrapper>
         <Logo />
@@ -1095,4 +1083,3 @@ export default function App() {
     );
   }
 }
- 
