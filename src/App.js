@@ -1,3 +1,4 @@
+App · JS
 import React, { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
  
@@ -5,7 +6,6 @@ const supabase = createClient(
   "https://sbidwhsnwdsvkbdwzphb.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaWR3aHNud2RzdmtiZHd6cGhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MzcyOTcsImV4cCI6MjA5NzIxMzI5N30.eCkIM3gKZCi7hY-ef9JQjRHHBZ-97VSVC2npQH6M26g"
 );
- 
 const DEV_PATH = "/dev";
  
 const TRADES = [
@@ -120,12 +120,11 @@ const Tag = ({ label, onRemove, pending }) => (
   </div>
 );
  
-// Searchable list with "Other" freetext at bottom
-const SearchSelect = ({ items, selected, onAdd, placeholder, max, onAddCustom }) => {
+// Searchable list with always-visible "Other" freetext at bottom
+const SearchSelect = ({ items, selected, onAdd, placeholder, max, onAddCustom, customItems, onRemoveCustom }) => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [otherText, setOtherText] = useState("");
-  const [showOther, setShowOther] = useState(false);
  
   const filtered = items.filter(i =>
     i.toLowerCase().includes(search.toLowerCase()) && !selected.includes(i)
@@ -138,45 +137,46 @@ const SearchSelect = ({ items, selected, onAdd, placeholder, max, onAddCustom })
   };
  
   const submitOther = () => {
-    if (otherText.trim()) { onAddCustom(otherText.trim()); setOtherText(""); setShowOther(false); }
+    if (otherText.trim()) { onAddCustom(otherText.trim()); setOtherText(""); }
   };
  
   return (
-    <div style={{ position: "relative", marginBottom: 12 }}>
-      <input
-        style={{ ...inputStyle, marginBottom: 0 }}
-        placeholder={max && selected.length >= max ? `Max ${max} selected` : placeholder}
-        value={search}
-        disabled={max && selected.length >= max}
-        onChange={e => { setSearch(e.target.value); setOpen(true); }}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setTimeout(() => setOpen(false), 150)}
-        onKeyDown={handleKey}
-      />
-      {open && (
-        <div style={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100, background: "#1a2d42", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, maxHeight: 220, overflowY: "auto", marginTop: 4 }}>
-          {filtered.map(item => (
-            <div key={item} onMouseDown={() => { onAdd(item); setSearch(""); setOpen(false); }}
-              style={{ padding: "10px 16px", fontSize: 14, color: "#fff", cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.05)" }}
-              onMouseEnter={e => e.currentTarget.style.background = "rgba(244,130,42,0.1)"}
-              onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-              {item}
-            </div>
-          ))}
-          <div onMouseDown={() => { setShowOther(true); setOpen(false); setSearch(""); }}
-            style={{ padding: "10px 16px", fontSize: 14, color: "#F4822A", cursor: "pointer", borderTop: "1px solid rgba(255,255,255,0.08)", fontWeight: 700 }}>
-            + Other (not listed)
+    <div style={{ marginBottom: 12 }}>
+      <div style={{ position: "relative" }}>
+        <input
+          style={{ ...inputStyle, marginBottom: 0 }}
+          placeholder={max && selected.length >= max ? `Max ${max} selected` : placeholder}
+          value={search}
+          disabled={max && selected.length >= max}
+          onChange={e => { setSearch(e.target.value); setOpen(true); }}
+          onFocus={() => setOpen(true)}
+          onBlur={() => setTimeout(() => setOpen(false), 150)}
+          onKeyDown={handleKey}
+        />
+        {open && (
+          <div style={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100, background: "#1a2d42", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, maxHeight: 220, overflowY: "auto", marginTop: 4 }}>
+            {filtered.map(item => (
+              <div key={item} onMouseDown={() => { onAdd(item); setSearch(""); setOpen(false); }}
+                style={{ padding: "10px 16px", fontSize: 14, color: "#fff", cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(244,130,42,0.1)"}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                {item}
+              </div>
+            ))}
+            {filtered.length === 0 && search.trim() && (
+              <div style={{ padding: "10px 16px", fontSize: 13, color: "rgba(255,255,255,0.3)" }}>No matches — add using "Other" below</div>
+            )}
           </div>
-        </div>
-      )}
-      {showOther && (
-        <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
-          <input style={{ ...inputStyle, marginBottom: 0, flex: 1 }} placeholder="Type your own..." value={otherText}
-            onChange={e => setOtherText(e.target.value)} onKeyDown={e => e.key === "Enter" && submitOther()} autoFocus />
-          <button onClick={submitOther} style={{ background: "#F4822A", border: "none", borderRadius: 10, padding: "0 16px", color: "#fff", fontWeight: 800, cursor: "pointer", fontSize: 14 }}>Add</button>
-          <button onClick={() => { setShowOther(false); setOtherText(""); }} style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "0 12px", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: 13 }}>✕</button>
-        </div>
-      )}
+        )}
+      </div>
+      {/* Always-visible Other bar */}
+      <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+        <input style={{ ...inputStyle, marginBottom: 0, flex: 1, fontSize: 13 }}
+          placeholder="Not listed? Type it here..."
+          value={otherText} onChange={e => setOtherText(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && submitOther()} />
+        <button onClick={submitOther} style={{ background: otherText.trim() ? "#F4822A" : "rgba(255,255,255,0.1)", border: "none", borderRadius: 10, padding: "0 14px", color: "#fff", fontWeight: 800, cursor: otherText.trim() ? "pointer" : "default", fontSize: 13 }}>Add</button>
+      </div>
     </div>
   );
 };
@@ -239,10 +239,66 @@ const REGION_DATA = {
   },
 };
  
+const POSTCODE_MAP = {
+  "4000": "Brisbane CBD", "4001": "Brisbane CBD", "4005": "New Farm", "4006": "Fortitude Valley",
+  "4007": "Ascot", "4010": "Albion", "4011": "Clayfield", "4012": "Nundah", "4013": "Northgate",
+  "4014": "Sandgate", "4017": "Bracken Ridge", "4018": "Fitzgibbon", "4019": "Redcliffe",
+  "4020": "Woody Point", "4021": "Kippa-Ring", "4029": "Herston", "4030": "Lutwyche",
+  "4031": "Kedron", "4032": "Chermside", "4033": "Aspley", "4034": "Zillmere",
+  "4035": "Bridgeman Downs", "4036": "Bald Hills", "4051": "Gaythorne", "4053": "Everton Park",
+  "4054": "The Gap", "4055": "Ferny Grove", "4059": "Paddington", "4060": "Toowong",
+  "4061": "Taringa", "4064": "Milton", "4065": "Fig Tree Pocket", "4066": "Indooroopilly",
+  "4067": "St Lucia", "4068": "Chelmer", "4069": "Chapel Hill", "4070": "Brookfield",
+  "4072": "Kenmore", "4073": "Riverhills", "4074": "Jindalee", "4075": "Oxley",
+  "4076": "Darra", "4077": "Inala", "4078": "Forest Lake", "4101": "South Brisbane",
+  "4102": "Woolloongabba", "4103": "Annerley", "4104": "Yeronga", "4105": "Moorooka",
+  "4106": "Rocklea", "4107": "Salisbury", "4108": "Coopers Plains", "4109": "Macgregor",
+  "4110": "Sunnybank", "4111": "Nathan", "4112": "Runcorn", "4113": "Eight Mile Plains",
+  "4114": "Logan Central", "4115": "Stretton", "4116": "Kuraby", "4117": "Karawatha",
+  "4118": "Parkinson", "4119": "Wishart", "4120": "Greenslopes", "4121": "Holland Park",
+  "4122": "Mount Gravatt", "4123": "Carindale", "4124": "Springwood", "4125": "Slacks Creek",
+  "4127": "Underwood", "4128": "Shailer Park", "4129": "Loganholme", "4130": "Meadowbrook",
+  "4131": "Kingston", "4132": "Woodridge", "4133": "Waterford West", "4157": "Capalaba",
+  "4158": "Thornlands", "4159": "Birkdale", "4160": "Wellington Point", "4161": "Alexandra Hills",
+  "4163": "Cleveland", "4164": "Thornlands", "4165": "Redland Bay", "4169": "East Brisbane",
+  "4170": "Coorparoo", "4171": "Balmoral", "4172": "Murarrie", "4173": "Tingalpa",
+  "4174": "Hemmant", "4178": "Wynnum", "4179": "Lytton", "4205": "Beenleigh",
+  "4207": "Yatala", "4208": "Ormeau", "4209": "Coomera", "4210": "Helensvale",
+  "4211": "Sanctuary Cove", "4212": "Hope Island", "4213": "Mudgeeraba", "4214": "Labrador",
+  "4215": "Southport", "4216": "Runaway Bay", "4217": "Surfers Paradise", "4218": "Broadbeach",
+  "4219": "Mermaid Beach", "4220": "Burleigh Heads", "4221": "Palm Beach", "4222": "Currumbin",
+  "4223": "Tugun", "4224": "Coolangatta", "4225": "Gold Coast", "4226": "Robina",
+  "4227": "Varsity Lakes", "4228": "Reedy Creek", "4229": "Tallebudgera",
+  "4300": "Springfield", "4301": "Goodna", "4303": "Redbank", "4304": "Collingwood Park",
+  "4305": "Ipswich CBD", "4306": "Karalee", "4307": "Ripley", "4350": "Toowoomba CBD",
+  "4500": "Strathpine", "4501": "Petrie", "4502": "Kallangur", "4503": "Mango Hill",
+  "4504": "Narangba", "4505": "Burpengary", "4506": "Morayfield", "4507": "Bribie Island",
+  "4508": "North Lakes", "4509": "North Lakes", "4510": "Caboolture", "4511": "Beachmere",
+  "4512": "Woodford", "4514": "Kilcoy", "4515": "Esk", "4516": "Elimbah",
+  "4517": "Landsborough", "4518": "Maleny", "4519": "Woodford", "4520": "Cedar Creek",
+  "4550": "Caloundra", "4551": "Caloundra West", "4552": "Pelican Waters", "4553": "Mooloolah",
+  "4554": "Palmview", "4555": "Eudlo", "4556": "Buderim", "4557": "Maroochydore",
+  "4558": "Maroochydore", "4559": "Nambour", "4560": "Nambour", "4561": "Eumundi",
+  "4562": "Noosaville", "4563": "Tewantin", "4564": "Peregian Beach", "4565": "Noosa Heads",
+  "4566": "Noosa Heads", "4567": "Noosa Heads", "4568": "Pomona", "4569": "Kin Kin",
+  "4570": "Gympie", "2000": "Sydney CBD", "2010": "Surry Hills", "2020": "Mascot",
+  "2060": "North Sydney", "2065": "Chatswood", "2067": "Chatswood", "2077": "Hornsby",
+  "2150": "Parramatta", "2155": "Kellyville", "2170": "Liverpool", "2199": "Bankstown",
+  "2747": "Penrith", "2750": "Penrith", "2560": "Campbelltown", "2300": "Newcastle CBD",
+  "2500": "Wollongong CBD", "2250": "Gosford", "3000": "Melbourne CBD", "3006": "Southbank",
+  "3011": "Footscray", "3121": "Richmond", "3122": "Hawthorn", "3150": "Glen Waverley",
+  "3175": "Dandenong", "3199": "Frankston", "3220": "Geelong CBD", "6000": "Perth CBD",
+  "6005": "West Perth", "6060": "Stirling", "6100": "Burswood", "6155": "Canning Vale",
+  "6164": "Cockburn", "5000": "Adelaide CBD", "5041": "Marion", "7000": "Hobart CBD",
+  "2600": "Canberra CBD", "0800": "Darwin CBD",
+};
+ 
 const ServiceAreaPicker = ({ serviceAreas, onAdd, onRemove }) => {
   const [selectedState, setSelectedState] = useState(null);
   const [regionSearch, setRegionSearch] = useState("");
   const [selectedRegion, setSelectedRegion] = useState(null);
+  const [postcodeSearch, setPostcodeSearch] = useState("");
+  const [postcodeResult, setPostcodeResult] = useState(null);
   const [otherText, setOtherText] = useState("");
   const [showOther, setShowOther] = useState(false);
  
@@ -264,6 +320,20 @@ const ServiceAreaPicker = ({ serviceAreas, onAdd, onRemove }) => {
  
   const submitOther = () => {
     if (otherText.trim()) { onAdd({ label: otherText.trim(), isCustom: true }); setOtherText(""); setShowOther(false); }
+  };
+ 
+  const handlePostcodeSearch = (val) => {
+    setPostcodeSearch(val);
+    const suburb = POSTCODE_MAP[val.trim()];
+    setPostcodeResult(suburb ? { suburb, postcode: val.trim() } : null);
+  };
+ 
+  const addPostcodeArea = () => {
+    if (postcodeResult) {
+      addArea(`${postcodeResult.suburb} (${postcodeResult.postcode})`);
+      setPostcodeSearch("");
+      setPostcodeResult(null);
+    }
   };
  
   return (
@@ -317,6 +387,29 @@ const ServiceAreaPicker = ({ serviceAreas, onAdd, onRemove }) => {
         </>
       )}
  
+      {/* POSTCODE SEARCH */}
+      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 8, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>Or search by postcode</div>
+      <div style={{ display: "flex", gap: 8, marginBottom: 4 }}>
+        <input style={{ ...inputStyle, marginBottom: 0, flex: 1 }} placeholder="Type postcode e.g. 4507"
+          value={postcodeSearch} onChange={e => handlePostcodeSearch(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && postcodeResult && addPostcodeArea()} />
+        {postcodeResult && (
+          <button onClick={addPostcodeArea} style={{ background: "#F4822A", border: "none", borderRadius: 10, padding: "0 16px", color: "#fff", fontWeight: 800, cursor: "pointer", fontSize: 14, whiteSpace: "nowrap" }}>
+            Add →
+          </button>
+        )}
+      </div>
+      {postcodeResult && (
+        <div style={{ fontSize: 13, color: "#F4822A", marginBottom: 12, paddingLeft: 4 }}>
+          📍 {postcodeResult.suburb} ({postcodeResult.postcode})
+        </div>
+      )}
+      {postcodeSearch.length === 4 && !postcodeResult && (
+        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 12, paddingLeft: 4 }}>
+          Postcode not found — use "add manually" below
+        </div>
+      )}
+ 
       {/* Selected areas */}
       {serviceAreas.length > 0 && (
         <>
@@ -327,17 +420,13 @@ const ServiceAreaPicker = ({ serviceAreas, onAdd, onRemove }) => {
         </>
       )}
  
-      {/* Other fallback */}
-      {!showOther ? (
-        <div onClick={() => setShowOther(true)} style={{ fontSize: 13, color: "rgba(255,255,255,0.3)", cursor: "pointer", marginTop: 4 }}>+ My area isn't listed — add it manually</div>
-      ) : (
-        <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-          <input style={{ ...inputStyle, marginBottom: 0, flex: 1 }} placeholder="Type suburb or postcode..."
-            value={otherText} onChange={e => setOtherText(e.target.value)} onKeyDown={e => e.key === "Enter" && submitOther()} autoFocus />
-          <button onClick={submitOther} style={{ background: "#F4822A", border: "none", borderRadius: 10, padding: "0 16px", color: "#fff", fontWeight: 800, cursor: "pointer" }}>Add</button>
-          <button onClick={() => { setShowOther(false); setOtherText(""); }} style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "0 12px", color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>✕</button>
-        </div>
-      )}
+      {/* Other fallback — always visible */}
+      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 8, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>Add area manually</div>
+      <div style={{ display: "flex", gap: 8 }}>
+        <input style={{ ...inputStyle, marginBottom: 0, flex: 1 }} placeholder="Type any suburb, area or postcode..."
+          value={otherText} onChange={e => setOtherText(e.target.value)} onKeyDown={e => e.key === "Enter" && submitOther()} />
+        <button onClick={submitOther} style={{ background: otherText.trim() ? "#F4822A" : "rgba(255,255,255,0.1)", border: "none", borderRadius: 10, padding: "0 16px", color: "#fff", fontWeight: 800, cursor: otherText.trim() ? "pointer" : "default", fontSize: 14 }}>Add</button>
+      </div>
     </div>
   );
 };
