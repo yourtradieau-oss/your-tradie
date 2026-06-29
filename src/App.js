@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
  
@@ -183,97 +182,161 @@ const SearchSelect = ({ items, selected, onAdd, placeholder, max, onAddCustom })
   );
 };
  
-// Google Places autocomplete for service areas
-const PlacesSearch = ({ onAdd, selectedAreas }) => {
-  const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [showOther, setShowOther] = useState(false);
+const REGION_DATA = {
+  QLD: {
+    "Brisbane": ["Brisbane CBD", "South Brisbane", "Fortitude Valley", "New Farm", "Paddington", "Toowong", "St Lucia", "West End"],
+    "North Brisbane": ["Chermside", "Kedron", "Nundah", "Aspley", "Sandgate", "Bracken Ridge", "Zillmere"],
+    "Moreton Bay": ["Redcliffe", "Caboolture", "Bribie Island", "North Lakes", "Morayfield", "Burpengary", "Narangba", "Strathpine", "Kallangur", "Petrie", "Mango Hill"],
+    "Sunshine Coast": ["Noosa", "Maroochydore", "Caloundra", "Nambour", "Coolum", "Kawana", "Buderim", "Sippy Downs"],
+    "Gold Coast": ["Surfers Paradise", "Broadbeach", "Robina", "Southport", "Coomera", "Helensvale", "Nerang", "Varsity Lakes", "Burleigh Heads"],
+    "Ipswich": ["Ipswich CBD", "Springfield", "Goodna", "Redbank", "Ripley", "Karalee", "Collingwood Park"],
+    "Logan": ["Logan Central", "Beenleigh", "Springwood", "Slacks Creek", "Shailer Park", "Woodridge", "Meadowbrook"],
+    "Toowoomba": ["Toowoomba CBD", "Highfields", "Gatton", "Dalby", "Harristown"],
+    "Cairns": ["Cairns CBD", "Smithfield", "Edge Hill", "Gordonvale", "Innisfail"],
+    "Townsville": ["Townsville CBD", "Thuringowa", "Kirwan", "Hermit Park", "Aitkenvale"],
+  },
+  NSW: {
+    "Sydney CBD": ["Sydney CBD", "Parramatta", "Blacktown", "Liverpool", "Campbelltown", "Penrith"],
+    "North Sydney": ["Chatswood", "Hornsby", "Pymble", "Mosman", "Manly", "Dee Why", "Brookvale"],
+    "Eastern Suburbs": ["Bondi", "Randwick", "Coogee", "Maroubra", "Kingsford", "Kensington"],
+    "Inner West": ["Leichhardt", "Newtown", "Marrickville", "Strathfield", "Burwood", "Ashfield"],
+    "South Sydney": ["Sutherland", "Cronulla", "Miranda", "Hurstville", "Kogarah", "Rockdale"],
+    "Newcastle": ["Newcastle CBD", "Maitland", "Cessnock", "Lake Macquarie", "Charlestown", "Wallsend"],
+    "Central Coast": ["Gosford", "Wyong", "Tuggerah", "The Entrance", "Woy Woy", "Erina"],
+    "Wollongong": ["Wollongong CBD", "Shellharbour", "Kiama", "Dapto", "Corrimal", "Fairy Meadow"],
+  },
+  VIC: {
+    "Melbourne CBD": ["Melbourne CBD", "Southbank", "Docklands", "Carlton", "Fitzroy", "North Melbourne"],
+    "Inner Melbourne": ["Richmond", "Collingwood", "Prahran", "St Kilda", "Port Melbourne", "South Yarra"],
+    "Eastern Melbourne": ["Box Hill", "Ringwood", "Doncaster", "Croydon", "Lilydale", "Mitcham"],
+    "Northern Melbourne": ["Coburg", "Preston", "Bundoora", "Epping", "South Morang", "Mill Park"],
+    "Western Melbourne": ["Footscray", "Sunshine", "Werribee", "Point Cook", "Hoppers Crossing", "Altona"],
+    "South East Melbourne": ["Dandenong", "Frankston", "Cranbourne", "Berwick", "Pakenham", "Narre Warren"],
+    "Geelong": ["Geelong CBD", "Torquay", "Ocean Grove", "Lara", "Corio", "Belmont"],
+    "Ballarat": ["Ballarat CBD", "Wendouree", "Sebastopol", "Mount Helen"],
+    "Bendigo": ["Bendigo CBD", "Kangaroo Flat", "Strathdale", "Eaglehawk"],
+  },
+  WA: {
+    "Perth CBD": ["Perth CBD", "Fremantle", "Midland", "Armadale", "Cannington"],
+    "North Perth": ["Stirling", "Wanneroo", "Yanchep", "Clarkson", "Butler", "Joondalup"],
+    "South Perth": ["Rockingham", "Mandurah", "Cockburn", "Canning Vale", "Thornlie"],
+    "East Perth": ["Bayswater", "Bassendean", "Swan", "Kalamunda", "Bellevue"],
+  },
+  SA: {
+    "Adelaide": ["Adelaide CBD", "Glenelg", "Marion", "Tea Tree Gully", "Campbelltown", "Unley"],
+    "North Adelaide": ["Elizabeth", "Salisbury", "Parafield", "Gawler", "Mawson Lakes"],
+    "South Adelaide": ["Noarlunga", "Morphett Vale", "Christies Beach", "Seaford"],
+  },
+  TAS: {
+    "Hobart": ["Hobart CBD", "Sandy Bay", "Glenorchy", "Kingston", "Huonville", "Moonah"],
+    "Launceston": ["Launceston CBD", "Devonport", "Burnie", "Kings Meadows"],
+  },
+  ACT: {
+    "Canberra": ["Canberra CBD", "Belconnen", "Tuggeranong", "Woden", "Gungahlin", "Queanbeyan"],
+  },
+  NT: {
+    "Darwin": ["Darwin CBD", "Palmerston", "Casuarina", "Nightcliff", "Humpty Doo"],
+    "Alice Springs": ["Alice Springs CBD", "Larapinta", "Gillen"],
+  },
+};
+ 
+const ServiceAreaPicker = ({ serviceAreas, onAdd, onRemove }) => {
+  const [selectedState, setSelectedState] = useState(null);
+  const [regionSearch, setRegionSearch] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState(null);
   const [otherText, setOtherText] = useState("");
-  const [open, setOpen] = useState(false);
-  const debounceRef = useRef(null);
+  const [showOther, setShowOther] = useState(false);
  
-  const searchPlaces = async (val) => {
-    if (!val || val.length < 2) { setSuggestions([]); return; }
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(val)}&types=(regions)&components=country:au&key=${GOOGLE_PLACES_API_KEY}`
-      );
-      const data = await res.json();
-      setSuggestions(data.predictions || []);
-    } catch (e) { setSuggestions([]); }
-    setLoading(false);
-  };
+  const states = Object.keys(REGION_DATA);
  
-  const handleChange = (e) => {
-    const val = e.target.value;
-    setQuery(val);
-    setOpen(true);
-    clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => searchPlaces(val), 300);
-  };
+  const regions = selectedState
+    ? Object.keys(REGION_DATA[selectedState]).filter(r =>
+        r.toLowerCase().includes(regionSearch.toLowerCase())
+      )
+    : [];
  
-  const handleSelect = (place) => {
-    const label = place.structured_formatting?.main_text || place.description;
-    if (!selectedAreas.find(a => a.label === label)) {
-      onAdd({ label, place_id: place.place_id, description: place.description });
-    }
-    setQuery(""); setSuggestions([]); setOpen(false);
+  const suburbs = selectedState && selectedRegion
+    ? REGION_DATA[selectedState][selectedRegion] || []
+    : [];
+ 
+  const addArea = (label) => {
+    if (!serviceAreas.find(a => a.label === label)) onAdd({ label, isCustom: false });
   };
  
   const submitOther = () => {
-    if (otherText.trim()) {
-      onAdd({ label: otherText.trim(), place_id: null, description: otherText.trim(), isCustom: true });
-      setOtherText(""); setShowOther(false);
-    }
+    if (otherText.trim()) { onAdd({ label: otherText.trim(), isCustom: true }); setOtherText(""); setShowOther(false); }
   };
  
   return (
-    <div style={{ position: "relative", marginBottom: 12 }}>
-      <input
-        style={{ ...inputStyle, marginBottom: 0 }}
-        placeholder="Search suburb, city, postcode or state..."
-        value={query}
-        onChange={handleChange}
-        onFocus={() => query.length > 1 && searchPlaces(query)}
-        onBlur={() => setTimeout(() => setOpen(false), 150)}
-      />
-      {open && (suggestions.length > 0 || loading) && (
-        <div style={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100, background: "#1a2d42", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, maxHeight: 240, overflowY: "auto", marginTop: 4 }}>
-          {loading && <div style={{ padding: "10px 16px", fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Searching...</div>}
-          {suggestions.map(place => (
-            <div key={place.place_id} onMouseDown={() => handleSelect(place)}
-              style={{ padding: "10px 16px", fontSize: 14, color: "#fff", cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.05)" }}
-              onMouseEnter={e => e.currentTarget.style.background = "rgba(244,130,42,0.1)"}
-              onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-              <div style={{ fontWeight: 600 }}>{place.structured_formatting?.main_text}</div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{place.structured_formatting?.secondary_text}</div>
-            </div>
-          ))}
-          <div onMouseDown={() => { setShowOther(true); setSuggestions([]); setQuery(""); setOpen(false); }}
-            style={{ padding: "10px 16px", fontSize: 14, color: "#F4822A", cursor: "pointer", borderTop: "1px solid rgba(255,255,255,0.08)", fontWeight: 700 }}>
-            + My area isn't listed
+    <div>
+      {/* LEVEL 1 — State */}
+      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 8, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>1. Select state</div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 }}>
+        {states.map(s => (
+          <div key={s} onClick={() => { setSelectedState(s); setSelectedRegion(null); setRegionSearch(""); }}
+            style={{ background: selectedState === s ? "#F4822A" : "rgba(255,255,255,0.07)", border: selectedState === s ? "none" : "1px solid rgba(255,255,255,0.15)", borderRadius: 20, padding: "7px 16px", fontSize: 13, fontWeight: 700, color: selectedState === s ? "#fff" : "rgba(255,255,255,0.6)", cursor: "pointer" }}>
+            {s}
           </div>
-        </div>
-      )}
-      {!open && query.length > 1 && suggestions.length === 0 && !loading && (
-        <div style={{ marginTop: 8 }}>
-          <button onMouseDown={() => setShowOther(true)}
-            style={{ background: "none", border: "1px solid rgba(244,130,42,0.4)", borderRadius: 8, padding: "8px 14px", color: "#F4822A", fontSize: 13, cursor: "pointer", fontWeight: 700 }}>
-            + My area isn't listed — add it manually
-          </button>
-        </div>
-      )}
-      {showOther && (
-        <div style={{ marginTop: 8 }}>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 6 }}>Type your suburb or postcode — we'll add it to our list</div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <input style={{ ...inputStyle, marginBottom: 0, flex: 1 }} placeholder="e.g. Bribie Island or 4507"
-              value={otherText} onChange={e => setOtherText(e.target.value)} onKeyDown={e => e.key === "Enter" && submitOther()} autoFocus />
-            <button onClick={submitOther} style={{ background: "#F4822A", border: "none", borderRadius: 10, padding: "0 16px", color: "#fff", fontWeight: 800, cursor: "pointer", fontSize: 14 }}>Add</button>
-            <button onClick={() => { setShowOther(false); setOtherText(""); }} style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "0 12px", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: 13 }}>✕</button>
+        ))}
+      </div>
+ 
+      {/* LEVEL 2 — Region search */}
+      {selectedState && (
+        <>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 8, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>2. Search region</div>
+          <input style={{ ...inputStyle, marginBottom: 8 }} placeholder={`Search regions in ${selectedState}...`}
+            value={regionSearch} onChange={e => { setRegionSearch(e.target.value); setSelectedRegion(null); }} />
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 }}>
+            {regions.map(r => (
+              <div key={r} onClick={() => setSelectedRegion(r)}
+                style={{ background: selectedRegion === r ? "#F4822A" : "rgba(255,255,255,0.07)", border: selectedRegion === r ? "none" : "1px solid rgba(255,255,255,0.15)", borderRadius: 20, padding: "7px 16px", fontSize: 13, fontWeight: 600, color: selectedRegion === r ? "#fff" : "rgba(255,255,255,0.6)", cursor: "pointer" }}>
+                {r}
+              </div>
+            ))}
           </div>
+        </>
+      )}
+ 
+      {/* LEVEL 3 — Suburb tags */}
+      {selectedRegion && suburbs.length > 0 && (
+        <>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 8, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>3. Select suburbs</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 8 }}>
+            {suburbs.map(suburb => {
+              const already = serviceAreas.find(a => a.label === suburb);
+              return (
+                <div key={suburb} onClick={() => already ? onRemove(suburb) : addArea(suburb)}
+                  style={{ background: already ? "rgba(244,130,42,0.2)" : "rgba(255,255,255,0.05)", border: already ? "1px solid rgba(244,130,42,0.5)" : "1px solid rgba(255,255,255,0.12)", borderRadius: 20, padding: "6px 14px", fontSize: 13, color: already ? "#F4822A" : "rgba(255,255,255,0.5)", cursor: "pointer" }}>
+                  {already ? "✓ " : ""}{suburb}
+                </div>
+              );
+            })}
+          </div>
+          <div onClick={() => addArea(selectedRegion)} style={{ fontSize: 13, color: "#F4822A", cursor: "pointer", marginBottom: 16, fontWeight: 700 }}>
+            + Add all of {selectedRegion}
+          </div>
+        </>
+      )}
+ 
+      {/* Selected areas */}
+      {serviceAreas.length > 0 && (
+        <>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 8, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>Your service areas</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+            {serviceAreas.map(a => <Tag key={a.label} label={a.label} onRemove={() => onRemove(a.label)} pending={a.isCustom} />)}
+          </div>
+        </>
+      )}
+ 
+      {/* Other fallback */}
+      {!showOther ? (
+        <div onClick={() => setShowOther(true)} style={{ fontSize: 13, color: "rgba(255,255,255,0.3)", cursor: "pointer", marginTop: 4 }}>+ My area isn't listed — add it manually</div>
+      ) : (
+        <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+          <input style={{ ...inputStyle, marginBottom: 0, flex: 1 }} placeholder="Type suburb or postcode..."
+            value={otherText} onChange={e => setOtherText(e.target.value)} onKeyDown={e => e.key === "Enter" && submitOther()} autoFocus />
+          <button onClick={submitOther} style={{ background: "#F4822A", border: "none", borderRadius: 10, padding: "0 16px", color: "#fff", fontWeight: 800, cursor: "pointer" }}>Add</button>
+          <button onClick={() => { setShowOther(false); setOtherText(""); }} style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "0 12px", color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>✕</button>
         </div>
       )}
     </div>
@@ -845,17 +908,9 @@ export default function App() {
           {step === 3 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Service Areas</div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 4 }}>Where do you work? Add as many areas as you like.</div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", textAlign: "center", marginBottom: 20 }}>Search any suburb, city, postcode or state in Australia</div>
-              <PlacesSearch onAdd={addServiceArea} selectedAreas={serviceAreas} />
-              {serviceAreas.length > 0 ? (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16, marginTop: 8 }}>
-                  {serviceAreas.map(a => <Tag key={a.label} label={a.label} onRemove={() => removeServiceArea(a.label)} pending={a.isCustom} />)}
-                </div>
-              ) : (
-                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.2)", textAlign: "center", marginBottom: 16, marginTop: 8 }}>No areas added yet</div>
-              )}
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", marginBottom: 16 }}>💡 Update your service areas anytime from your dashboard</div>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 20 }}>Where do you work? Add as many areas as you like.</div>
+              <ServiceAreaPicker serviceAreas={serviceAreas} onAdd={addServiceArea} onRemove={removeServiceArea} />
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", margin: "12px 0" }}>💡 Update your service areas anytime from your dashboard</div>
               <div style={{ display: "flex", gap: 8 }}>
                 <button onClick={() => setStep(2)} style={btnSecondary}>← Back</button>
                 <button onClick={() => serviceAreas.length > 0 && setStep(4)} style={btnPrimary(serviceAreas.length === 0)}>Next →</button>
