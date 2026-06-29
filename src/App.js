@@ -300,7 +300,6 @@ const ServiceAreaPicker = ({ serviceAreas, onAdd, onRemove }) => {
   const [postcodeSearch, setPostcodeSearch] = useState("");
   const [postcodeResult, setPostcodeResult] = useState(null);
   const [otherText, setOtherText] = useState("");
-  const [showOther, setShowOther] = useState(false);
  
   const states = Object.keys(REGION_DATA);
  
