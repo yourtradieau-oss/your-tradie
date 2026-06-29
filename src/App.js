@@ -1,3 +1,4 @@
+App · JS
 import React, { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
  
@@ -646,19 +647,24 @@ export default function App() {
   const [authMode, setAuthMode] = useState("register"); // "register" | "login"
   const [authPassword, setAuthPassword] = useState("");
  
-  // Check for existing Supabase session on load (cookie/cache persistence)
+  // Only handle OAuth redirect (when Google redirects back to the site)
   React.useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        // User already logged in — go straight to onboarding or dashboard
-        setView("tradie-onboarding");
-      }
-    });
-    // Listen for auth state changes
+    // Check if this is an OAuth callback (URL contains access_token or code)
+    const isOAuthCallback = window.location.hash.includes("access_token") || 
+                            window.location.search.includes("code=");
+    
+    if (isOAuthCallback) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          checkProfileAndRoute(session.user.id);
+        }
+      });
+    }
+ 
+    // Listen for auth state changes (email sign in/register)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session && view === "tradie-auth") {
-        setStep(1);
-        setView("tradie-onboarding");
+      if (_event === "SIGNED_IN" && view === "tradie-auth") {
+        checkProfileAndRoute(session.user.id);
       }
     });
     return () => subscription.unsubscribe();
