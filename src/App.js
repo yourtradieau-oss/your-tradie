@@ -664,6 +664,17 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, [view]);
  
+  const checkProfileAndRoute = async (userId) => {
+    const { data } = await supabase.from("tradies").select("id").eq("user_id", userId).single();
+    if (data) {
+      setView("tradie-dashboard");
+    } else {
+      setStep(1);
+      setView("tradie-onboarding");
+    }
+    setLoading(false);
+  };
+ 
   const handleSocialAuth = async (provider) => {
     setErrorMsg(""); setLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
@@ -677,13 +688,13 @@ export default function App() {
     if (!wEmail || !authPassword) { setErrorMsg("Please enter your email and password."); return; }
     setLoading(true); setErrorMsg("");
     if (authMode === "register") {
-      const { error } = await supabase.auth.signUp({ email: wEmail, password: authPassword });
+      const { data, error } = await supabase.auth.signUp({ email: wEmail, password: authPassword });
       if (error) { setErrorMsg(error.message); setLoading(false); }
-      else { setStep(1); setView("tradie-onboarding"); setLoading(false); }
+      else { await checkProfileAndRoute(data.user?.id); }
     } else {
-      const { error } = await supabase.auth.signInWithPassword({ email: wEmail, password: authPassword });
+      const { data, error } = await supabase.auth.signInWithPassword({ email: wEmail, password: authPassword });
       if (error) { setErrorMsg(error.message); setLoading(false); }
-      else { setStep(1); setView("tradie-onboarding"); setLoading(false); }
+      else { await checkProfileAndRoute(data.user?.id); }
     }
   };
  
@@ -713,6 +724,36 @@ export default function App() {
   };
  
   const handleLaunch = async () => {
+    setLoading(true);
+    setErrorMsg("");
+ 
+    // Get current logged in user
+    const { data: { user } } = await supabase.auth.getUser();
+ 
+    // Save tradie profile to tradies table
+    const { error: profileError } = await supabase.from("tradies").upsert({
+      user_id: user?.id,
+      full_name: fullName,
+      business_name: businessName,
+      trades: trades,
+      custom_trades: customTrades,
+      specialties: specialties,
+      custom_specialties: customSpecialties,
+      primary_area: primaryArea,
+      secondary_areas: secondaryAreas,
+      postcode: postcode,
+      licence_number: licenceNumber,
+      abn: abn,
+      is_live: true
+    });
+ 
+    if (profileError) {
+      setErrorMsg("Error saving profile: " + profileError.message);
+      setLoading(false);
+      return;
+    }
+ 
+    // Save any custom trade/specialty suggestions
     const allCustom = [
       ...customTrades.map(t => ({ type: "trade", value: t })),
       ...customSpecialties.map(s => ({ type: "specialty", value: s }))
@@ -722,6 +763,8 @@ export default function App() {
         suggestion_type: c.type, value: c.value, submitted_by: fullName, status: "pending"
       })));
     }
+ 
+    setLoading(false);
     setOnboardingComplete(true);
   };
  
@@ -894,6 +937,29 @@ export default function App() {
     );
   }
  
+ 
+  if (view === "tradie-dashboard") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", overflowX: "hidden" }}>
+        <GlobalMobileStyles />
+        <div style={{ background: "#0D1B2A", borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>Your <span style={{ color: "#F4822A" }}>Tradie</span></div>
+          <button onClick={async () => { await supabase.auth.signOut(); setView("landing"); }}
+            style={{ background: "none", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 8, padding: "6px 14px", fontSize: 13, color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>
+            Sign out
+          </button>
+        </div>
+        <div style={{ padding: "40px 24px", maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
+          <div style={{ fontSize: 28, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Welcome back!</div>
+          <div style={{ fontSize: 16, color: "rgba(255,255,255,0.4)", marginBottom: 40 }}>Your tradie dashboard is coming soon.</div>
+          <button onClick={() => { setStep(1); setView("tradie-onboarding"); }}
+            style={{ background: "#F4822A", border: "none", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, color: "#fff", cursor: "pointer" }}>
+            Edit my profile →
+          </button>
+        </div>
+      </div>
+    );
+  }
  
   if (view === "tradie-onboarding") {
     if (onboardingComplete) {
