@@ -679,7 +679,7 @@ export default function App() {
     setErrorMsg(""); setLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: window.location.href }
+      options: { redirectTo: "https://yourtradieaustralia.com" }
     });
     if (error) { setErrorMsg(error.message); setLoading(false); }
   };
