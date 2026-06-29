@@ -894,10 +894,6 @@ export default function App() {
             style={{ width: "100%", background: "#fff", border: "none", borderRadius: 10, padding: "13px 16px", fontSize: 14, fontWeight: 600, color: "#333", cursor: "pointer", marginBottom: 10, letterSpacing: 0.3 }}>
             Continue with Google
           </button>
-          <button onClick={() => handleSocialAuth("apple")}
-            style={{ width: "100%", background: "#000", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "13px 16px", fontSize: 14, fontWeight: 600, color: "#fff", cursor: "pointer", marginBottom: 16, letterSpacing: 0.3 }}>
-            Continue with Apple
-          </button>
  
           {/* Divider */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
