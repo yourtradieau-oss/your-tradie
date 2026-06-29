@@ -1,21 +1,23 @@
-import React, { useState } from "react";
+App · JS
+import React, { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
-
+ 
 const supabase = createClient(
   "https://sbidwhsnwdsvkbdwzphb.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaWR3aHNud2RzdmtiZHd6cGhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MzcyOTcsImV4cCI6MjA5NzIxMzI5N30.eCkIM3gKZCi7hY-ef9JQjRHHBZ-97VSVC2npQH6M26g"
 );
-
+ 
+const GOOGLE_PLACES_API_KEY = "AIzaSyCxbj0KJSptxtiG7zCFXK0_7xV3XiTD4Qw";
 const DEV_PATH = "/dev";
-
+ 
 const TRADES = [
   "Electrician", "Plumber", "Builder", "Carpenter", "Painter",
   "Tiler", "Landscaper", "Roofer", "Plasterer", "Concreter",
   "Air Conditioning", "Locksmith", "Glazier", "Pest Control",
   "Handyman", "Cabinet Maker", "Bricklayer", "Welder",
-  "Solar Installer", "Flooring Specialist", "Other"
+  "Solar Installer", "Flooring Specialist"
 ];
-
+ 
 const SPECIALTIES = [
   "Solar Panels", "EV Charging", "Switchboards", "Renovations",
   "New Builds", "Decking", "Fencing", "Retaining Walls",
@@ -24,15 +26,7 @@ const SPECIALTIES = [
   "Air Con Servicing", "Hot Water Systems", "Gas Fitting", "Waterproofing",
   "Rendering", "Insulation", "Damp Proofing", "Asbestos Removal"
 ];
-
-const AREAS = [
-  "Bribie Island", "Caboolture", "Redcliffe", "Morayfield",
-  "Burpengary", "Narangba", "North Lakes", "Strathpine",
-  "Chermside", "Brisbane CBD", "Brisbane North", "Brisbane South",
-  "Brisbane East", "Brisbane West", "Ipswich", "Logan",
-  "Sunshine Coast", "Gold Coast", "Toowoomba", "Other"
-];
-
+ 
 const inputStyle = {
   width: "100%", background: "rgba(255,255,255,0.07)",
   border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10,
@@ -40,32 +34,24 @@ const inputStyle = {
   marginBottom: 12, outline: "none", boxSizing: "border-box",
   fontFamily: "sans-serif"
 };
-
+ 
 const cardStyle = {
   background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
   borderRadius: 16, padding: "32px 28px", width: "100%", maxWidth: 440
 };
-
+ 
 const btnPrimary = (disabled) => ({
   flex: 2, background: disabled ? "rgba(244,130,42,0.3)" : "#F4822A",
   border: "none", borderRadius: 10, padding: "14px", fontSize: 16,
   fontWeight: 800, color: "#fff", cursor: disabled ? "default" : "pointer"
 });
-
+ 
 const btnSecondary = {
   flex: 1, background: "rgba(255,255,255,0.07)",
   border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10,
   padding: "14px", fontSize: 15, fontWeight: 800, color: "#fff", cursor: "pointer"
 };
-
-/*
-  GlobalMobileStyles: injects real CSS with a media query so the
-  waitlist page's two-column grid (form + phone) properly stacks
-  into one column on narrow phone screens, and oversized text
-  shrinks down. Inline style objects can't use media queries, so
-  this uses a <style> tag with classNames instead, only for the
-  specific spots that were overflowing on mobile.
-*/
+ 
 const GlobalMobileStyles = () => (
   <style>{`
     html, body { overflow-x: hidden; max-width: 100%; }
@@ -78,34 +64,20 @@ const GlobalMobileStyles = () => (
     .yt-congrats-title { font-size: 32px; }
     .yt-congrats-heading { font-size: 26px; word-wrap: break-word; overflow-wrap: break-word; }
     .yt-landing-heading { font-size: 24px; }
-    .yt-phone-row {
-      display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;
-    }
+    .yt-phone-row { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
     @media (max-width: 700px) {
       html, body, #root { overflow-x: hidden; width: 100%; max-width: 100vw; }
       .yt-logo-text { font-size: 34px; }
-      .yt-waitlist-grid {
-        grid-template-columns: 1fr !important;
-        gap: 24px !important;
-        padding: 0 4px;
-      }
+      .yt-waitlist-grid { grid-template-columns: 1fr !important; gap: 24px !important; padding: 0 4px; }
       .yt-congrats-title { font-size: 26px; }
       .yt-congrats-heading { font-size: 21px; }
       .yt-landing-heading { font-size: 20px; }
-      .yt-phone-row {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        justify-items: center;
-        gap: 10px !important;
-      }
-      .yt-phone-row > div:nth-child(3) {
-        grid-column: 1 / span 2;
-      }
+      .yt-phone-row { display: grid !important; grid-template-columns: 1fr 1fr !important; justify-items: center; gap: 10px !important; }
+      .yt-phone-row > div:nth-child(3) { grid-column: 1 / span 2; }
     }
   `}</style>
 );
-
-
+ 
 const Logo = ({ dark = true }) => (
   <div style={{ textAlign: "center", marginBottom: 16 }}>
     <div className="yt-logo-text" style={{ fontWeight: 800, color: dark ? "#FFFFFF" : "#0D1B2A", letterSpacing: -2, lineHeight: 1 }}>
@@ -117,20 +89,14 @@ const Logo = ({ dark = true }) => (
     </div>
   </div>
 );
-
+ 
 const Wrapper = ({ children }) => (
-  <div style={{
-    minHeight: "100vh", background: "#0D1B2A", display: "flex",
-    flexDirection: "column", alignItems: "center", justifyContent: "center",
-    padding: "40px 24px", fontFamily: "sans-serif"
-  }}>
+  <div style={{ minHeight: "100vh", background: "#0D1B2A", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", fontFamily: "sans-serif" }}>
     {children}
-    <div style={{ marginTop: 48, fontSize: 12, color: "rgba(255,255,255,0.2)", textAlign: "center" }}>
-      © 2025 Your Tradie · Australia
-    </div>
+    <div style={{ marginTop: 48, fontSize: 12, color: "rgba(255,255,255,0.2)", textAlign: "center" }}>© 2025 Your Tradie · Australia</div>
   </div>
 );
-
+ 
 const ProgressBar = ({ current, total }) => (
   <div style={{ marginBottom: 24 }}>
     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
@@ -142,7 +108,7 @@ const ProgressBar = ({ current, total }) => (
     </div>
   </div>
 );
-
+ 
 const Tag = ({ label, onRemove, pending }) => (
   <div style={{
     background: pending ? "rgba(255,255,255,0.05)" : "rgba(244,130,42,0.2)",
@@ -155,24 +121,28 @@ const Tag = ({ label, onRemove, pending }) => (
     <span onClick={onRemove} style={{ cursor: "pointer", opacity: 0.6 }}>×</span>
   </div>
 );
-
+ 
+// Searchable list with "Other" freetext at bottom
 const SearchSelect = ({ items, selected, onAdd, placeholder, max, onAddCustom }) => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
-
+  const [otherText, setOtherText] = useState("");
+  const [showOther, setShowOther] = useState(false);
+ 
   const filtered = items.filter(i =>
     i.toLowerCase().includes(search.toLowerCase()) && !selected.includes(i)
   );
-
+ 
   const handleKey = (e) => {
-    if (e.key === "Enter" && search.trim()) {
-      if (filtered.length > 0) onAdd(filtered[0]);
-      else onAddCustom(search.trim());
-      setSearch("");
-      setOpen(false);
+    if (e.key === "Enter" && search.trim() && filtered.length > 0) {
+      onAdd(filtered[0]); setSearch(""); setOpen(false);
     }
   };
-
+ 
+  const submitOther = () => {
+    if (otherText.trim()) { onAddCustom(otherText.trim()); setOtherText(""); setShowOther(false); }
+  };
+ 
   return (
     <div style={{ position: "relative", marginBottom: 12 }}>
       <input
@@ -185,43 +155,136 @@ const SearchSelect = ({ items, selected, onAdd, placeholder, max, onAddCustom })
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         onKeyDown={handleKey}
       />
-      {open && search.length > 0 && (
-        <div style={{
-          position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100,
-          background: "#1a2d42", border: "1px solid rgba(255,255,255,0.15)",
-          borderRadius: 10, maxHeight: 200, overflowY: "auto", marginTop: 4
-        }}>
+      {open && (
+        <div style={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100, background: "#1a2d42", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, maxHeight: 220, overflowY: "auto", marginTop: 4 }}>
           {filtered.map(item => (
             <div key={item} onMouseDown={() => { onAdd(item); setSearch(""); setOpen(false); }}
               style={{ padding: "10px 16px", fontSize: 14, color: "#fff", cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.05)" }}
-              onMouseEnter={e => e.target.style.background = "rgba(244,130,42,0.1)"}
-              onMouseLeave={e => e.target.style.background = "transparent"}>
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(244,130,42,0.1)"}
+              onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
               {item}
             </div>
           ))}
-          {filtered.length === 0 && search.trim() && (
-            <div onMouseDown={() => { onAddCustom(search.trim()); setSearch(""); setOpen(false); }}
-              style={{ padding: "10px 16px", fontSize: 14, color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>
-              Add "{search}" as custom →
-            </div>
-          )}
+          <div onMouseDown={() => { setShowOther(true); setOpen(false); setSearch(""); }}
+            style={{ padding: "10px 16px", fontSize: 14, color: "#F4822A", cursor: "pointer", borderTop: "1px solid rgba(255,255,255,0.08)", fontWeight: 700 }}>
+            + Other (not listed)
+          </div>
+        </div>
+      )}
+      {showOther && (
+        <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
+          <input style={{ ...inputStyle, marginBottom: 0, flex: 1 }} placeholder="Type your own..." value={otherText}
+            onChange={e => setOtherText(e.target.value)} onKeyDown={e => e.key === "Enter" && submitOther()} autoFocus />
+          <button onClick={submitOther} style={{ background: "#F4822A", border: "none", borderRadius: 10, padding: "0 16px", color: "#fff", fontWeight: 800, cursor: "pointer", fontSize: 14 }}>Add</button>
+          <button onClick={() => { setShowOther(false); setOtherText(""); }} style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "0 12px", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: 13 }}>✕</button>
         </div>
       )}
     </div>
   );
 };
-
+ 
+// Google Places autocomplete for service areas
+const PlacesSearch = ({ onAdd, selectedAreas }) => {
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showOther, setShowOther] = useState(false);
+  const [otherText, setOtherText] = useState("");
+  const [open, setOpen] = useState(false);
+  const debounceRef = useRef(null);
+ 
+  const searchPlaces = async (val) => {
+    if (!val || val.length < 2) { setSuggestions([]); return; }
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(val)}&types=(regions)&components=country:au&key=${GOOGLE_PLACES_API_KEY}`
+      );
+      const data = await res.json();
+      setSuggestions(data.predictions || []);
+    } catch (e) { setSuggestions([]); }
+    setLoading(false);
+  };
+ 
+  const handleChange = (e) => {
+    const val = e.target.value;
+    setQuery(val);
+    setOpen(true);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => searchPlaces(val), 300);
+  };
+ 
+  const handleSelect = (place) => {
+    const label = place.structured_formatting?.main_text || place.description;
+    if (!selectedAreas.find(a => a.label === label)) {
+      onAdd({ label, place_id: place.place_id, description: place.description });
+    }
+    setQuery(""); setSuggestions([]); setOpen(false);
+  };
+ 
+  const submitOther = () => {
+    if (otherText.trim()) {
+      onAdd({ label: otherText.trim(), place_id: null, description: otherText.trim(), isCustom: true });
+      setOtherText(""); setShowOther(false);
+    }
+  };
+ 
+  return (
+    <div style={{ position: "relative", marginBottom: 12 }}>
+      <input
+        style={{ ...inputStyle, marginBottom: 0 }}
+        placeholder="Search suburb, city, postcode or state..."
+        value={query}
+        onChange={handleChange}
+        onFocus={() => query.length > 1 && searchPlaces(query)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+      />
+      {open && (suggestions.length > 0 || loading) && (
+        <div style={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100, background: "#1a2d42", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, maxHeight: 240, overflowY: "auto", marginTop: 4 }}>
+          {loading && <div style={{ padding: "10px 16px", fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Searching...</div>}
+          {suggestions.map(place => (
+            <div key={place.place_id} onMouseDown={() => handleSelect(place)}
+              style={{ padding: "10px 16px", fontSize: 14, color: "#fff", cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(244,130,42,0.1)"}
+              onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+              <div style={{ fontWeight: 600 }}>{place.structured_formatting?.main_text}</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{place.structured_formatting?.secondary_text}</div>
+            </div>
+          ))}
+          <div onMouseDown={() => { setShowOther(true); setSuggestions([]); setQuery(""); setOpen(false); }}
+            style={{ padding: "10px 16px", fontSize: 14, color: "#F4822A", cursor: "pointer", borderTop: "1px solid rgba(255,255,255,0.08)", fontWeight: 700 }}>
+            + My area isn't listed
+          </div>
+        </div>
+      )}
+      {!open && query.length > 1 && suggestions.length === 0 && !loading && (
+        <div style={{ marginTop: 8 }}>
+          <button onMouseDown={() => setShowOther(true)}
+            style={{ background: "none", border: "1px solid rgba(244,130,42,0.4)", borderRadius: 8, padding: "8px 14px", color: "#F4822A", fontSize: 13, cursor: "pointer", fontWeight: 700 }}>
+            + My area isn't listed — add it manually
+          </button>
+        </div>
+      )}
+      {showOther && (
+        <div style={{ marginTop: 8 }}>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 6 }}>Type your suburb or postcode — we'll add it to our list</div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <input style={{ ...inputStyle, marginBottom: 0, flex: 1 }} placeholder="e.g. Bribie Island or 4507"
+              value={otherText} onChange={e => setOtherText(e.target.value)} onKeyDown={e => e.key === "Enter" && submitOther()} autoFocus />
+            <button onClick={submitOther} style={{ background: "#F4822A", border: "none", borderRadius: 10, padding: "0 16px", color: "#fff", fontWeight: 800, cursor: "pointer", fontSize: 14 }}>Add</button>
+            <button onClick={() => { setShowOther(false); setOtherText(""); }} style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "0 12px", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: 13 }}>✕</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+ 
 const PhoneMockup = () => (
   <div style={{ display: "flex", justifyContent: "center" }}>
-    <div style={{
-      width: 240, height: 500, background: "#fff", borderRadius: 40,
-      padding: 8, position: "relative", boxShadow: "0 8px 30px rgba(0,0,0,0.35)"
-    }}>
+    <div style={{ width: 240, height: 500, background: "#fff", borderRadius: 40, padding: 8, position: "relative", boxShadow: "0 8px 30px rgba(0,0,0,0.35)" }}>
       <div style={{ border: "5px solid #1a1a1a", borderRadius: 32, height: "100%", overflow: "hidden", display: "flex", flexDirection: "column", position: "relative" }}>
-        <div style={{
-          position: "absolute", top: 8, left: "50%", transform: "translateX(-50%)",
-          width: 70, height: 18, background: "#1a1a1a", borderRadius: "0 0 12px 12px", zIndex: 2
-        }} />
+        <div style={{ position: "absolute", top: 8, left: "50%", transform: "translateX(-50%)", width: 70, height: 18, background: "#1a1a1a", borderRadius: "0 0 12px 12px", zIndex: 2 }} />
         <div style={{ background: "#0D1B2A", padding: "30px 16px 16px" }}>
           <div style={{ fontSize: 10, color: "#F4822A", fontWeight: 800, letterSpacing: 1, marginBottom: 10 }}>YOUR TRADIE</div>
           <div style={{ fontSize: 17, color: "#fff", fontWeight: 800, lineHeight: 1.25, marginBottom: 6 }}>Find a trusted tradie near you</div>
@@ -255,12 +318,7 @@ const PhoneMockup = () => (
           </div>
         </div>
         <div style={{ background: "#fff", borderTop: "1px solid #eee", display: "flex", justifyContent: "space-around", padding: "10px 8px" }}>
-          {[
-            { icon: "📊", label: "Dashboard" },
-            { icon: "🔨", label: "Jobs" },
-            { icon: "💬", label: "Messages" },
-            { icon: "👤", label: "Account" }
-          ].map(item => (
+          {[{ icon: "📊", label: "Dashboard" }, { icon: "🔨", label: "Jobs" }, { icon: "💬", label: "Messages" }, { icon: "👤", label: "Account" }].map(item => (
             <div key={item.label} style={{ textAlign: "center" }}>
               <div style={{ fontSize: 14 }}>{item.icon}</div>
               <div style={{ fontSize: 7, color: "#888", marginTop: 2 }}>{item.label}</div>
@@ -271,7 +329,7 @@ const PhoneMockup = () => (
     </div>
   </div>
 );
-
+ 
 const NavBar = ({ active, labelSet }) => {
   const sets = {
     dashboard: [
@@ -299,51 +357,26 @@ const NavBar = ({ active, labelSet }) => {
     </div>
   );
 };
-
-/*
-  FeaturePhoneFrame: pure pixel-locked mockup, not a real scrolling UI.
-  Outer + inner frame are fixed-size boxes. The content area is a fixed
-  190px window with overflow:hidden (no scroll needed -- it's a static
-  image, not an app). NavBar is pinned with position:absolute to the
-  very bottom of the inner frame, so it is PHYSICALLY GUARANTEED to be
-  visible no matter what happens to the content above it.
-*/
+ 
 const FeaturePhoneFrame = ({ children, label }) => (
   <div style={{ textAlign: "center" }}>
-    <div style={{
-      width: 170, height: 330, background: "#fff", borderRadius: 24,
-      padding: 6, margin: "0 auto", boxShadow: "0 8px 24px rgba(0,0,0,0.3)"
-    }}>
-      <div style={{
-        border: "4px solid #1a1a1a", borderRadius: 18, height: 318,
-        width: 158, overflow: "hidden", position: "relative", background: "#fff"
-      }}>
-        <div style={{
-          position: "absolute", top: 5, left: "50%", transform: "translateX(-50%)",
-          width: 40, height: 9, background: "#1a1a1a", borderRadius: "0 0 7px 7px", zIndex: 10
-        }} />
+    <div style={{ width: 170, height: 330, background: "#fff", borderRadius: 24, padding: 6, margin: "0 auto", boxShadow: "0 8px 24px rgba(0,0,0,0.3)" }}>
+      <div style={{ border: "4px solid #1a1a1a", borderRadius: 18, height: 318, width: 158, overflow: "hidden", position: "relative", background: "#fff" }}>
+        <div style={{ position: "absolute", top: 5, left: "50%", transform: "translateX(-50%)", width: 40, height: 9, background: "#1a1a1a", borderRadius: "0 0 7px 7px", zIndex: 10 }} />
         {children}
       </div>
     </div>
     <div style={{ fontSize: 11, color: "rgba(255,255,255,0.8)", marginTop: 8, fontWeight: 600 }}>{label}</div>
   </div>
 );
-
-/*
-  ScrollBody: fixed 190px window, content clipped (overflow: hidden,
-  not scroll) since this is a static mockup image. Positioned with
-  plain document flow above the absolutely-positioned NavBar.
-*/
-const scrollBodyStyle = {
-  padding: 6, height: 190, background: "#F8F8F6", overflow: "hidden"
-};
-
+ 
+const scrollBodyStyle = { padding: 6, height: 190, background: "#F8F8F6", overflow: "hidden" };
+ 
 const GetSeenSection = () => (
- <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "28px 20px" }}>
+  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "28px 20px" }}>
     <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get seen</div>
     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 16, textAlign: "center" }}>Homeowners find you by trade and area — your work speaks for itself</div>
     <div className="yt-phone-row">
-
       <FeaturePhoneFrame label="Find tradies near you">
         <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
           <div style={{ fontSize: 6, color: "#F4822A", fontWeight: 800, letterSpacing: 0.5 }}>WORKING AREA</div>
@@ -359,22 +392,15 @@ const GetSeenSection = () => (
           <div style={{ fontSize: 6, color: "#888", marginBottom: 3 }}>3 tradies near you</div>
           <div style={{ background: "#fff", borderRadius: 6, padding: 4, marginBottom: 3, display: "flex", alignItems: "center", gap: 4 }}>
             <div style={{ width: 14, height: 14, borderRadius: 4, background: "#F4822A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6, color: "#fff", fontWeight: 800 }}>DK</div>
-            <div style={{ textAlign: "left" }}>
-              <div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Dave Kowalski</div>
-              <div style={{ fontSize: 5, color: "#F4822A" }}>Electrician · Redcliffe</div>
-            </div>
+            <div><div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Dave Kowalski</div><div style={{ fontSize: 5, color: "#F4822A" }}>Electrician · Redcliffe</div></div>
           </div>
           <div style={{ background: "#fff", borderRadius: 6, padding: 4, display: "flex", alignItems: "center", gap: 4 }}>
             <div style={{ width: 14, height: 14, borderRadius: 4, background: "#1D9E75", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6, color: "#fff", fontWeight: 800 }}>MT</div>
-            <div style={{ textAlign: "left" }}>
-              <div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Mel Torres</div>
-              <div style={{ fontSize: 5, color: "#F4822A" }}>Plumber · Bribie Island</div>
-            </div>
+            <div><div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Mel Torres</div><div style={{ fontSize: 5, color: "#F4822A" }}>Plumber · Bribie Island</div></div>
           </div>
         </div>
         <NavBar active="chart-bar" labelSet="dashboard" />
       </FeaturePhoneFrame>
-
       <FeaturePhoneFrame label="Verified profile">
         <div style={{ background: "#0D1B2A", padding: "20px 8px 8px", textAlign: "center" }}>
           <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#F4822A", margin: "0 auto 4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff", fontWeight: 800 }}>DK</div>
@@ -382,196 +408,108 @@ const GetSeenSection = () => (
           <div style={{ fontSize: 7, color: "#F4822A" }}>Electrician · Redcliffe</div>
         </div>
         <div style={scrollBodyStyle}>
-          <div style={{ background: "#E1F5EE", borderRadius: 5, padding: 4, display: "flex", alignItems: "center", gap: 3, marginBottom: 4 }}>
-            <span style={{ fontSize: 9 }}>✅</span>
-            <span style={{ fontSize: 6, color: "#0F6E56", fontWeight: 800 }}>Licence verified</span>
-          </div>
-          <div style={{ background: "#E1F5EE", borderRadius: 5, padding: 4, display: "flex", alignItems: "center", gap: 3, marginBottom: 4 }}>
-            <span style={{ fontSize: 9 }}>✅</span>
-            <span style={{ fontSize: 6, color: "#0F6E56", fontWeight: 800 }}>ABN verified</span>
-          </div>
-          <div style={{ background: "#fff", borderRadius: 6, padding: 5 }}>
-            <div style={{ fontSize: 5, color: "#555", lineHeight: 1.4 }}>Licensed electrician working on switchboards, EV charging and renovations.</div>
-          </div>
+          <div style={{ background: "#E1F5EE", borderRadius: 5, padding: 4, display: "flex", alignItems: "center", gap: 3, marginBottom: 4 }}><span style={{ fontSize: 9 }}>✅</span><span style={{ fontSize: 6, color: "#0F6E56", fontWeight: 800 }}>Licence verified</span></div>
+          <div style={{ background: "#E1F5EE", borderRadius: 5, padding: 4, display: "flex", alignItems: "center", gap: 3, marginBottom: 4 }}><span style={{ fontSize: 9 }}>✅</span><span style={{ fontSize: 6, color: "#0F6E56", fontWeight: 800 }}>ABN verified</span></div>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 5 }}><div style={{ fontSize: 5, color: "#555", lineHeight: 1.4 }}>Licensed electrician working on switchboards, EV charging and renovations.</div></div>
         </div>
         <NavBar active="chart-bar" labelSet="search" />
       </FeaturePhoneFrame>
-
       <FeaturePhoneFrame label="Show what you do">
-        <div style={{ background: "#0D1B2A", padding: "18px 8px 7px" }}>
-          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Specialties</div>
-        </div>
+        <div style={{ background: "#0D1B2A", padding: "18px 8px 7px" }}><div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Specialties</div></div>
         <div style={scrollBodyStyle}>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 3, marginBottom: 4 }}>
             <span style={{ background: "#FAEEDA", color: "#854F0B", fontSize: 6, padding: "2px 6px", borderRadius: 8 }}>Solar</span>
             <span style={{ background: "#FAEEDA", color: "#854F0B", fontSize: 6, padding: "2px 6px", borderRadius: 8 }}>Switchboards</span>
             <span style={{ background: "#FAEEDA", color: "#854F0B", fontSize: 6, padding: "2px 6px", borderRadius: 8 }}>EV Charging</span>
           </div>
-          <div style={{ background: "#fff", borderRadius: 6, padding: 5, marginBottom: 4 }}>
-            <div style={{ fontSize: 5, color: "#888", marginBottom: 1 }}>Years experience</div>
-            <div style={{ fontSize: 7, color: "#222", fontWeight: 800 }}>14 years</div>
-          </div>
-          <div style={{ background: "#fff", borderRadius: 6, padding: 5 }}>
-            <div style={{ fontSize: 5, color: "#888", marginBottom: 1 }}>Service areas</div>
-            <div style={{ fontSize: 6, color: "#222" }}>Redcliffe, Bribie, Caboolture</div>
-          </div>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 5, marginBottom: 4 }}><div style={{ fontSize: 5, color: "#888", marginBottom: 1 }}>Years experience</div><div style={{ fontSize: 7, color: "#222", fontWeight: 800 }}>14 years</div></div>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 5 }}><div style={{ fontSize: 5, color: "#888", marginBottom: 1 }}>Service areas</div><div style={{ fontSize: 6, color: "#222" }}>Redcliffe, Bribie, Caboolture</div></div>
         </div>
         <NavBar active="user" labelSet="dashboard" />
       </FeaturePhoneFrame>
-
     </div>
   </div>
 );
-
+ 
 const GetHiredSection = () => (
- <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "24px 20px 16px" }}>
+  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "24px 20px 16px" }}>
     <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get hired</div>
     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 16, textAlign: "center" }}>Direct messages, no middlemen, no lead fees</div>
     <div className="yt-phone-row">
-
       <FeaturePhoneFrame label="Browse jobs near you">
-        <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
-          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Jobs board</div>
-          <div style={{ fontSize: 5, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>No lead fees · Unlimited</div>
-        </div>
+        <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}><div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Jobs board</div><div style={{ fontSize: 5, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>No lead fees · Unlimited</div></div>
         <div style={scrollBodyStyle}>
-          <div style={{ background: "#fff", borderRadius: 6, padding: 5, marginBottom: 4 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
-              <span style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Switchboard upgrade</span>
-              <span style={{ background: "#FCEBEB", color: "#A32D2D", fontSize: 4, padding: "1px 4px", borderRadius: 5 }}>Urgent</span>
+          {[{ title: "Switchboard upgrade", tag: "Urgent", tagBg: "#FCEBEB", tagColor: "#A32D2D", area: "Redcliffe · 2hrs ago" }, { title: "EV charger install", tag: "This week", tagBg: "#FAEEDA", tagColor: "#854F0B", area: "Bribie Island · 1d ago" }, { title: "New power point", tag: "Planning", tagBg: "#EAF3DE", tagColor: "#3B6D11", area: "Caboolture · 3d ago" }].map(j => (
+            <div key={j.title} style={{ background: "#fff", borderRadius: 6, padding: 5, marginBottom: 4 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
+                <span style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>{j.title}</span>
+                <span style={{ background: j.tagBg, color: j.tagColor, fontSize: 4, padding: "1px 4px", borderRadius: 5 }}>{j.tag}</span>
+              </div>
+              <div style={{ fontSize: 5, color: "#888" }}>{j.area}</div>
             </div>
-            <div style={{ fontSize: 5, color: "#888" }}>Redcliffe · 2hrs ago</div>
-          </div>
-          <div style={{ background: "#fff", borderRadius: 6, padding: 5, marginBottom: 4 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
-              <span style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>EV charger install</span>
-              <span style={{ background: "#FAEEDA", color: "#854F0B", fontSize: 4, padding: "1px 4px", borderRadius: 5 }}>This week</span>
-            </div>
-            <div style={{ fontSize: 5, color: "#888" }}>Bribie Island · 1d ago</div>
-          </div>
-          <div style={{ background: "#fff", borderRadius: 6, padding: 5 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
-              <span style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>New power point</span>
-              <span style={{ background: "#EAF3DE", color: "#3B6D11", fontSize: 4, padding: "1px 4px", borderRadius: 5 }}>Planning</span>
-            </div>
-            <div style={{ fontSize: 5, color: "#888" }}>Caboolture · 3d ago</div>
-          </div>
+          ))}
         </div>
         <NavBar active="briefcase" labelSet="search" />
       </FeaturePhoneFrame>
-
       <FeaturePhoneFrame label="Direct messages, no fees">
-        <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
-          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Messages</div>
-          <div style={{ fontSize: 5, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>Tradie view</div>
-        </div>
+        <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}><div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Messages</div><div style={{ fontSize: 5, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>Tradie view</div></div>
         <div style={scrollBodyStyle}>
-          <div style={{ background: "#fff", borderRadius: 6, padding: 4, marginBottom: 3, display: "flex", alignItems: "center", gap: 4 }}>
-            <div style={{ width: 14, height: 14, borderRadius: "50%", background: "#378ADD", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6, color: "#fff" }}>SM</div>
-            <div style={{ textAlign: "left", flex: 1 }}>
-              <div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Sarah M.</div>
-              <div style={{ fontSize: 5, color: "#888" }}>Free next week?</div>
+          {[{ init: "SM", color: "#378ADD", name: "Sarah M.", msg: "Free next week?" }, { init: "JT", color: "#D4537E", name: "James T.", msg: "Thanks for the quote!" }, { init: "RK", color: "#1D9E75", name: "Rachel K.", msg: "Do Thursday?" }].map(m => (
+            <div key={m.name} style={{ background: "#fff", borderRadius: 6, padding: 4, marginBottom: 3, display: "flex", alignItems: "center", gap: 4 }}>
+              <div style={{ width: 14, height: 14, borderRadius: "50%", background: m.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6, color: "#fff" }}>{m.init}</div>
+              <div style={{ flex: 1 }}><div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>{m.name}</div><div style={{ fontSize: 5, color: "#888" }}>{m.msg}</div></div>
             </div>
-          </div>
-          <div style={{ background: "#fff", borderRadius: 6, padding: 4, marginBottom: 3, display: "flex", alignItems: "center", gap: 4 }}>
-            <div style={{ width: 14, height: 14, borderRadius: "50%", background: "#D4537E", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6, color: "#fff" }}>JT</div>
-            <div style={{ textAlign: "left", flex: 1 }}>
-              <div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>James T.</div>
-              <div style={{ fontSize: 5, color: "#888" }}>Thanks for the quote!</div>
-            </div>
-          </div>
-          <div style={{ background: "#fff", borderRadius: 6, padding: 4, display: "flex", alignItems: "center", gap: 4 }}>
-            <div style={{ width: 14, height: 14, borderRadius: "50%", background: "#1D9E75", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 6, color: "#fff" }}>RK</div>
-            <div style={{ textAlign: "left", flex: 1 }}>
-              <div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Rachel K.</div>
-              <div style={{ fontSize: 5, color: "#888" }}>Do Thursday?</div>
-            </div>
-          </div>
+          ))}
         </div>
         <NavBar active="message-circle" labelSet="dashboard" />
       </FeaturePhoneFrame>
-
       <FeaturePhoneFrame label="Homeowner messaging you">
-        <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
-          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Dave Kowalski</div>
-          <div style={{ fontSize: 5, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>Online now</div>
-        </div>
+        <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}><div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Dave Kowalski</div><div style={{ fontSize: 5, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>Online now</div></div>
         <div style={{ ...scrollBodyStyle, display: "flex", flexDirection: "column", gap: 4 }}>
-          <div style={{ background: "#fff", borderRadius: "8px 8px 8px 2px", padding: "4px 6px", maxWidth: "85%", alignSelf: "flex-start" }}>
-            <div style={{ fontSize: 5, color: "#222" }}>Happy to quote on your switchboard job.</div>
-          </div>
-          <div style={{ background: "#F4822A", borderRadius: "8px 8px 2px 8px", padding: "4px 6px", maxWidth: "85%", alignSelf: "flex-end" }}>
-            <div style={{ fontSize: 5, color: "#fff" }}>When can you look?</div>
-          </div>
-          <div style={{ background: "#fff", borderRadius: "8px 8px 8px 2px", padding: "4px 6px", maxWidth: "85%", alignSelf: "flex-start" }}>
-            <div style={{ fontSize: 5, color: "#222" }}>Tomorrow 9am works</div>
-          </div>
+          <div style={{ background: "#fff", borderRadius: "8px 8px 8px 2px", padding: "4px 6px", maxWidth: "85%", alignSelf: "flex-start" }}><div style={{ fontSize: 5, color: "#222" }}>Happy to quote on your switchboard job.</div></div>
+          <div style={{ background: "#F4822A", borderRadius: "8px 8px 2px 8px", padding: "4px 6px", maxWidth: "85%", alignSelf: "flex-end" }}><div style={{ fontSize: 5, color: "#fff" }}>When can you look?</div></div>
+          <div style={{ background: "#fff", borderRadius: "8px 8px 8px 2px", padding: "4px 6px", maxWidth: "85%", alignSelf: "flex-start" }}><div style={{ fontSize: 5, color: "#222" }}>Tomorrow 9am works</div></div>
         </div>
         <NavBar active="message-circle" labelSet="search" />
       </FeaturePhoneFrame>
-
     </div>
   </div>
 );
-
+ 
 const GetRewardedSection = () => (
- <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "24px 20px 30px" }}>
+  <div style={{ width: "100%", maxWidth: 800, margin: "0 auto", padding: "24px 20px 30px" }}>
     <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4, textAlign: "center" }}>Get rewarded</div>
     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 16, textAlign: "center" }}>Every job done builds your reputation on the platform</div>
     <div className="yt-phone-row">
-
       <FeaturePhoneFrame label="Real reviews build trust">
-        <div style={{ background: "#F4822A", padding: "18px 8px 8px", textAlign: "center" }}>
-          <div style={{ fontSize: 12, color: "#fff" }}>★★★★★</div>
-          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800, marginTop: 2 }}>4.9 · 87 reviews</div>
-        </div>
+        <div style={{ background: "#F4822A", padding: "18px 8px 8px", textAlign: "center" }}><div style={{ fontSize: 12, color: "#fff" }}>★★★★★</div><div style={{ fontSize: 8, color: "#fff", fontWeight: 800, marginTop: 2 }}>4.9 · 87 reviews</div></div>
         <div style={scrollBodyStyle}>
-          <div style={{ background: "#fff", borderRadius: 6, padding: 5, marginBottom: 4 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
-              <span style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Sarah M.</span>
-              <span style={{ fontSize: 6, color: "#F4822A" }}>★★★★★</span>
+          {[{ name: "Sarah M.", review: "Switchboard upgrade done same day." }, { name: "James T.", review: "Punctual, fair price, very tidy." }].map(r => (
+            <div key={r.name} style={{ background: "#fff", borderRadius: 6, padding: 5, marginBottom: 4 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}><span style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>{r.name}</span><span style={{ fontSize: 6, color: "#F4822A" }}>★★★★★</span></div>
+              <div style={{ fontSize: 5, color: "#888", lineHeight: 1.3 }}>{r.review}</div>
             </div>
-            <div style={{ fontSize: 5, color: "#888", lineHeight: 1.3 }}>Switchboard upgrade done same day.</div>
-          </div>
-          <div style={{ background: "#fff", borderRadius: 6, padding: 5 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
-              <span style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>James T.</span>
-              <span style={{ fontSize: 6, color: "#F4822A" }}>★★★★★</span>
-            </div>
-            <div style={{ fontSize: 5, color: "#888", lineHeight: 1.3 }}>Punctual, fair price, very tidy.</div>
-          </div>
+          ))}
         </div>
         <NavBar active="user" labelSet="dashboard" />
       </FeaturePhoneFrame>
-
       <FeaturePhoneFrame label="Show your finished work">
-        <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
-          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Completed work</div>
-        </div>
+        <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}><div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>Completed work</div></div>
         <div style={scrollBodyStyle}>
-          <div style={{ borderRadius: 6, height: 56, width: "100%", marginBottom: 4, position: "relative", overflow: "hidden", background: "#ddd" }}>
-            <img src="/solar-job.jpg" alt="Solar panel installation" style={{ width: "100%", height: "100%", maxHeight: 56, objectFit: "cover", display: "block" }} />
+          <div style={{ borderRadius: 6, height: 56, width: "100%", marginBottom: 4, background: "#ddd", overflow: "hidden" }}>
+            <img src="/solar-job.jpg" alt="Solar panel installation" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           </div>
-          <div style={{ background: "#fff", borderRadius: 6, padding: 5 }}>
-            <div style={{ fontSize: 6, color: "#222", fontWeight: 800, marginBottom: 1 }}>Solar panel install</div>
-            <div style={{ fontSize: 5, color: "#888" }}>Brisbane · Completed last week</div>
-          </div>
+          <div style={{ background: "#fff", borderRadius: 6, padding: 5 }}><div style={{ fontSize: 6, color: "#222", fontWeight: 800, marginBottom: 1 }}>Solar panel install</div><div style={{ fontSize: 5, color: "#888" }}>Brisbane · Completed last week</div></div>
         </div>
         <NavBar active="user" labelSet="search" />
       </FeaturePhoneFrame>
-
       <FeaturePhoneFrame label="Detailed reviews">
-        <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}>
-          <div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>New review</div>
-        </div>
+        <div style={{ background: "#0D1B2A", padding: "18px 8px 6px" }}><div style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>New review</div></div>
         <div style={scrollBodyStyle}>
           <div style={{ background: "#fff", borderRadius: 8, padding: 6 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
               <div style={{ width: 14, height: 14, borderRadius: "50%", background: "#378ADD", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 5, color: "#fff" }}>SM</div>
-              <div style={{ textAlign: "left" }}>
-                <div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Sarah M.</div>
-                <div style={{ fontSize: 4, color: "#888" }}>2 days ago</div>
-              </div>
+              <div><div style={{ fontSize: 6, color: "#222", fontWeight: 800 }}>Sarah M.</div><div style={{ fontSize: 4, color: "#888" }}>2 days ago</div></div>
             </div>
             <div style={{ fontSize: 7, color: "#F4822A", marginBottom: 3 }}>★★★★★</div>
             <div style={{ fontSize: 5, color: "#555", lineHeight: 1.4 }}>"Dave was on time, explained everything clearly. Highly recommend."</div>
@@ -579,55 +517,37 @@ const GetRewardedSection = () => (
         </div>
         <NavBar active="user" labelSet="dashboard" />
       </FeaturePhoneFrame>
-
     </div>
   </div>
 );
-
+ 
 const CongratsPage = () => (
   <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", overflowX: "hidden" }}>
     <GlobalMobileStyles />
     <div style={{ padding: "50px 24px 20px", textAlign: "center" }}>
       <Logo />
-      <div className="yt-congrats-title" style={{ fontWeight: 800, color: "#F4822A", marginTop: 24, marginBottom: 12 }}>
-        Congratulations!
-      </div>
-      <div style={{ fontSize: 17, color: "rgba(255,255,255,0.6)", maxWidth: 500, margin: "0 auto" }}>
-        You're officially on the Your Tradie waitlist.
-      </div>
+      <div className="yt-congrats-title" style={{ fontWeight: 800, color: "#F4822A", marginTop: 24, marginBottom: 12 }}>Congratulations!</div>
+      <div style={{ fontSize: 17, color: "rgba(255,255,255,0.6)", maxWidth: 500, margin: "0 auto" }}>You're officially on the Your Tradie waitlist.</div>
     </div>
-
     <div style={{ width: "100%", maxWidth: 700, margin: "0 auto", padding: "0 24px 20px", textAlign: "center" }}>
-      <div className="yt-congrats-heading" style={{ fontWeight: 800, color: "#fff", marginBottom: 16 }}>
-        Building Australia's Largest Tradie Network
-      </div>
-      <div style={{ fontSize: 16, color: "rgba(255,255,255,0.5)", lineHeight: 1.7 }}>
-        We're connecting homeowners with tradies. No lead fees, no bidding wars, no middlemen — just the best way for tradies to get seen, get hired, and get the jobs they deserve.
-      </div>
+      <div className="yt-congrats-heading" style={{ fontWeight: 800, color: "#fff", marginBottom: 16 }}>Building Australia's Largest Tradie Network</div>
+      <div style={{ fontSize: 16, color: "rgba(255,255,255,0.5)", lineHeight: 1.7 }}>We're connecting homeowners with tradies. No lead fees, no bidding wars, no middlemen — just the best way for tradies to get seen, get hired, and get the jobs they deserve.</div>
     </div>
-
-    <GetSeenSection />
-    <GetHiredSection />
-    <GetRewardedSection />
-
-    <div style={{ textAlign: "center", padding: "10px 24px 60px" }}>
-      <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>© 2025 Your Tradie · Australia</div>
-    </div>
+    <GetSeenSection /><GetHiredSection /><GetRewardedSection />
+    <div style={{ textAlign: "center", padding: "10px 24px 60px" }}><div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>© 2025 Your Tradie · Australia</div></div>
   </div>
 );
-
+ 
 export default function App() {
   const isDevMode = window.location.pathname === DEV_PATH;
   const [view, setView] = useState(isDevMode ? "landing" : "waitlist");
   const [darkMode, setDarkMode] = useState(true);
-
   const [wName, setWName] = useState("");
   const [wEmail, setWEmail] = useState("");
   const [wPhone, setWPhone] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-
   const [step, setStep] = useState(1);
   const [fullName, setFullName] = useState("");
   const [businessName, setBusinessName] = useState("");
@@ -635,74 +555,54 @@ export default function App() {
   const [customTrades, setCustomTrades] = useState([]);
   const [specialties, setSpecialties] = useState([]);
   const [customSpecialties, setCustomSpecialties] = useState([]);
-  const [primaryArea, setPrimaryArea] = useState("");
-  const [secondaryAreas, setSecondaryAreas] = useState([]);
-  const [postcode, setPostcode] = useState("");
+  const [serviceAreas, setServiceAreas] = useState([]);
   const [licenceNumber, setLicenceNumber] = useState("");
   const [abn, setAbn] = useState("");
   const [photo, setPhoto] = useState(null);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
-
-  const [authMode, setAuthMode] = useState("register"); // "register" | "login"
+  const [authMode, setAuthMode] = useState("register");
   const [authPassword, setAuthPassword] = useState("");
-
-  // Only handle OAuth redirect (when Google redirects back to the site)
-  React.useEffect(() => {
-    // Check if this is an OAuth callback (URL contains access_token or code)
-    const isOAuthCallback = window.location.hash.includes("access_token") || 
-                            window.location.search.includes("code=");
-    
+ 
+  useEffect(() => {
+    const isOAuthCallback = window.location.hash.includes("access_token") || window.location.search.includes("code=");
     if (isOAuthCallback) {
       supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          checkProfileAndRoute(session.user.id);
-        }
+        if (session) checkProfileAndRoute(session.user.id);
       });
     }
-
-    // Listen for auth state changes (email sign in/register)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (_event === "SIGNED_IN" && view === "tradie-auth") {
-        checkProfileAndRoute(session.user.id);
-      }
+      if (_event === "SIGNED_IN" && session) checkProfileAndRoute(session.user.id);
     });
     return () => subscription.unsubscribe();
-  }, [view]);
-
+  }, []);
+ 
   const checkProfileAndRoute = async (userId) => {
     const { data } = await supabase.from("tradies").select("id").eq("user_id", userId).single();
-    if (data) {
-      setView("tradie-dashboard");
-    } else {
-      setStep(1);
-      setView("tradie-onboarding");
-    }
+    if (data) setView("tradie-dashboard");
+    else { setStep(1); setView("tradie-onboarding"); }
     setLoading(false);
   };
-
+ 
   const handleSocialAuth = async (provider) => {
     setErrorMsg(""); setLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo: "https://yourtradieaustralia.com" }
-    });
+    const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: "https://yourtradieaustralia.com/dev" } });
     if (error) { setErrorMsg(error.message); setLoading(false); }
   };
-
+ 
   const handleEmailAuth = async () => {
     if (!wEmail || !authPassword) { setErrorMsg("Please enter your email and password."); return; }
     setLoading(true); setErrorMsg("");
     if (authMode === "register") {
       const { data, error } = await supabase.auth.signUp({ email: wEmail, password: authPassword });
       if (error) { setErrorMsg(error.message); setLoading(false); }
-      else { await checkProfileAndRoute(data.user?.id); }
+      else await checkProfileAndRoute(data.user?.id);
     } else {
       const { data, error } = await supabase.auth.signInWithPassword({ email: wEmail, password: authPassword });
       if (error) { setErrorMsg(error.message); setLoading(false); }
-      else { await checkProfileAndRoute(data.user?.id); }
+      else await checkProfileAndRoute(data.user?.id);
     }
   };
-
+ 
   const handleWaitlistSubmit = async () => {
     if (!wName || !wEmail) { setErrorMsg("Please enter your name and email."); return; }
     setLoading(true); setErrorMsg("");
@@ -712,71 +612,39 @@ export default function App() {
       else { setSubmitted(true); setLoading(false); }
     } catch (err) { setErrorMsg("Error: " + err.message); setLoading(false); }
   };
-
+ 
   const addTrade = (t) => { if (!trades.includes(t)) setTrades([...trades, t]); };
   const removeTrade = (t) => setTrades(trades.filter(x => x !== t));
   const addCustomTrade = (t) => { if (!customTrades.includes(t)) setCustomTrades([...customTrades, t]); };
   const removeCustomTrade = (t) => setCustomTrades(customTrades.filter(x => x !== t));
-
   const addSpecialty = (s) => { if (!specialties.includes(s)) setSpecialties([...specialties, s]); };
   const removeSpecialty = (s) => setSpecialties(specialties.filter(x => x !== s));
   const addCustomSpecialty = (s) => { if (!customSpecialties.includes(s)) setCustomSpecialties([...customSpecialties, s]); };
   const removeCustomSpecialty = (s) => setCustomSpecialties(customSpecialties.filter(x => x !== s));
-
-  const toggleSecondaryArea = (a) => {
-    if (secondaryAreas.includes(a)) setSecondaryAreas(secondaryAreas.filter(x => x !== a));
-    else setSecondaryAreas([...secondaryAreas, a]);
-  };
-
+  const addServiceArea = (area) => { if (!serviceAreas.find(a => a.label === area.label)) setServiceAreas([...serviceAreas, area]); };
+  const removeServiceArea = (label) => setServiceAreas(serviceAreas.filter(a => a.label !== label));
+ 
   const handleLaunch = async () => {
-    setLoading(true);
-    setErrorMsg("");
-
-    // Get current logged in user
+    setLoading(true); setErrorMsg("");
     const { data: { user } } = await supabase.auth.getUser();
-
-    // Save tradie profile to tradies table
     const { error: profileError } = await supabase.from("tradies").upsert({
-      user_id: user?.id,
-      full_name: fullName,
-      business_name: businessName,
-      trades: trades,
-      custom_trades: customTrades,
-      specialties: specialties,
-      custom_specialties: customSpecialties,
-      primary_area: primaryArea,
-      secondary_areas: secondaryAreas,
-      postcode: postcode,
-      licence_number: licenceNumber,
-      abn: abn,
-      is_live: true
+      user_id: user?.id, full_name: fullName, business_name: businessName,
+      trades, custom_trades: customTrades, specialties, custom_specialties: customSpecialties,
+      service_areas: serviceAreas.map(a => a.label), service_areas_full: serviceAreas,
+      licence_number: licenceNumber, abn, is_live: true
     });
-
-    if (profileError) {
-      setErrorMsg("Error saving profile: " + profileError.message);
-      setLoading(false);
-      return;
-    }
-
-    // Save any custom trade/specialty suggestions
+    if (profileError) { setErrorMsg("Error saving profile: " + profileError.message); setLoading(false); return; }
     const allCustom = [
-      ...customTrades.map(t => ({ type: "trade", value: t })),
-      ...customSpecialties.map(s => ({ type: "specialty", value: s }))
+      ...customTrades.map(t => ({ suggestion_type: "trade", value: t, submitted_by: fullName, status: "pending" })),
+      ...customSpecialties.map(s => ({ suggestion_type: "specialty", value: s, submitted_by: fullName, status: "pending" })),
+      ...serviceAreas.filter(a => a.isCustom).map(a => ({ suggestion_type: "area", value: a.label, submitted_by: fullName, status: "pending" }))
     ];
-    if (allCustom.length > 0) {
-      await supabase.from("suggestions").insert(allCustom.map(c => ({
-        suggestion_type: c.type, value: c.value, submitted_by: fullName, status: "pending"
-      })));
-    }
-
-    setLoading(false);
-    setOnboardingComplete(true);
+    if (allCustom.length > 0) await supabase.from("suggestions").insert(allCustom);
+    setLoading(false); setOnboardingComplete(true);
   };
-
+ 
   if (view === "waitlist") {
-    if (submitted) {
-      return <CongratsPage />;
-    }
+    if (submitted) return <CongratsPage />;
     return (
       <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", padding: "40px 24px", display: "flex", flexDirection: "column", justifyContent: "center", overflowX: "hidden" }}>
         <GlobalMobileStyles />
@@ -784,12 +652,8 @@ export default function App() {
           <div>
             <Logo />
             <div style={{ marginBottom: 32 }}>
-              <div className="yt-congrats-heading" style={{ fontWeight: 800, color: "#FFFFFF", lineHeight: 1.3, marginBottom: 10 }}>
-                Get found. Get hired. Get rewarded.
-              </div>
-              <div style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
-                Connecting you with tradies.
-              </div>
+              <div className="yt-congrats-heading" style={{ fontWeight: 800, color: "#FFFFFF", lineHeight: 1.3, marginBottom: 10 }}>Get found. Get hired. Get rewarded.</div>
+              <div style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>Connecting you with tradies.</div>
             </div>
             <div style={cardStyle}>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#FFFFFF", marginBottom: 6, textAlign: "center" }}>Join the Community</div>
@@ -807,13 +671,11 @@ export default function App() {
           </div>
           <PhoneMockup />
         </div>
-        <div style={{ marginTop: 64, fontSize: 12, color: "rgba(255,255,255,0.2)", textAlign: "center" }}>
-          © 2025 Your Tradie · Australia
-        </div>
+        <div style={{ marginTop: 64, fontSize: 12, color: "rgba(255,255,255,0.2)", textAlign: "center" }}>© 2025 Your Tradie · Australia</div>
       </div>
     );
   }
-
+ 
   if (view === "landing") {
     const bg = darkMode ? "#0D1B2A" : "#F5F5F0";
     const text = darkMode ? "#fff" : "#0D1B2A";
@@ -863,14 +725,9 @@ export default function App() {
             <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: subText }}>Why tradies choose us</span>
           </div>
           <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
-            {[
-              { label: "Verified Tradies", sub: "Licence & ABN checked", color: "#F4822A" },
-              { label: "No Lead Fees", sub: "You keep every dollar you earn", color: "#F4822A" },
-              { label: "Direct Messaging", sub: "No middlemen involved", color: "#F4822A" },
-              { label: "Real Reviews", sub: "From real customers", color: "#F4822A" }
-            ].map(item => (
-              <div key={item.label} style={{ background: darkMode ? `${item.color}18` : `${item.color}12`, border: `1.5px solid ${item.color}50`, borderRadius: 12, padding: "16px 22px", width: 220, minHeight: 80, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                <div style={{ fontSize: 15, fontWeight: 800, color: item.color, marginBottom: 4 }}>{item.label}</div>
+            {[{ label: "Verified Tradies", sub: "Licence & ABN checked" }, { label: "No Lead Fees", sub: "You keep every dollar you earn" }, { label: "Direct Messaging", sub: "No middlemen involved" }, { label: "Real Reviews", sub: "From real customers" }].map(item => (
+              <div key={item.label} style={{ background: darkMode ? "#F4822A18" : "#F4822A12", border: "1.5px solid #F4822A50", borderRadius: 12, padding: "16px 22px", width: 220, minHeight: 80, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ fontSize: 15, fontWeight: 800, color: "#F4822A", marginBottom: 4 }}>{item.label}</div>
                 <div style={{ fontSize: 12, color: subText }}>{item.sub}</div>
               </div>
             ))}
@@ -880,56 +737,32 @@ export default function App() {
       </div>
     );
   }
-
+ 
   if (view === "tradie-auth") {
     return (
       <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", overflowX: "hidden" }}>
         <GlobalMobileStyles />
         <Logo />
         <div style={{ ...cardStyle, marginTop: 8, width: "100%", maxWidth: 400 }}>
-          <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", textAlign: "center", marginBottom: 6 }}>
-            {authMode === "register" ? "Create your free profile" : "Welcome back"}
-          </div>
-          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>
-            {authMode === "register" ? "Join Australia's tradie network" : "Sign in to your account"}
-          </div>
-
-          {/* Social login buttons */}
-          <button onClick={() => handleSocialAuth("google")}
-            style={{ width: "100%", background: "#fff", border: "none", borderRadius: 10, padding: "13px 16px", fontSize: 14, fontWeight: 600, color: "#333", cursor: "pointer", marginBottom: 10, letterSpacing: 0.3 }}>
-            Continue with Google
-          </button>
-
-          {/* Divider */}
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", textAlign: "center", marginBottom: 6 }}>{authMode === "register" ? "Create your free profile" : "Welcome back"}</div>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>{authMode === "register" ? "Join Australia's tradie network" : "Sign in to your account"}</div>
+          <button onClick={() => handleSocialAuth("google")} style={{ width: "100%", background: "#fff", border: "none", borderRadius: 10, padding: "13px 16px", fontSize: 14, fontWeight: 600, color: "#333", cursor: "pointer", marginBottom: 10, letterSpacing: 0.3 }}>Continue with Google</button>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
             <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.1)" }} />
             <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>or use email</span>
             <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.1)" }} />
           </div>
-
-          {/* Email fields */}
           <input style={inputStyle} placeholder="Email address" type="email" value={wEmail} onChange={e => setWEmail(e.target.value)} />
           <input style={{ ...inputStyle, marginBottom: 16 }} placeholder="Password" type="password" value={authPassword} onChange={e => setAuthPassword(e.target.value)} />
-
           {errorMsg && <div style={{ color: "#ff6b6b", fontSize: 13, marginBottom: 12, textAlign: "center", padding: 8, background: "rgba(255,107,107,0.1)", borderRadius: 8 }}>{errorMsg}</div>}
-
-          <button onClick={handleEmailAuth} disabled={loading}
-            style={{ width: "100%", background: loading ? "rgba(244,130,42,0.4)" : "#F4822A", border: "none", borderRadius: 10, padding: "14px", fontSize: 16, fontWeight: 800, color: "#fff", cursor: loading ? "default" : "pointer", marginBottom: 16 }}>
+          <button onClick={handleEmailAuth} disabled={loading} style={{ width: "100%", background: loading ? "rgba(244,130,42,0.4)" : "#F4822A", border: "none", borderRadius: 10, padding: "14px", fontSize: 16, fontWeight: 800, color: "#fff", cursor: loading ? "default" : "pointer", marginBottom: 16 }}>
             {loading ? "Please wait..." : authMode === "register" ? "Create Account →" : "Sign In →"}
           </button>
-
-          {/* Toggle register/login */}
           <div style={{ textAlign: "center" }}>
             {authMode === "register" ? (
-              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
-                Already have an account?{" "}
-                <span onClick={() => { setAuthMode("login"); setErrorMsg(""); }} style={{ color: "#F4822A", cursor: "pointer", fontWeight: 700 }}>Sign in</span>
-              </span>
+              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Already have an account?{" "}<span onClick={() => { setAuthMode("login"); setErrorMsg(""); }} style={{ color: "#F4822A", cursor: "pointer", fontWeight: 700 }}>Sign in</span></span>
             ) : (
-              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
-                New to Your Tradie?{" "}
-                <span onClick={() => { setAuthMode("register"); setErrorMsg(""); }} style={{ color: "#F4822A", cursor: "pointer", fontWeight: 700 }}>Create account</span>
-              </span>
+              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>New to Your Tradie?{" "}<span onClick={() => { setAuthMode("register"); setErrorMsg(""); }} style={{ color: "#F4822A", cursor: "pointer", fontWeight: 700 }}>Create account</span></span>
             )}
           </div>
         </div>
@@ -937,31 +770,24 @@ export default function App() {
       </div>
     );
   }
-
-
+ 
   if (view === "tradie-dashboard") {
     return (
       <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", overflowX: "hidden" }}>
         <GlobalMobileStyles />
         <div style={{ background: "#0D1B2A", borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>Your <span style={{ color: "#F4822A" }}>Tradie</span></div>
-          <button onClick={async () => { await supabase.auth.signOut(); setView("landing"); }}
-            style={{ background: "none", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 8, padding: "6px 14px", fontSize: 13, color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>
-            Sign out
-          </button>
+          <button onClick={async () => { await supabase.auth.signOut(); setView("landing"); }} style={{ background: "none", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 8, padding: "6px 14px", fontSize: 13, color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>Sign out</button>
         </div>
         <div style={{ padding: "40px 24px", maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
           <div style={{ fontSize: 28, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Welcome back!</div>
           <div style={{ fontSize: 16, color: "rgba(255,255,255,0.4)", marginBottom: 40 }}>Your tradie dashboard is coming soon.</div>
-          <button onClick={() => { setStep(1); setView("tradie-onboarding"); }}
-            style={{ background: "#F4822A", border: "none", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, color: "#fff", cursor: "pointer" }}>
-            Edit my profile →
-          </button>
+          <button onClick={() => { setStep(1); setView("tradie-onboarding"); }} style={{ background: "#F4822A", border: "none", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, color: "#fff", cursor: "pointer" }}>Edit my profile →</button>
         </div>
       </div>
     );
   }
-
+ 
   if (view === "tradie-onboarding") {
     if (onboardingComplete) {
       return (
@@ -970,24 +796,19 @@ export default function App() {
           <div style={{ ...cardStyle, textAlign: "center" }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>🚀</div>
             <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Profile Launched!</div>
-            <div style={{ fontSize: 15, color: "rgba(255,255,255,0.5)", lineHeight: 1.6, marginBottom: 24 }}>
-              Welcome to Your Tradie, {fullName.split(" ")[0]}!
-            </div>
-            <button onClick={() => { setView("landing"); setOnboardingComplete(false); setStep(1); }}
-              style={{ background: "none", border: "none", color: "rgba(255,255,255,0.3)", fontSize: 13, cursor: "pointer" }}>
-              ← Back to home
-            </button>
+            <div style={{ fontSize: 15, color: "rgba(255,255,255,0.5)", lineHeight: 1.6, marginBottom: 24 }}>Welcome to Your Tradie, {fullName.split(" ")[0]}!</div>
+            <button onClick={() => { setView("tradie-dashboard"); setOnboardingComplete(false); setStep(1); }} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.3)", fontSize: 13, cursor: "pointer" }}>Go to dashboard →</button>
           </div>
         </Wrapper>
       );
     }
-
+ 
     return (
       <Wrapper>
         <Logo />
         <div style={cardStyle}>
           <ProgressBar current={step} total={5} />
-
+ 
           {step === 1 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>About You</div>
@@ -997,19 +818,19 @@ export default function App() {
               <button onClick={() => fullName && setStep(2)} style={{ ...btnPrimary(!fullName), width: "100%", marginTop: 4 }}>Next →</button>
             </>
           )}
-
+ 
           {step === 2 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Your Trade</div>
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>What do you do? Select all that apply.</div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Primary trade(s)</div>
-              <SearchSelect items={TRADES} selected={trades} onAdd={addTrade} onAddCustom={addCustomTrade} placeholder="Search or type your trade..." />
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Trade type</div>
+              <SearchSelect items={TRADES} selected={trades} onAdd={addTrade} onAddCustom={addCustomTrade} placeholder="Search or select your trade..." />
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
                 {trades.map(t => <Tag key={t} label={t} onRemove={() => removeTrade(t)} />)}
                 {customTrades.map(t => <Tag key={t} label={t} onRemove={() => removeCustomTrade(t)} pending />)}
               </div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Specialties (optional)</div>
-              <SearchSelect items={SPECIALTIES} selected={specialties} onAdd={addSpecialty} onAddCustom={addCustomSpecialty} placeholder="Search or type a specialty..." max={6} />
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Specialties (optional, max 6)</div>
+              <SearchSelect items={SPECIALTIES} selected={specialties} onAdd={addSpecialty} onAddCustom={addCustomSpecialty} placeholder="Search or select specialties..." max={6} />
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
                 {specialties.map(s => <Tag key={s} label={s} onRemove={() => removeSpecialty(s)} />)}
                 {customSpecialties.map(s => <Tag key={s} label={s} onRemove={() => removeCustomSpecialty(s)} pending />)}
@@ -1020,39 +841,28 @@ export default function App() {
               </div>
             </>
           )}
-
+ 
           {step === 3 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Service Areas</div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>Where do you work?</div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Primary area</div>
-              <select value={primaryArea} onChange={e => setPrimaryArea(e.target.value)} style={{ ...inputStyle, marginBottom: 16 }}>
-                <option value="">Select your main area</option>
-                {AREAS.map(a => <option key={a} value={a}>{a}</option>)}
-              </select>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Postcode (if outside listed areas)</div>
-              <input style={inputStyle} placeholder="e.g. 4507" value={postcode} onChange={e => setPostcode(e.target.value)} />
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>Also service</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-                {AREAS.filter(a => a !== primaryArea).map(area => (
-                  <div key={area} onClick={() => toggleSecondaryArea(area)}
-                    style={{
-                      background: secondaryAreas.includes(area) ? "rgba(244,130,42,0.2)" : "rgba(255,255,255,0.05)",
-                      border: secondaryAreas.includes(area) ? "1px solid rgba(244,130,42,0.4)" : "1px solid rgba(255,255,255,0.12)",
-                      borderRadius: 20, padding: "6px 14px", fontSize: 13,
-                      color: secondaryAreas.includes(area) ? "#F4822A" : "rgba(255,255,255,0.5)", cursor: "pointer"
-                    }}>
-                    {area}
-                  </div>
-                ))}
-              </div>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 4 }}>Where do you work? Add as many areas as you like.</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", textAlign: "center", marginBottom: 20 }}>Search any suburb, city, postcode or state in Australia</div>
+              <PlacesSearch onAdd={addServiceArea} selectedAreas={serviceAreas} />
+              {serviceAreas.length > 0 ? (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16, marginTop: 8 }}>
+                  {serviceAreas.map(a => <Tag key={a.label} label={a.label} onRemove={() => removeServiceArea(a.label)} pending={a.isCustom} />)}
+                </div>
+              ) : (
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.2)", textAlign: "center", marginBottom: 16, marginTop: 8 }}>No areas added yet</div>
+              )}
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", marginBottom: 16 }}>💡 Update your service areas anytime from your dashboard</div>
               <div style={{ display: "flex", gap: 8 }}>
                 <button onClick={() => setStep(2)} style={btnSecondary}>← Back</button>
-                <button onClick={() => (primaryArea || postcode) && setStep(4)} style={btnPrimary(!primaryArea && !postcode)}>Next →</button>
+                <button onClick={() => serviceAreas.length > 0 && setStep(4)} style={btnPrimary(serviceAreas.length === 0)}>Next →</button>
               </div>
             </>
           )}
-
+ 
           {step === 4 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Credentials</div>
@@ -1066,25 +876,23 @@ export default function App() {
               </div>
             </>
           )}
-
+ 
           {step === 5 && (
             <>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 6, textAlign: "center" }}>Profile Photo</div>
               <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", marginBottom: 24 }}>Add a photo or logo</div>
               <div style={{ textAlign: "center", marginBottom: 24 }}>
-                <div style={{
-                  width: 100, height: 100, borderRadius: "50%", background: "rgba(255,255,255,0.07)",
-                  border: "2px dashed rgba(255,255,255,0.2)", margin: "0 auto 16px",
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, cursor: "pointer"
-                }} onClick={() => document.getElementById("photo-upload").click()}>
+                <div style={{ width: 100, height: 100, borderRadius: "50%", background: "rgba(255,255,255,0.07)", border: "2px dashed rgba(255,255,255,0.2)", margin: "0 auto 16px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, cursor: "pointer" }}
+                  onClick={() => document.getElementById("photo-upload").click()}>
                   {photo ? "📷" : "👤"}
                 </div>
                 <input id="photo-upload" type="file" accept="image/*" style={{ display: "none" }} onChange={e => setPhoto(e.target.files[0])} />
                 <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>{photo ? photo.name : "Tap to upload"}</div>
               </div>
+              {errorMsg && <div style={{ color: "#ff6b6b", fontSize: 13, marginBottom: 12, textAlign: "center", padding: 8, background: "rgba(255,107,107,0.1)", borderRadius: 8 }}>{errorMsg}</div>}
               <div style={{ display: "flex", gap: 8 }}>
                 <button onClick={() => setStep(4)} style={btnSecondary}>← Back</button>
-                <button onClick={handleLaunch} style={{ ...btnPrimary(false), flex: 2 }}>Launch My Profile 🚀</button>
+                <button onClick={handleLaunch} disabled={loading} style={{ ...btnPrimary(loading), flex: 2 }}>{loading ? "Launching..." : "Launch My Profile 🚀"}</button>
               </div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", textAlign: "center", marginTop: 12 }}>You can add a photo later</div>
             </>
@@ -1094,12 +902,11 @@ export default function App() {
       </Wrapper>
     );
   }
-
+ 
   if (view === "find-tradie") {
     return (
       <div style={{ minHeight: "100vh", background: "#0D1B2A", fontFamily: "sans-serif", overflowX: "hidden" }}>
         <GlobalMobileStyles />
-        {/* Header */}
         <div style={{ background: "#0D1B2A", padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
           <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>Your <span style={{ color: "#F4822A" }}>Tradie</span></div>
           <div style={{ display: "flex", gap: 10 }}>
@@ -1107,27 +914,18 @@ export default function App() {
             <button onClick={() => { setAuthMode("register"); setView("tradie-auth"); }} style={{ background: "#F4822A", border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 13, fontWeight: 700, color: "#fff", cursor: "pointer" }}>Register</button>
           </div>
         </div>
-
-        {/* Search bar */}
         <div style={{ padding: "20px 20px 12px" }}>
           <div style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, padding: "13px 16px", fontSize: 15, color: "rgba(255,255,255,0.4)", display: "flex", alignItems: "center", gap: 10 }}>
-            <span>🔍</span>
-            <span>Search trade, name or suburb...</span>
+            <span>🔍</span><span>Search trade, name or suburb...</span>
           </div>
         </div>
-
-        {/* Trade category pills */}
         <div style={{ padding: "0 20px 20px", overflowX: "auto" }}>
           <div style={{ display: "flex", gap: 8, paddingBottom: 4 }}>
             {["All", "Electrician", "Plumber", "Builder", "Painter", "Tiler", "Landscaper"].map(t => (
-              <div key={t} style={{ background: t === "All" ? "#F4822A" : "rgba(255,255,255,0.07)", border: t === "All" ? "none" : "1px solid rgba(255,255,255,0.12)", borderRadius: 20, padding: "7px 16px", fontSize: 13, color: t === "All" ? "#fff" : "rgba(255,255,255,0.6)", cursor: "pointer", whiteSpace: "nowrap", fontWeight: t === "All" ? 700 : 400 }}>
-                {t}
-              </div>
+              <div key={t} style={{ background: t === "All" ? "#F4822A" : "rgba(255,255,255,0.07)", border: t === "All" ? "none" : "1px solid rgba(255,255,255,0.12)", borderRadius: 20, padding: "7px 16px", fontSize: 13, color: t === "All" ? "#fff" : "rgba(255,255,255,0.6)", cursor: "pointer", whiteSpace: "nowrap", fontWeight: t === "All" ? 700 : 400 }}>{t}</div>
             ))}
           </div>
         </div>
-
-        {/* Sample tradie cards */}
         <div style={{ padding: "0 20px" }}>
           <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>Tradies near you</div>
           {[
@@ -1146,18 +944,13 @@ export default function App() {
             </div>
           ))}
         </div>
-
-        {/* Soft login nudge at bottom */}
         <div style={{ margin: "20px", background: "rgba(244,130,42,0.08)", border: "1px solid rgba(244,130,42,0.2)", borderRadius: 14, padding: "16px", textAlign: "center" }}>
           <div style={{ fontSize: 14, color: "rgba(255,255,255,0.6)", marginBottom: 10 }}>Want to message a tradie or save favourites?</div>
-          <button onClick={() => { setAuthMode("register"); setView("tradie-auth"); }}
-            style={{ background: "#F4822A", border: "none", borderRadius: 8, padding: "10px 24px", fontSize: 14, fontWeight: 700, color: "#fff", cursor: "pointer" }}>
-            Create a free account →
-          </button>
+          <button onClick={() => { setAuthMode("register"); setView("tradie-auth"); }} style={{ background: "#F4822A", border: "none", borderRadius: 8, padding: "10px 24px", fontSize: 14, fontWeight: 700, color: "#fff", cursor: "pointer" }}>Create a free account →</button>
         </div>
-
         <button onClick={() => setView("landing")} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.2)", fontSize: 13, cursor: "pointer", padding: "10px 20px 40px" }}>← Back to home</button>
       </div>
     );
   }
 }
+ 
