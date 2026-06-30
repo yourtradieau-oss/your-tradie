@@ -1,29 +1,13 @@
-
+App · JS
 import React, { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
+import { TRADES, SPECIALTIES } from "./data/trades";
  
 const supabase = createClient(
   "https://sbidwhsnwdsvkbdwzphb.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaWR3aHNud2RzdmtiZHd6cGhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MzcyOTcsImV4cCI6MjA5NzIxMzI5N30.eCkIM3gKZCi7hY-ef9JQjRHHBZ-97VSVC2npQH6M26g"
 );
 const DEV_PATH = "/dev";
- 
-const TRADES = [
-  "Electrician", "Plumber", "Builder", "Carpenter", "Painter",
-  "Tiler", "Landscaper", "Roofer", "Plasterer", "Concreter",
-  "Air Conditioning", "Locksmith", "Glazier", "Pest Control",
-  "Handyman", "Cabinet Maker", "Bricklayer", "Welder",
-  "Solar Installer", "Flooring Specialist"
-];
- 
-const SPECIALTIES = [
-  "Solar Panels", "EV Charging", "Switchboards", "Renovations",
-  "New Builds", "Decking", "Fencing", "Retaining Walls",
-  "Bathroom Renovations", "Kitchen Renovations", "Underground", "Mosaics",
-  "Roof Repairs", "Guttering", "Skylights", "Air Con Installation",
-  "Air Con Servicing", "Hot Water Systems", "Gas Fitting", "Waterproofing",
-  "Rendering", "Insulation", "Damp Proofing", "Asbestos Removal"
-];
  
 const inputStyle = {
   width: "100%", background: "rgba(255,255,255,0.07)",
@@ -318,7 +302,7 @@ const ServiceAreaPicker = ({ serviceAreas, onAdd, onRemove }) => {
   };
  
   const submitOther = () => {
-    if (otherText.trim()) { onAdd({ label: otherText.trim(), isCustom: true }); setOtherText(""); setShowOther(false); }
+    if (otherText.trim()) { onAdd({ label: otherText.trim(), isCustom: true }); setOtherText(""); }
   };
  
   const handlePostcodeSearch = (val) => {
@@ -1082,3 +1066,4 @@ export default function App() {
     );
   }
 }
+ 
