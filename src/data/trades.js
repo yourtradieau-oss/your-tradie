@@ -1,6 +1,8 @@
 // Your Tradie — Master Trades & Specialties
-// Edit this file to update lists. App.js imports from here automatically.
-
+// Source: Lindsay's Trades.docx — master reference
+// Trades = what you ARE (profession/licence)
+// Specialties = what you DO (specific jobs/services)
+ 
 export const TRADES = [
   // Building & Construction
   "Builder",
@@ -11,6 +13,7 @@ export const TRADES = [
   "Stonemason",
   "Plasterer",
   "Renderer",
+  "Gyprocker",
   "Concreter",
   "Paver",
   "Waterproofer",
@@ -22,14 +25,16 @@ export const TRADES = [
   "Earthmoving Contractor",
   "Civil Contractor",
   "Structural Steel Installer",
+  "Draftsperson",
   "Building Inspector",
   "Building Designer",
-  "Draftsperson",
-
+  "Carport Builder",
+  "Patio Builder",
+ 
   // Roofing
   "Roofer",
   "Roof Plumber",
-
+ 
   // Electrical & Technology
   "Electrician",
   "Auto Electrician",
@@ -49,10 +54,11 @@ export const TRADES = [
   "Antenna Installer",
   "Satellite Installer",
   "NBN Technician",
-
+ 
   // Plumbing & Water
   "Plumber",
   "Gas Fitter",
+  "Drainer",
   "Drainage Contractor",
   "Septic System Installer",
   "Irrigation Installer",
@@ -61,20 +67,24 @@ export const TRADES = [
   "Pipe Relining Specialist",
   "Backflow Tester",
   "Hot Water Specialist",
-  "Fire Services Plumber",
-
+  "Fire Protection Technician",
+  "Smoke Alarm Technician",
+ 
   // Painting & Decorating
   "Painter",
   "Decorator",
   "Wallpaper Installer",
-
+ 
   // Tiling
   "Tiler",
-
+ 
   // Flooring
   "Flooring Installer",
   "Carpet Layer",
-
+  "Vinyl Flooring Installer",
+  "Timber Flooring Installer",
+  "Epoxy Flooring Installer",
+ 
   // Outdoor & Landscaping
   "Landscaper",
   "Gardener",
@@ -88,26 +98,29 @@ export const TRADES = [
   "Retaining Wall Builder",
   "Deck Builder",
   "Pergola Builder",
-  "Patio Builder",
-  "Carport Builder",
   "Shade Sail Installer",
+  "Awning Installer",
   "Stormwater Contractor",
-
+  "Artificial Turf Installer",
+  "Rock Wall Builder",
+ 
   // Pools
   "Pool Builder",
   "Pool Cleaner",
   "Pool Maintenance Technician",
-
+ 
   // Glass & Windows
   "Glazier",
   "Window Installer",
   "Window Tinting Installer",
-
+  "Skylight Installer",
+ 
   // Doors & Security
   "Locksmith",
   "Garage Door Installer",
+  "Roller Door Technician",
   "Door Installer",
-
+ 
   // Cleaning & Maintenance
   "Handyman",
   "Pressure Cleaning Specialist",
@@ -116,11 +129,12 @@ export const TRADES = [
   "Bond Cleaner",
   "Roof Cleaner",
   "Gutter Cleaner",
+  "Gutter Installer",
   "Solar Panel Cleaner",
   "Chimney Sweep",
   "Graffiti Removal Specialist",
-  "Mould Remediation Specialist",
-
+  "Property Maintenance",
+ 
   // Fabrication & Metalwork
   "Welder",
   "Steel Fabricator",
@@ -128,36 +142,33 @@ export const TRADES = [
   "Aluminium Fabricator",
   "Stainless Steel Fabricator",
   "Stone Benchtop Installer",
-
+ 
   // Pest & Environment
   "Pest Controller",
   "Asbestos Removalist",
-  "Bird Proofing Specialist",
-
+ 
   // Interiors & Fitouts
   "Kitchen Installer",
   "Bathroom Renovator",
   "Shopfitter",
   "Blind Installer",
-  "Skylight Installer",
   "Lift Installer",
   "Upholsterer",
-
+  "Signwriter",
+  "Caulker",
+ 
   // Rubbish & Removals
   "Removalist",
   "Rubbish Removal",
   "Skip Bin Provider",
-
-  // Fire & Safety
-  "Fire Protection Technician",
-  "Smoke Alarm Technician",
-
+ 
   // Other
   "Shed Builder",
   "Appliance Installer",
   "Furniture Assembler",
   "Sign Installer",
-
+  "Polished Concrete Specialist",
+ 
   // Automotive
   "Auto Mechanic",
   "Diesel Mechanic",
@@ -165,6 +176,7 @@ export const TRADES = [
   "Marine Mechanic",
   "Small Engine Mechanic",
   "Panel Beater",
+  "Spray Painter",
   "Windscreen Installer",
   "Tow Bar Installer",
   "4WD Accessory Installer",
@@ -172,7 +184,7 @@ export const TRADES = [
   "Wheel Alignment Specialist",
   "Brake & Suspension Specialist",
 ];
-
+ 
 export const SPECIALTIES = [
   // Tiling
   "Bathroom Tiling",
@@ -187,8 +199,8 @@ export const SPECIALTIES = [
   "Spa Tiling",
   "Mosaic Tiling",
   "Feature Wall Tiling",
+  "Splashbacks",
   "Kitchen Splashbacks",
-  "Bathroom Splashbacks",
   "Stone Tiling",
   "Marble Tiling",
   "Granite Tiling",
@@ -199,6 +211,7 @@ export const SPECIALTIES = [
   "Ceramic Tiling",
   "Porcelain Tiling",
   "Large Format Tiles",
+  "Natural Stone Tiling",
   "Tile Repairs",
   "Tile Replacement",
   "Tile Removal",
@@ -207,23 +220,7 @@ export const SPECIALTIES = [
   "Tile Sealing",
   "Pool Coping",
   "Waterproofing",
-
-  // Flooring
-  "Timber Flooring",
-  "Hybrid Flooring",
-  "Vinyl Flooring",
-  "Laminate Flooring",
-  "Bamboo Flooring",
-  "Cork Flooring",
-  "Epoxy Flooring",
-  "Garage Floors",
-  "Commercial Flooring",
-  "Carpet Installation",
-  "Carpet Repairs",
-  "Floor Sanding",
-  "Floor Polishing",
-  "Floor Levelling",
-
+ 
   // Electrical
   "LED Lighting",
   "Feature Lighting",
@@ -258,6 +255,8 @@ export const SPECIALTIES = [
   "Three Phase Power",
   "Underground Power",
   "Temporary Power",
+  "Factory Electrical",
+  "Warehouse Electrical",
   "Generator Installation",
   "UPS Systems",
   "Surge Protection",
@@ -286,11 +285,12 @@ export const SPECIALTIES = [
   "Access Control",
   "Data Cabling",
   "Fibre Cabling",
+  "Fibre Optic Cabling",
   "NBN Cabling",
   "TV Antennas",
   "Satellite Systems",
-  "Lightning Protection",
-
+  "Wi-Fi Installation",
+ 
   // Plumbing
   "Blocked Drains",
   "Drain Cleaning",
@@ -298,6 +298,7 @@ export const SPECIALTIES = [
   "CCTV Drain Inspection",
   "Leak Detection",
   "Burst Pipes",
+  "Emergency Plumbing",
   "Pipe Relining",
   "Pipe Replacement",
   "Tap Repairs",
@@ -309,6 +310,7 @@ export const SPECIALTIES = [
   "Vanity Installation",
   "Basin Installation",
   "Sink Installation",
+  "Dishwasher Installation",
   "Fridge Plumbing",
   "Water Filters",
   "Water Pressure Systems",
@@ -327,6 +329,10 @@ export const SPECIALTIES = [
   "Electric Hot Water",
   "Heat Pump Systems",
   "Solar Hot Water",
+  "Gas Appliances",
+  "Gas Leaks",
+  "Gas Cooktops",
+  "Gas Line Installation",
   "Roof Plumbing",
   "Guttering",
   "Downpipes",
@@ -335,10 +341,12 @@ export const SPECIALTIES = [
   "Bore Pumps",
   "Pump Installation",
   "Grey Water Systems",
-  "Emergency Plumbing",
   "Commercial Plumbing",
+  "Industrial Plumbing",
   "Fire Services Plumbing",
-
+  "Pool Plumbing",
+  "Irrigation Plumbing",
+ 
   // Roofing
   "Roof Repairs",
   "Roof Restoration",
@@ -348,7 +356,7 @@ export const SPECIALTIES = [
   "Roof Inspections",
   "Roof Leaks",
   "Tile Roofs",
-  "Metal Roofs",
+  "Metal Roofing",
   "Colorbond Roofing",
   "Flashings",
   "Ridge Capping",
@@ -362,7 +370,7 @@ export const SPECIALTIES = [
   "Soffits",
   "Skylights",
   "Whirlybirds",
-
+ 
   // Painting
   "Interior Painting",
   "Exterior Painting",
@@ -377,19 +385,21 @@ export const SPECIALTIES = [
   "Colour Consultation",
   "Paint Stripping",
   "Feature Walls",
-  "Painting Preparation",
-
+  "Rendering",
+  "Plaster Repairs",
+ 
   // Carpentry
   "Decking",
   "Pergolas",
   "Patios",
   "Carports",
-  "Granny Flat",
   "Timber Framing",
   "Wall Framing",
   "Roof Framing",
   "Doors",
   "Door Repairs",
+  "Door Installation",
+  "Windows",
   "Window Installation",
   "Window Repairs",
   "Skirting Boards",
@@ -402,7 +412,7 @@ export const SPECIALTIES = [
   "Balustrades",
   "Timber Repairs",
   "Custom Joinery",
-
+ 
   // Landscaping
   "Garden Design",
   "Garden Makeovers",
@@ -433,7 +443,7 @@ export const SPECIALTIES = [
   "Outdoor Steps",
   "Drainage",
   "Outdoor Kitchens",
-
+ 
   // Concrete
   "Concrete Driveways",
   "Concrete Paths",
@@ -458,7 +468,23 @@ export const SPECIALTIES = [
   "Pressure Grouting",
   "Screw Piles",
   "Underpinning",
-
+ 
+  // Flooring
+  "Timber Flooring",
+  "Hybrid Flooring",
+  "Vinyl Flooring",
+  "Laminate Flooring",
+  "Bamboo Flooring",
+  "Cork Flooring",
+  "Epoxy Flooring",
+  "Garage Floors",
+  "Commercial Flooring",
+  "Carpet Installation",
+  "Carpet Repairs",
+  "Floor Sanding",
+  "Floor Polishing",
+  "Floor Levelling",
+ 
   // Fencing
   "Timber Fencing",
   "Colorbond Fencing",
@@ -473,7 +499,7 @@ export const SPECIALTIES = [
   "Automatic Gates",
   "Boom Gates",
   "Wooden Gates",
-
+ 
   // Pools
   "Pool Cleaning",
   "Pool Servicing",
@@ -485,7 +511,7 @@ export const SPECIALTIES = [
   "Pool Covers",
   "Pool Lighting",
   "Pool Automation",
-
+ 
   // Air Conditioning
   "Split Systems",
   "Ducted Air Conditioning",
@@ -494,11 +520,11 @@ export const SPECIALTIES = [
   "Air Conditioning Servicing",
   "Air Conditioning Cleaning",
   "Refrigeration",
-  "Ventilation Systems",
+  "Ventilation",
   "Evaporative Cooling",
   "Cool Rooms",
   "Cold Rooms",
-
+ 
   // Glass
   "Glass Replacement",
   "Window Glass Replacement",
@@ -510,8 +536,8 @@ export const SPECIALTIES = [
   "Shopfront Glazing",
   "Pet Doors",
   "Flyscreens",
-
-  // Doors & Security
+ 
+  // Security & Doors
   "Security Doors",
   "Security Screens",
   "Screen Doors",
@@ -520,11 +546,12 @@ export const SPECIALTIES = [
   "Fire Doors",
   "Deadlocks",
   "Digital Locks",
-
+ 
   // Cleaning
   "Pressure Washing",
   "Pressure Cleaning",
   "Driveway Cleaning",
+  "Roof Cleaning",
   "House Washing",
   "Window Cleaning",
   "Gutter Cleaning",
@@ -532,9 +559,7 @@ export const SPECIALTIES = [
   "Bond Cleaning",
   "Builders Cleaning",
   "Commercial Cleaning",
-  "Mould Remediation",
-  "Graffiti Removal",
-
+ 
   // Pest Control
   "Termite Treatment",
   "Termite Inspections",
@@ -549,15 +574,7 @@ export const SPECIALTIES = [
   "Bed Bugs",
   "Possum Removal",
   "Bird Proofing",
-
-  // Waterproofing
-  "Shower Waterproofing",
-  "Balcony Waterproofing",
-  "Deck Waterproofing",
-  "Roof Waterproofing",
-  "Expansion Joints",
-  "Caulking",
-
+ 
   // Interiors
   "Bathroom Renovations",
   "Kitchen Renovations",
@@ -573,21 +590,24 @@ export const SPECIALTIES = [
   "Shade Sails",
   "TV Wall Mounting",
   "Furniture Assembly",
-
+ 
   // Fire & Safety
   "Fire Protection Systems",
   "Fire Sprinklers",
   "Smoke Ventilation",
   "Passive Fire",
   "Fire Stopping",
-
-  // Fabrication
+  "Expansion Joints",
+  "Caulking",
+ 
+  // Fabrication & Structural
   "Structural Steel",
   "Steel Fabrication",
   "Aluminium Fabrication",
   "Stainless Steel Fabrication",
+  "Metal Fabrication",
   "Welding",
-
+ 
   // Fitouts
   "Shop Fitouts",
   "Commercial Fitouts",
@@ -598,13 +618,13 @@ export const SPECIALTIES = [
   "Commercial Kitchen Fitouts",
   "Acoustic Ceilings",
   "Suspended Ceilings",
-
+ 
   // Accessibility
   "Disability Access Ramps",
   "NDIS Home Modifications",
   "Disability Modifications",
   "Lift Installation",
-
+ 
   // Demolition & Site
   "Demolition",
   "Excavation",
@@ -613,7 +633,17 @@ export const SPECIALTIES = [
   "Asbestos Removal",
   "Rubbish Removal",
   "Skip Bin Hire",
-
+ 
+  // Water & Drainage
+  "Stormwater Drainage",
+  "Water Tanks",
+  "Backflow Prevention",
+  "Septic Systems",
+  "Grey Water Systems",
+  "Bore Pumps",
+  "Rainwater Harvesting",
+  "French Drains",
+ 
   // Other
   "Shed Installation",
   "Roller Shutters",
@@ -621,4 +651,8 @@ export const SPECIALTIES = [
   "Insulation",
   "Acoustic Insulation",
   "Soundproofing",
+  "Property Maintenance",
+  "Granny Flat",
+  "Rendering",
 ];
+ 
